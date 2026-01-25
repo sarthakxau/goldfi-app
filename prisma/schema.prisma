@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  privyUserId   String    @unique
+  walletAddress String    @unique
+  phone         String?
+  email         String?
+  kycStatus     String    @default("pending")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  holdings      Holding?
+  transactions  Transaction[]
+}
+
+model Holding {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id])
+  xautAmount       Decimal  @default(0) @db.Decimal(18, 6)
+  avgBuyPriceInr   Decimal? @db.Decimal(18, 2)
+  totalInvestedInr Decimal  @default(0) @db.Decimal(18, 2)
+  unrealizedPnlInr Decimal? @db.Decimal(18, 2)
+  updatedAt        DateTime @updatedAt
+}
+
+model Transaction {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  type             String    // 'buy' | 'sell'
+  status           String    // 'pending' | 'processing' | 'completed' | 'failed'
+
+  xautAmount       Decimal?  @db.Decimal(18, 6)
+  usdtAmount       Decimal?  @db.Decimal(18, 6)
+  inrAmount        Decimal?  @db.Decimal(18, 2)
+
+  goldPriceUsd     Decimal?  @db.Decimal(18, 2)
+  usdInrRate       Decimal?  @db.Decimal(10, 4)
+  goldPriceInr     Decimal?  @db.Decimal(18, 2)
+
+  blockchainTxHash String?
+  fromAddress      String?
+  toAddress        String?
+
+  onmetaOrderId    String?
+  dexSwapTxHash    String?
+  errorMessage     String?
+
+  createdAt        DateTime  @default(now())
+  completedAt      DateTime?
+
+  @@index([userId, status])
+  @@index([createdAt])
+}
+
+model PriceHistory {
+  id           String   @id @default(uuid())
+  goldPriceUsd Decimal  @db.Decimal(18, 2)
+  usdInrRate   Decimal  @db.Decimal(10, 4)
+  goldPriceInr Decimal  @db.Decimal(18, 2)
+  source       String   // 'coingecko' | 'pool'
+  timestamp    DateTime @default(now())
+
+  @@index([timestamp])
+}
