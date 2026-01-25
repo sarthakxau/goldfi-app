@@ -1,0 +1,101 @@
+import { cn } from '@/lib/utils';
+import React from 'react';
+
+interface TolaCardProps {
+  className?: string;
+  cardHolderName?: string;
+}
+
+export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) {
+  return (
+    <div
+      className={cn(
+        'relative w-full aspect-[1.586] rounded-2xl p-6 overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]',
+        'bg-gradient-to-br from-[#FDFBF7] via-[#E8E8E8] to-[#C0C0C0] border border-white/50', // Silver/Platinum-ish base for "Gold" card contrast, or maybe we go full gold? 
+        // Let's try a premium Gold gradient as requested by the app theme "Bullion"
+        'bg-gradient-to-br from-gold-100 via-gold-300 to-gold-500',
+        className
+      )}
+    >
+      {/* Texture/Noise overlay for realism (optional, simulating with opacity) */}
+      <div className="absolute inset-0 bg-white/10 opacity-50 pointer-events-none" />
+      
+      {/* Shine effect */}
+      <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 left-1/4" />
+
+      <div className="relative z-10 flex flex-col justify-between h-full text-white mix-blend-hard-light cursor-default">
+        {/* Top Row */}
+        <div className="flex justify-between items-start">
+          <span className="font-bold text-2xl tracking-tight text-white drop-shadow-sm">tola</span>
+           {/* Gold Coins Illustration (SVG) */}
+          <div className="absolute right-6 top-6 opacity-90">
+             <GoldCoinsIcon className="w-24 h-24 drop-shadow-lg" />
+          </div>
+        </div>
+
+        {/* Middle/Bottom Card Info */}
+        <div className="mt-auto space-y-4">
+            <div className="text-xl font-medium tracking-widest flex items-center gap-2 text-white/90 drop-shadow-md font-mono">
+                <span>****</span>
+                <span>****</span>
+                <span>****</span>
+                <span>3224</span>
+                <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded border border-white/30 ml-2 not-italic font-sans">virtual</span>
+            </div>
+            
+            <div className="flex justify-between items-end">
+                 {/* This would be the name, usually. Wireframe shows just VISA at bottom right and name top left? 
+                     Wireframe: "{name}'s tola card" is outside. 
+                     On card: "tola" top left. 
+                     "**** 3224 [virtual]" mid-bottom left.
+                     "VISA" bottom right.
+                 */}
+                 <div className="flex gap-4">
+                 </div>
+                 <VisaLogo className="w-16 h-auto text-white drop-shadow-md" />
+            </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Simple illustrative SVG for stacked gold coins
+function GoldCoinsIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FDE68A" />
+          <stop offset="50%" stopColor="#F59E0B" />
+          <stop offset="100%" stopColor="#B45309" />
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="2" dy="4" stdDeviation="2" floodOpacity="0.3"/>
+        </filter>
+      </defs>
+      <g filter="url(#shadow)">
+          {/* Bottom Coin */}
+          <ellipse cx="50" cy="75" rx="25" ry="12" fill="url(#coinGrad)" stroke="#92400E" strokeWidth="1"/>
+          <path d="M25 75 v10 c0 6.6 11.2 12 25 12 s25 -5.4 25 -12 v-10" fill="url(#coinGrad)" stroke="#92400E" strokeWidth="1"/>
+          
+          {/* Middle Coin */}
+          <ellipse cx="50" cy="65" rx="25" ry="12" fill="url(#coinGrad)" stroke="#92400E" strokeWidth="1"/>
+          <path d="M25 65 v10 c0 6.6 11.2 12 25 12 s25 -5.4 25 -12 v-10" fill="url(#coinGrad)" stroke="#92400E" strokeWidth="1"/>
+
+          {/* Top Coin */}
+          <ellipse cx="54" cy="50" rx="25" ry="12" fill="url(#coinGrad)" stroke="#92400E" strokeWidth="1"/>
+          <path d="M29 50 v10 c0 6.6 11.2 12 25 12 s25 -5.4 25 -12 v-10" fill="url(#coinGrad)" stroke="#92400E" strokeWidth="1"/>
+          <ellipse cx="54" cy="50" rx="25" ry="12" fill="#FCD34D" stroke="#92400E" strokeWidth="1"/>
+      </g>
+    </svg>
+  );
+}
+
+function VisaLogo({ className }: { className?: string }) {
+    return (
+        <svg viewBox="0 0 100 32" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+             <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="30" fontWeight="bold" fontStyle="italic" fontFamily="sans-serif">VISA</text>
+        </svg>
+    )
+}
