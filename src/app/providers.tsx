@@ -1,0 +1,43 @@
+'use client';
+
+import { PrivyProvider } from '@privy-io/react-auth';
+import { arbitrum } from 'viem/chains';
+import { useEffect, useState } from 'react';
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render Privy until we're on the client to avoid SSR issues
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-gold-500 border-t-transparent border-4 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'your-privy-app-id'}
+      config={{
+        loginMethods: ['email', 'sms'],
+        appearance: {
+          theme: 'light',
+          accentColor: '#F59E0B',
+          logo: '/icon-192x192.png',
+        },
+        embeddedWallets: {
+          createOnLogin: 'users-without-wallets',
+        },
+        defaultChain: arbitrum,
+        supportedChains: [arbitrum],
+      }}
+    >
+      {children}
+    </PrivyProvider>
+  );
+}
