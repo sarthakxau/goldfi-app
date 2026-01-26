@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import supabase from '@/lib/supabase';
 import { getGoldPrice } from '@/services/priceOracle';
+import { publicClient, ERC20_ABI } from '@/lib/viem';
+import { CONTRACTS, XAUT_DECIMALS, GRAMS_PER_OUNCE } from '@/lib/constants';
 import Decimal from 'decimal.js';
 
 async function getCurrentUser() {
@@ -11,8 +13,56 @@ async function getCurrentUser() {
   return { privyUserId: 'dev-user' };
 }
 
-export async function GET() {
+async function getOnChainBalance(walletAddress: string): Promise<Decimal> {
   try {
+    const balanceRaw = await publicClient.readContract({
+      address: CONTRACTS.XAUT0,
+      abi: ERC20_ABI,
+      functionName: 'balanceOf',
+      args: [walletAddress as `0x${string}`],
+    });
+    
+    // Convert from raw units (6 decimals) to XAUT amount
+    return new Decimal(balanceRaw.toString()).dividedBy(
+      new Decimal(10).pow(XAUT_DECIMALS)
+    );
+  } catch (error) {
+    console.error('Error fetching on-chain balance:', error);
+    return new Decimal(0);
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const walletAddressParam = searchParams.get('walletAddress');
+
+  try {
+    // Get current gold price (needed for all cases)
+    const price = await getGoldPrice();
+
+    // If wallet address is provided, fetch on-chain balance directly
+    // This allows the client to get holdings without requiring database auth
+    if (walletAddressParam && walletAddressParam !== '0x0000000000000000000000000000000000000000') {
+      const xautAmount = await getOnChainBalance(walletAddressParam);
+      const currentValue = xautAmount.times(price.priceInr);
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          id: null,
+          userId: null,
+          xautAmount: xautAmount.toString(),
+          totalInvestedInr: '0',
+          avgBuyPriceInr: null,
+          currentValueInr: currentValue.toNumber(),
+          profitLossInr: 0,
+          profitLossPercent: 0,
+          xautAmountGrams: xautAmount.times(GRAMS_PER_OUNCE).toNumber(),
+        },
+      });
+    }
+
+    // Otherwise, use database-backed authentication
     const authUser = await getCurrentUser();
 
     if (!authUser) {
@@ -65,24 +115,22 @@ export async function GET() {
       );
     }
 
-    // Get holding
+    // Get holding from database
     const { data: holding } = await supabase
       .from('holdings')
       .select('*')
       .eq('user_id', user.id)
       .single();
 
-    if (!holding) {
-      return NextResponse.json({
-        success: true,
-        data: null,
-      });
+    // Fetch on-chain XAUT balance using database wallet address
+    let xautAmount = new Decimal(0);
+    const walletAddress = user.wallet_address;
+    
+    if (walletAddress && walletAddress !== '0x0000000000000000000000000000000000000000') {
+      xautAmount = await getOnChainBalance(walletAddress);
     }
 
-    // Calculate current values
-    const price = await getGoldPrice();
-    const xautAmount = new Decimal(holding.xaut_amount || 0);
-    const totalInvested = new Decimal(holding.total_invested_inr || 0);
+    const totalInvested = new Decimal(holding?.total_invested_inr || 0);
     const currentValue = xautAmount.times(price.priceInr);
     const profitLoss = currentValue.minus(totalInvested);
     const profitLossPercent = totalInvested.isZero()
@@ -92,15 +140,15 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: {
-        id: holding.id,
-        userId: holding.user_id,
-        xautAmount: holding.xaut_amount?.toString() || '0',
-        totalInvestedInr: holding.total_invested_inr?.toString() || '0',
-        avgBuyPriceInr: holding.avg_buy_price_inr?.toString() || null,
+        id: holding?.id || null,
+        userId: user.id,
+        xautAmount: xautAmount.toString(),
+        totalInvestedInr: totalInvested.toString(),
+        avgBuyPriceInr: holding?.avg_buy_price_inr?.toString() || null,
         currentValueInr: currentValue.toNumber(),
         profitLossInr: profitLoss.toNumber(),
         profitLossPercent: profitLossPercent.toNumber(),
-        xautAmountGrams: xautAmount.times(31.1035).toNumber(),
+        xautAmountGrams: xautAmount.times(GRAMS_PER_OUNCE).toNumber(),
       },
     });
   } catch (error) {
@@ -111,3 +159,4 @@ export async function GET() {
     );
   }
 }
+

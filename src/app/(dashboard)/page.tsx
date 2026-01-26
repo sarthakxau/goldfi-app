@@ -47,7 +47,12 @@ export default function DashboardPage() {
   const fetchHoldings = useCallback(async () => {
     try {
       setHoldingLoading(true);
-      const res = await fetch('/api/holdings');
+      // Pass wallet address from Privy to fetch on-chain balance
+      const walletAddress = user?.wallet?.address;
+      const url = walletAddress 
+        ? `/api/holdings?walletAddress=${encodeURIComponent(walletAddress)}`
+        : '/api/holdings';
+      const res = await fetch(url);
       const data = await res.json();
       if (data.success) {
         setHolding(data.data);
@@ -59,7 +64,7 @@ export default function DashboardPage() {
     } finally {
       setHoldingLoading(false);
     }
-  }, [setHolding, setHoldingLoading, setHoldingError]);
+  }, [user?.wallet?.address, setHolding, setHoldingLoading, setHoldingError]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -77,18 +82,24 @@ export default function DashboardPage() {
 
   // Derived State
   const xautAmount = holding ? new Decimal(holding.xautAmount) : new Decimal(0);
-  const xautAmountGrams = xautAmount.times(31.1035).toNumber();
+  // Use pre-computed value from API when available, otherwise calculate locally
+  const xautAmountGrams = holding?.xautAmountGrams ?? xautAmount.times(31.1035).toNumber();
   const buyingPricePerOz = goldPrice ? goldPrice.priceInr : 0;
   const buyingPricePerGram = goldPrice ? goldPrice.pricePerGramInr : 0;
   const buyingPricePer10g = buyingPricePerGram * 10;
+
+  console.log('holdings', holding);
+  console.log('goldPrice', goldPrice);
+  console.log('xautAmount', xautAmount);
+  console.log('xautAmountGrams', xautAmountGrams);
+  console.log('buyingPricePer10g', buyingPricePer10g);
   
-  // Calculate Current Value
-  const currentValueInr = xautAmount.times(buyingPricePerOz).toNumber();
+  // Use pre-computed value from API when available
+  const currentValueInr = holding?.currentValueInr ?? xautAmount.times(buyingPricePerOz).toNumber();
   
   // Calculate Returns (Profit/Loss)
-  // Assuming totalInvestedInr is available in holding
   const totalInvested = holding ? new Decimal(holding.totalInvestedInr) : new Decimal(0);
-  const profitLossInr = currentValueInr - totalInvested.toNumber();
+  const profitLossInr = holding?.profitLossInr ?? (currentValueInr - totalInvested.toNumber());
   // We can estimate the "grams" profit by profitInr / currentPricePerGram
   const profitLossGrams = buyingPricePerGram > 0 ? profitLossInr / buyingPricePerGram : 0;
 
