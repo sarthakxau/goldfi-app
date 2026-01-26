@@ -39,9 +39,13 @@ export const KYC_STATUS = {
   REJECTED: 'rejected',
 } as const;
 
-// Swap Constants
+// Swap Constants (Buy - USDT to XAUT)
 export const MIN_USDT_SWAP = 5; // Minimum USDT to swap
 export const MAX_USDT_SWAP = 100000; // Maximum USDT per swap
 export const QUOTE_REFRESH_INTERVAL = 15000; // 15 seconds
 export const QUOTE_VALIDITY_SECONDS = 60; // Quote valid for 60 seconds
 export const SWAP_DEADLINE_MINUTES = 5; // Transaction deadline
+
+// Sell Constants (XAUT to USDT)
+export const MIN_GRAMS_SELL = 0.01; // Minimum grams to sell
+export const MAX_GRAMS_SELL = 1000; // Maximum grams per sell

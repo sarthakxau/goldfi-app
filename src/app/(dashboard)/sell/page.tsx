@@ -1,118 +1,262 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppStore } from '@/store';
-import { formatINR, formatGrams } from '@/lib/utils';
-import type { SellQuote } from '@/types';
-import Decimal from 'decimal.js';
+import { useSellSwap } from '@/hooks/useSellSwap';
+import { formatINR, formatGrams, debounce } from '@/lib/utils';
+import { MIN_GRAMS_SELL, MAX_GRAMS_SELL, QUOTE_REFRESH_INTERVAL } from '@/lib/constants';
+import { ArrowLeft, RefreshCw, ExternalLink, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function SellPage() {
   const router = useRouter();
-  const { goldPrice, holding, setGoldPrice, setHolding, setPriceLoading, setHoldingLoading } = useAppStore();
   const [grams, setGrams] = useState('');
-  const [quote, setQuote] = useState<SellQuote | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchData = useCallback(async () => {
-    try {
-      setPriceLoading(true);
-      setHoldingLoading(true);
+  const {
+    walletAddress,
+    xautBalance,
+    xautBalanceGrams,
+    balanceLoading,
+    quote,
+    quoteLoading,
+    step,
+    error,
+    approvalTxHash,
+    swapTxHash,
+    fetchBalance,
+    fetchQuote,
+    executeSell,
+    reset,
+  } = useSellSwap();
 
-      const [priceRes, holdingRes] = await Promise.all([
-        fetch('/api/prices'),
-        fetch('/api/holdings'),
-      ]);
+  // Debounced quote fetch
+  const debouncedFetchQuote = useMemo(
+    () => debounce((amount: string) => fetchQuote(amount), 500),
+    [fetchQuote]
+  );
 
-      const [priceData, holdingData] = await Promise.all([
-        priceRes.json(),
-        holdingRes.json(),
-      ]);
-
-      if (priceData.success) setGoldPrice(priceData.data);
-      if (holdingData.success) setHolding(holdingData.data);
-    } catch {
-      // Silent fail
-    } finally {
-      setPriceLoading(false);
-      setHoldingLoading(false);
-    }
-  }, [setGoldPrice, setHolding, setPriceLoading, setHoldingLoading]);
-
+  // Fetch quote when input changes
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (grams && Number(grams) >= MIN_GRAMS_SELL) {
+      debouncedFetchQuote(grams);
+    }
+  }, [grams, debouncedFetchQuote]);
 
-  // Calculate quote when amount changes
+  // Auto-refresh quote
   useEffect(() => {
-    if (!grams || !goldPrice) {
-      setQuote(null);
-      return;
-    }
+    if (step !== 'input' || !grams) return;
 
-    const gramsAmount = parseFloat(grams);
-    if (isNaN(gramsAmount) || gramsAmount <= 0) {
-      setQuote(null);
-      return;
-    }
-
-    // Convert grams to XAUT (troy ounces)
-    const xautAmount = gramsAmount / 31.1035;
-    const inrAmount = xautAmount * goldPrice.priceInr;
-
-    setQuote({
-      xautAmount,
-      estimatedInr: inrAmount,
-      goldPriceInr: goldPrice.priceInr,
-      usdInrRate: goldPrice.usdInrRate,
-      validUntil: new Date(Date.now() + 60000),
-    });
-  }, [grams, goldPrice]);
-
-  const handleSell = async () => {
-    if (!quote) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch('/api/transactions/sell', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ xautAmount: quote.xautAmount }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        router.push(`/transactions?highlight=${data.data.id}`);
-      } else {
-        setError(data.error || 'Failed to create sell order');
+    const interval = setInterval(() => {
+      if (Number(grams) >= MIN_GRAMS_SELL) {
+        fetchQuote(grams);
       }
-    } catch {
-      setError('Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    }, QUOTE_REFRESH_INTERVAL);
 
-  const maxGrams = holding
-    ? new Decimal(holding.xautAmount).times(31.1035).toNumber()
-    : 0;
+    return () => clearInterval(interval);
+  }, [step, grams, fetchQuote]);
 
+  const maxGrams = xautBalanceGrams ?? 0;
   const presetPercentages = [25, 50, 75, 100];
 
+  const inputError = useMemo(() => {
+    if (!grams) return null;
+    const amount = Number(grams);
+    if (amount < MIN_GRAMS_SELL) return `Minimum ${MIN_GRAMS_SELL} grams`;
+    if (amount > MAX_GRAMS_SELL) return `Maximum ${MAX_GRAMS_SELL} grams`;
+    if (amount > maxGrams) return 'Insufficient balance';
+    return null;
+  }, [grams, maxGrams]);
+
+  const canSell = grams &&
+    Number(grams) >= MIN_GRAMS_SELL &&
+    Number(grams) <= maxGrams &&
+    !inputError &&
+    !quoteLoading &&
+    step === 'input';
+
+  const handleSell = useCallback(() => {
+    console.log('[SellPage] handleSell called');
+    console.log('[SellPage] grams:', grams);
+    console.log('[SellPage] quote:', quote);
+
+    if (!grams) {
+      console.log('[SellPage] No grams input, returning early');
+      return;
+    }
+
+    console.log('[SellPage] Calling executeSell with grams:', grams);
+    executeSell(grams);
+  }, [grams, quote, executeSell]);
+
+  const handleDone = useCallback(() => {
+    reset();
+    setGrams('');
+    router.push('/');
+  }, [reset, router]);
+
+  const handleRetry = useCallback(() => {
+    reset();
+    handleSell();
+  }, [reset, handleSell]);
+
+  const showProgress = ['approve', 'swap', 'confirming', 'success', 'error'].includes(step);
+
+  // Progress/Success/Error Screen
+  if (showProgress) {
+    return (
+      <div className="p-4 min-h-screen flex flex-col">
+        {/* Header */}
+        <div className="flex items-center mb-8">
+          <button
+            onClick={() => step === 'success' || step === 'error' ? handleDone() : undefined}
+            disabled={step !== 'success' && step !== 'error'}
+            className="p-2 -ml-2 text-gray-500 hover:text-gray-900 disabled:opacity-50"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          <h1 className="text-xl font-bold ml-2">Selling Gold</h1>
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center">
+          {/* Success State */}
+          {step === 'success' && (
+            <div className="text-center">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-10 h-10 text-green-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Sell Successful!</h2>
+              <p className="text-gray-600 mb-6">
+                You sold {formatGrams(parseFloat(grams))} for ~${quote?.expectedUsdt} USDT
+              </p>
+              {swapTxHash && (
+                <a
+                  href={`https://arbiscan.io/tx/${swapTxHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 mb-8"
+                >
+                  <span>View on Arbiscan</span>
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              )}
+              <button
+                onClick={handleDone}
+                className="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl hover:bg-gray-800 transition-colors"
+              >
+                Done
+              </button>
+            </div>
+          )}
+
+          {/* Error State */}
+          {step === 'error' && (
+            <div className="text-center">
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="w-10 h-10 text-red-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Sell Failed</h2>
+              <p className="text-red-600 mb-6">{error || 'Something went wrong'}</p>
+              <div className="space-y-3 w-full">
+                <button
+                  onClick={handleRetry}
+                  className="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl hover:bg-gray-800 transition-colors"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={handleDone}
+                  className="w-full bg-gray-100 text-gray-700 font-semibold py-4 rounded-xl hover:bg-gray-200 transition-colors"
+                >
+                  Go Back
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Processing States */}
+          {['approve', 'swap', 'confirming'].includes(step) && (
+            <div className="text-center">
+              <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                {step === 'approve' && 'Approving XAUT...'}
+                {step === 'swap' && 'Executing Sell...'}
+                {step === 'confirming' && 'Confirming Transaction...'}
+              </h2>
+              <p className="text-gray-600 mb-6">
+                {step === 'approve' && 'Please confirm the approval in your wallet'}
+                {step === 'swap' && 'Please confirm the swap in your wallet'}
+                {step === 'confirming' && 'Waiting for blockchain confirmation'}
+              </p>
+
+              {/* Transaction Links */}
+              <div className="space-y-2">
+                {approvalTxHash && (
+                  <a
+                    href={`https://arbiscan.io/tx/${approvalTxHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 text-sm"
+                  >
+                    <span>Approval tx</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+                {swapTxHash && (
+                  <a
+                    href={`https://arbiscan.io/tx/${swapTxHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 text-sm"
+                  >
+                    <span>Swap tx</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Main Input Screen
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Sell Gold</h1>
+      {/* Header */}
+      <div className="flex items-center mb-6">
+        <Link href="/" className="p-2 -ml-2 text-gray-500 hover:text-gray-900">
+          <ArrowLeft className="w-6 h-6" />
+        </Link>
+        <h1 className="text-xl font-bold ml-2">Sell Gold</h1>
+      </div>
 
       {/* Available Balance */}
       <div className="bg-gray-50 rounded-xl p-4 mb-4">
-        <p className="text-sm text-gray-700 font-medium">Available to sell</p>
-        <p className="text-xl font-bold text-gray-900">
-          {formatGrams(maxGrams)}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-600">Available to sell</p>
+            <p className="text-xl font-bold text-gray-900">
+              {balanceLoading ? (
+                <span className="inline-block w-24 h-6 bg-gray-200 animate-pulse rounded" />
+              ) : (
+                formatGrams(maxGrams)
+              )}
+            </p>
+            {xautBalance && (
+              <p className="text-xs text-gray-500">{parseFloat(xautBalance).toFixed(6)} XAUT</p>
+            )}
+          </div>
+          <button
+            onClick={fetchBalance}
+            disabled={balanceLoading}
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <RefreshCw className={`w-5 h-5 ${balanceLoading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* Amount Input */}
@@ -128,12 +272,19 @@ export default function SellPage() {
             placeholder="0"
             max={maxGrams}
             step="0.001"
-            className="w-full text-3xl font-bold pl-4 pr-10 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+            className="w-full text-3xl font-bold pl-4 pr-10 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-gray-400">
             g
           </span>
         </div>
+
+        {/* Input Error */}
+        {inputError && (
+          <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" /> {inputError}
+          </p>
+        )}
 
         {/* Preset Percentages */}
         <div className="flex gap-2 mt-4">
@@ -151,65 +302,74 @@ export default function SellPage() {
       </div>
 
       {/* Quote Display */}
-      {quote && (
+      {(quote || quoteLoading) && (
         <div className="bg-green-50 rounded-2xl p-6 mt-4 border border-green-100">
           <h3 className="text-sm font-medium text-green-800 mb-4">
             You will receive (estimated)
           </h3>
-          <div className="text-3xl font-bold text-green-900 mb-2">
-            {formatINR(quote.estimatedInr)}
-          </div>
 
-          <div className="mt-4 pt-4 border-t border-green-200 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-green-700">Selling</span>
-              <span className="font-medium text-green-900">
-                {quote.xautAmount.toFixed(6)} XAUT
-              </span>
+          {quoteLoading ? (
+            <div className="animate-pulse">
+              <div className="h-8 w-32 bg-green-200 rounded mb-2" />
+              <div className="h-4 w-24 bg-green-200 rounded" />
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-green-700">Gold price</span>
-              <span className="font-medium text-green-900">
-                {formatINR(quote.goldPriceInr)}/oz
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+          ) : quote && (
+            <>
+              <div className="text-3xl font-bold text-green-900 mb-1">
+                ${quote.expectedUsdt} USDT
+              </div>
+              <div className="text-sm text-green-700">
+                Min: ${quote.minAmountOut} (with {quote.slippage}% slippage)
+              </div>
 
-      {/* Validation Error */}
-      {grams && parseFloat(grams) > maxGrams && (
-        <div className="bg-red-50 text-red-700 rounded-xl p-4 mt-4">
-          Insufficient balance. You only have {formatGrams(maxGrams)}.
+              <div className="mt-4 pt-4 border-t border-green-200 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-700">Selling</span>
+                  <span className="font-medium text-green-900">
+                    {quote.xautAmount} XAUT ({formatGrams(parseFloat(grams))})
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-700">Network</span>
+                  <span className="font-medium text-green-900">Arbitrum</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-700">Est. Gas</span>
+                  <span className="font-medium text-green-900">{quote.gasEstimate} ETH</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
 
       {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 text-red-700 rounded-xl p-4 mt-4">
-          {error}
+      {error && step === 'input' && (
+        <div className="bg-red-50 text-red-700 rounded-xl p-4 mt-4 flex items-start gap-2">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+          <span>{error}</span>
         </div>
       )}
 
       {/* Sell Button */}
       <button
         onClick={handleSell}
-        disabled={!quote || loading || parseFloat(grams) > maxGrams}
+        disabled={!canSell}
         className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl mt-6 transition-colors"
       >
-        {loading ? (
+        {quoteLoading ? (
           <span className="flex items-center justify-center gap-2">
-            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            Processing...
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Getting quote...
           </span>
         ) : (
-          `Sell for ${quote ? formatINR(quote.estimatedInr) : '₹0'}`
+          `Sell for $${quote?.expectedUsdt || '0'} USDT`
         )}
       </button>
 
       {/* Info */}
       <p className="text-xs text-gray-500 text-center mt-4">
-        Amount will be credited to your bank account within 24 hours.
+        Swap powered by Camelot DEX on Arbitrum. USDT will be sent to your wallet.
       </p>
     </div>
   );
