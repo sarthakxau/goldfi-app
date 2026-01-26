@@ -27,7 +27,8 @@ const CAMELOT_ROUTER_ABI = [
   },
 ] as const;
 
-// Camelot V3 Quoter ABI
+// Camelot V3 Quoter ABI (Algebra-based)
+// Note: Algebra quoter returns (amountOut, fee) not the extended tuple
 const CAMELOT_QUOTER_ABI = [
   {
     name: 'quoteExactInputSingle',
@@ -41,9 +42,7 @@ const CAMELOT_QUOTER_ABI = [
     ],
     outputs: [
       { name: 'amountOut', type: 'uint256' },
-      { name: 'sqrtPriceX96After', type: 'uint160' },
-      { name: 'initializedTicksCrossed', type: 'uint32' },
-      { name: 'gasEstimate', type: 'uint256' },
+      { name: 'fee', type: 'uint16' },
     ],
   },
 ] as const;
@@ -51,21 +50,33 @@ const CAMELOT_QUOTER_ABI = [
 // Get quote for USDT -> XAUT swap
 export async function getUsdtToXautQuote(usdtAmount: bigint): Promise<bigint> {
   try {
-    const result = await publicClient.readContract({
-      address: CONTRACTS.CAMELOT_V3_QUOTER,
+    console.log('[dexService] Getting quote for USDT -> XAUT');
+    console.log('[dexService] USDT amount:', usdtAmount.toString());
+    console.log('[dexService] Quoter address:', CONTRACTS.CAMELOT_V3_QUOTER);
+    console.log('[dexService] USDT address:', CONTRACTS.USDT);
+    console.log('[dexService] XAUT0 address:', CONTRACTS.XAUT0);
+
+    // Quoter functions are nonpayable but meant to be simulated via eth_call
+    const { result } = await publicClient.simulateContract({
+      address: CONTRACTS.CAMELOT_V3_QUOTER as `0x${string}`,
       abi: CAMELOT_QUOTER_ABI,
       functionName: 'quoteExactInputSingle',
       args: [
-        CONTRACTS.USDT,
-        CONTRACTS.XAUT0,
+        CONTRACTS.USDT as `0x${string}`,
+        CONTRACTS.XAUT0 as `0x${string}`,
         usdtAmount,
         BigInt(0), // No price limit
       ],
     });
 
+    console.log('[dexService] Quote result:', result);
+    // Result is [amountOut, fee] for Algebra quoter
     return result[0];
   } catch (error) {
-    console.error('Quote error:', error);
+    console.error('[dexService] Quote error:', error);
+    if (error instanceof Error) {
+      console.error('[dexService] Error message:', error.message);
+    }
     throw new Error('Failed to get swap quote');
   }
 }
@@ -73,21 +84,29 @@ export async function getUsdtToXautQuote(usdtAmount: bigint): Promise<bigint> {
 // Get quote for XAUT -> USDT swap
 export async function getXautToUsdtQuote(xautAmount: bigint): Promise<bigint> {
   try {
-    const result = await publicClient.readContract({
-      address: CONTRACTS.CAMELOT_V3_QUOTER,
+    console.log('[dexService] Getting quote for XAUT -> USDT');
+    console.log('[dexService] XAUT amount:', xautAmount.toString());
+
+    // Quoter functions are nonpayable but meant to be simulated via eth_call
+    const { result } = await publicClient.simulateContract({
+      address: CONTRACTS.CAMELOT_V3_QUOTER as `0x${string}`,
       abi: CAMELOT_QUOTER_ABI,
       functionName: 'quoteExactInputSingle',
       args: [
-        CONTRACTS.XAUT0,
-        CONTRACTS.USDT,
+        CONTRACTS.XAUT0 as `0x${string}`,
+        CONTRACTS.USDT as `0x${string}`,
         xautAmount,
         BigInt(0),
       ],
     });
 
+    console.log('[dexService] Quote result:', result);
     return result[0];
   } catch (error) {
-    console.error('Quote error:', error);
+    console.error('[dexService] Quote error:', error);
+    if (error instanceof Error) {
+      console.error('[dexService] Error message:', error.message);
+    }
     throw new Error('Failed to get swap quote');
   }
 }

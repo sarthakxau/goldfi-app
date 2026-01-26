@@ -115,3 +115,22 @@ export interface SellQuote {
   usdInrRate: number;
   validUntil: Date;
 }
+
+// Swap types
+export type SwapStep = 'input' | 'approve' | 'swap' | 'confirming' | 'success' | 'error';
+
+export interface SwapQuote {
+  usdtAmount: string;
+  expectedXautAmount: string;
+  expectedGrams: number;
+  priceImpact: number;
+  minAmountOut: string;
+  slippage: number;
+  gasEstimate: string;
+  validUntil: Date;
+}
+
+export interface UsdtBalance {
+  balance: string;
+  balanceRaw: string;
+}

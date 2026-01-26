@@ -173,9 +173,9 @@ export default function DashboardPage() {
       {/* First Time User Banner */}
       {!hasHoldings && (
           <div className="mb-10 flex justify-center">
-              <div className="bg-amber-400 text-white font-bold py-3 px-8 rounded-full shadow-sm text-sm transform -rotate-1">
+              <Link href="/buy" className="bg-amber-400 text-white font-bold py-3 px-8 rounded-full shadow-sm text-sm transform -rotate-1">
                   make your first investment
-              </div>
+              </Link>
           </div>
       )}
 

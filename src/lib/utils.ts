@@ -73,3 +73,16 @@ export function calculatePnlPercent(
   if (investedValue.isZero()) return new Decimal(0);
   return currentValue.minus(investedValue).dividedBy(investedValue).times(100);
 }
+
+// Debounce function for input handling
+export function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout | null = null;
+
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}

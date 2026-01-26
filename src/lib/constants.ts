@@ -6,6 +6,7 @@ export const CONTRACTS = {
   CAMELOT_V3_QUOTER: '0x0Fc73040b26E9bC8514fA028D998E73A254Fa76E' as const,
 } as const;
 
+
 // Chain Configuration
 export const ARBITRUM_CHAIN_ID = 42161;
 
@@ -37,3 +38,10 @@ export const KYC_STATUS = {
   VERIFIED: 'verified',
   REJECTED: 'rejected',
 } as const;
+
+// Swap Constants
+export const MIN_USDT_SWAP = 5; // Minimum USDT to swap
+export const MAX_USDT_SWAP = 100000; // Maximum USDT per swap
+export const QUOTE_REFRESH_INTERVAL = 15000; // 15 seconds
+export const QUOTE_VALIDITY_SECONDS = 60; // Quote valid for 60 seconds
+export const SWAP_DEADLINE_MINUTES = 5; // Transaction deadline
