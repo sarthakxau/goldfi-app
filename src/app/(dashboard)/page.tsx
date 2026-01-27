@@ -25,7 +25,7 @@ export default function DashboardPage() {
     setRefreshing,
   } = useAppStore();
 
-  const [viewMode, setViewMode] = useState<'grams' | 'inr'>('grams');
+  const [viewMode, setViewMode] = useState<'grams' | 'inr' | 'scudo'>('grams');
   const [showAutoSavingsModal, setShowAutoSavingsModal] = useState(false);
 
   const fetchPrice = useCallback(async () => {
@@ -94,6 +94,31 @@ export default function DashboardPage() {
 
   const hasHoldings = xautAmount.greaterThan(0);
 
+  const getDisplayValue = () => {
+    if (!hasHoldings) {
+      if (viewMode === 'grams') return '0.00 g';
+      if (viewMode === 'inr') return '₹0.00';
+      if (viewMode === 'scudo') return '0.00 scudo';
+    }
+
+    if (viewMode === 'grams') return `${formatGrams(xautAmountGrams)}`;
+    if (viewMode === 'inr') return formatINR(currentValueInr);
+    // 1 Scudo = 1/1000 XAUT
+    return `${xautAmount.times(1000).toFixed(2)} scudo`;
+  };
+
+  const getNextModeText = () => {
+    if (viewMode === 'grams') return 'INR';
+    if (viewMode === 'inr') return 'Scudo';
+    return 'grams';
+  };
+
+  const handleToggle = () => {
+    if (viewMode === 'grams') setViewMode('inr');
+    else if (viewMode === 'inr') setViewMode('scudo');
+    else setViewMode('grams');
+  };
+
   return (
     <div className="p-6 max-w-lg mx-auto min-h-screen gold-radial-bg">
       {/* Header / Price Strip */}
@@ -122,7 +147,7 @@ export default function DashboardPage() {
 
         {/* User Profile - Right */}
         <div className="flex flex-col items-end">
-          <span className="text-xs text-cream-muted/50 mb-1">hey!</span>
+          {/* <span className="text-xs text-cream-muted/50 mb-1">hey!</span> */}
           <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30 shadow-gold-glow">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -136,29 +161,32 @@ export default function DashboardPage() {
 
       {/* My Gold Card */}
       <section className="mb-8">
-        <h2 className="font-serif text-cream-muted/60 text-lg mb-4 ml-1">my gold</h2>
-        <div className="card-gold p-8 text-center relative">
+        <div className="card-gold p-8 relative">
           {/* Luxury gold glow behind the card */}
           <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-gold-500/10 to-transparent pointer-events-none" />
-          
-          {/* Value Display */}
-          <div className="relative mb-3">
-            <h1 className="text-5xl font-serif text-cream tabular-nums tracking-tight">
-              {viewMode === 'grams'
-                ? (hasHoldings ? `${formatGrams(xautAmountGrams)}` : '0.00 g')
-                : (hasHoldings ? formatINR(currentValueInr) : '₹0.00')
-              }
-            </h1>
-          </div>
 
-          {/* Toggle Switch */}
-          <button 
-            onClick={() => setViewMode(viewMode === 'grams' ? 'inr' : 'grams')}
-            className="absolute right-5 top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-lg bg-surface-elevated border border-border-subtle text-cream-muted/60 hover:text-gold-400 hover:border-gold-500/30 transition-all"
-            title="Switch View"
-          >
-            {viewMode === 'grams' ? 'INR' : 'grams'}
-          </button>
+          <div className="flex justify-between items-center relative z-10">
+            <div className="text-left">
+              {/* Value Display */}
+              <div className="relative mb-2">
+                <h1 className="text-4xl font-serif text-cream tabular-nums tracking-tight">
+                  {getDisplayValue()}
+                </h1>
+              </div>
+
+              {/* Label below value */}
+              <p className="font-serif text-cream-muted/60 text-sm">my holdings</p>
+            </div>
+
+            {/* Toggle Switch */}
+            <button 
+              onClick={handleToggle}
+              className="px-2.5 py-1 text-xs font-medium rounded-lg bg-surface-elevated border border-border-subtle text-cream-muted/60 hover:text-gold-400 hover:border-gold-500/30 transition-all"
+              title="Switch View"
+            >
+              {getNextModeText()}
+            </button>
+          </div>
         </div>
 
         {/* Returns Badge */}
@@ -181,7 +209,7 @@ export default function DashboardPage() {
         <div className="mb-10 flex justify-center">
           <Link 
             href="/buy" 
-            className="bg-gold-gradient text-surface font-bold py-3.5 px-10 rounded-full text-sm transform -rotate-1 hover:rotate-0 transition-transform"
+            className="bg-gold-gradient text-[#271F12] font-bold py-3.5 px-10 rounded-full text-sm border-2 border-yellow-400"
           >
             make your first investment
           </Link>
@@ -189,7 +217,7 @@ export default function DashboardPage() {
       )}
 
       {/* Gold Chart - Blurred with Coming Soon */}
-      <section className="mb-8 relative">
+      {/* <section className="mb-8 relative">
         <div className="blur-sm pointer-events-none select-none">
           <GoldChart />
         </div>
@@ -198,7 +226,7 @@ export default function DashboardPage() {
             <span className="text-cream-muted/60 font-medium text-sm">coming soon</span>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Primary Action Buttons - Golden Row */}
       <div className="flex gap-3 mb-6">

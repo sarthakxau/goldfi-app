@@ -43,3 +43,6 @@ public/workbox-*.js.map
 # Prisma
 prisma/*.db
 prisma/*.db-journal
+
+# misc
+todos.md
