@@ -67,7 +67,7 @@ export function useSwap(): UseSwapReturn {
       if (data.success) {
         setUsdtBalance(data.data.balance);
       } else {
-        console.error('[useSwap] Balance API error:', data.error);
+      console.error('[useSwap] Balance API error:', data.error);
       }
     } catch (err) {
       console.error('[useSwap] Balance fetch error:', err);
