@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { X, Copy, CreditCard, Shield, Ban, ChevronRight } from 'lucide-react';
+import { X, Copy, CreditCard, Shield, Ban, ChevronRight, Check } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -15,20 +15,24 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 transition-opacity"
+      <div
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-modalBackdrop transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* Content */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] animate-in slide-in-from-bottom duration-300 md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+      <div className="fixed bottom-0 left-0 right-0 z-modal bg-surface-card rounded-t-3xl p-6 shadow-luxury animate-in slide-in-from-bottom duration-300 md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl border-t border-border-subtle md:border">
+        {/* Gold accent line at top */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/30 to-transparent" />
+        
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <button 
+          <h3 className="text-xl font-serif text-cream">{title}</h3>
+          <button
             onClick={onClose}
-            className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 -mr-2 text-cream-muted/50 hover:text-cream hover:bg-surface-elevated rounded-full transition-colors"
+            aria-label="Close modal"
           >
-            <X className="w-6 h-6" />
+            <X className="size-6" />
           </button>
         </div>
         {children}
@@ -52,21 +56,21 @@ export function CardDetailsModal({ isOpen, onClose }: CardDetailsModalProps) {
   };
 
   const Field = ({ label, value, copyable = true }: { label: string, value: string, copyable?: boolean }) => (
-    <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between py-3 border-b border-border-subtle last:border-0">
       <div>
-        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-0.5">{label}</p>
-        <p className="text-gray-900 font-semibold text-lg">{value}</p>
+        <p className="text-xs text-cream-muted/40 font-medium uppercase tracking-wider mb-0.5">{label}</p>
+        <p className="text-cream font-serif text-lg">{value}</p>
       </div>
       {copyable && (
         <button 
           onClick={() => copyToClipboard(value, label)}
-          className="p-2 text-gold-600 hover:bg-gold-50 rounded-lg transition-colors"
+          className="p-2 text-gold-400 hover:bg-gold-500/10 rounded-lg transition-colors"
         >
-            {copiedField === label ? (
-                 <span className="text-xs font-bold text-green-600">Copied</span>
-            ) : (
-                <Copy className="w-5 h-5" />
-            )}
+          {copiedField === label ? (
+            <Check className="size-5 text-success" />
+          ) : (
+            <Copy className="size-5" />
+          )}
         </button>
       )}
     </div>
@@ -90,30 +94,39 @@ interface CardMoreModalProps {
 }
 
 export function CardMoreModal({ isOpen, onClose }: CardMoreModalProps) {
-  const ActionButton = ({ icon: Icon, label, destructive = false }: { icon: any, label: string, destructive?: boolean }) => (
+  const ActionButton = ({ icon: Icon, label, destructive = false }: { icon: React.ElementType, label: string, destructive?: boolean }) => (
     <button className={cn(
-      "w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 mb-3 transition-all active:scale-[0.98]",
-      "hover:border-gold-200 hover:bg-gold-50/50",
-      destructive ? "text-red-600 hover:bg-red-50 hover:border-red-100" : "text-gray-700"
+      "w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle mb-3 transition-all duration-300 active:scale-[0.98]",
+      "hover:border-gold-500/30 hover:bg-surface-elevated",
+      destructive && "hover:border-error/30 hover:bg-error/10"
     )}>
       <div className="flex items-center gap-3">
-        <div className={cn("p-2 rounded-lg", destructive ? "bg-red-100 text-red-600" : "bg-gold-100 text-gold-700")}>
-            <Icon className="w-5 h-5" />
+        <div className={cn(
+          "p-2 rounded-lg",
+          destructive ? "bg-error/10 text-error" : "bg-gold-500/10 text-gold-400"
+        )}>
+          <Icon className="size-5" />
         </div>
-        <span className="font-semibold">{label}</span>
+        <span className={cn(
+          "font-semibold",
+          destructive ? "text-error" : "text-cream-muted/80"
+        )}>{label}</span>
       </div>
-      <ChevronRight className="w-5 h-5 opacity-30" />
+      <ChevronRight className={cn(
+        "size-5",
+        destructive ? "text-error/50" : "text-cream-muted/30"
+      )} />
     </button>
   );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Card Options">
-        <div className="py-2">
-            <ActionButton icon={CreditCard} label="Set Card PIN" />
-            <ActionButton icon={Shield} label="Adjust Limits" />
-            <div className="h-px bg-gray-100 my-4" />
-            <ActionButton icon={Ban} label="Cancel Card" destructive />
-        </div>
+      <div className="py-2">
+        <ActionButton icon={CreditCard} label="Set Card PIN" />
+        <ActionButton icon={Shield} label="Adjust Limits" />
+        <div className="h-px bg-border-subtle my-4" />
+        <ActionButton icon={Ban} label="Cancel Card" destructive />
+      </div>
     </Modal>
   );
 }

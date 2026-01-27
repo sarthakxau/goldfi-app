@@ -1,87 +1,78 @@
 'use client';
 
 import { usePrivy } from '@privy-io/react-auth';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { TolaPriceDisplay } from '@/components/TolaPrice';
-import { Check } from 'lucide-react';
-
-const FEATURES = [
-  'pure 24K gold',
-  'earn up to 15% on your gold',
-  'backed by Swiss reserves',
-  'withdraw anytime, with zero limits',
-];
+import { CheckCircle, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
-  const { login, authenticated, ready } = usePrivy();
-  const router = useRouter();
+  const { login } = usePrivy();
 
-  useEffect(() => {
-    if (ready && authenticated) {
-      router.push('/');
-    }
-  }, [ready, authenticated, router]);
-
-  if (!ready) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const features = [
+    'pure 24K gold',
+    'earn up to 15% on your gold',
+    'backed by Swiss reserves',
+    'withdraw anytime, with zero limits',
+  ];
 
   return (
-    <div className="w-full max-w-sm mx-auto px-4 py-8">
-      {/* Phone notch indicator */}
-      <div className="flex justify-center mb-6">
-        <div className="w-32 h-1 bg-gray-300 rounded-full" />
+    <div className="w-full max-w-sm mx-auto px-6 py-8 min-h-screen bg-surface flex flex-col gold-radial-bg">
+      {/* Subtle grain overlay for luxury texture */}
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none bg-gradient-to-b from-cream/5 to-transparent" />
+      
+      {/* Top Bar / Logo */}
+      <div className="flex flex-col items-center pt-8 pb-6">
+        {/* Decorative line */}
+        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-cream-muted/20 to-transparent mb-8" />
+        
+        {/* Brand Logo */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="gold-coin">
+            <Sparkles className="size-5" />
+          </div>
+          <h1 className="text-4xl font-serif text-gold-gradient tracking-tight">
+            tola
+          </h1>
+        </div>
+
+        {/* Tagline */}
+        <p className="text-cream-muted/60 text-sm tracking-wide">
+          invest in gold with <span className="text-success font-semibold">ZERO</span> fees
+        </p>
       </div>
 
-      {/* Brand */}
-      <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
-        tola
-      </h1>
+      {/* Price Comparison Section */}
+      <div className="py-6">
+        <TolaPriceDisplay className="w-full" />
+      </div>
 
-      {/* Value proposition */}
-      <p className="text-center text-gray-700 text-lg mb-6">
-        invest in gold with{' '}
-        <span className="font-bold text-green-600">ZERO</span> fees
-      </p>
-
-      {/* Price comparison */}
-      <TolaPriceDisplay className="mb-6" />
-
-      {/* Feature list */}
-      <div className="space-y-3 mb-8">
-        {FEATURES.map((feature, index) => (
-          <div key={index} className="flex items-center gap-3">
-            <div className="w-5 h-5 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
-              <Check className="w-3 h-3 text-white" strokeWidth={3} />
+      {/* Feature List */}
+      <div className="flex-grow py-6 space-y-4">
+        {features.map((feature) => (
+          <div key={feature} className="flex items-center gap-3">
+            <div className="size-6 rounded-full bg-success/15 flex items-center justify-center flex-shrink-0">
+              <CheckCircle className="size-4 text-success" />
             </div>
-            <span className="text-gray-700 text-sm">{feature}</span>
+            <span className="text-cream-muted/70 text-sm">{feature}</span>
           </div>
         ))}
       </div>
 
-      {/* CTA section */}
-      <div className="text-center">
-        <p className="text-gray-500 text-sm mb-4">
+      {/* CTA Section */}
+      <div className="pt-6 pb-safe safe-area-bottom">
+        <p className="text-center text-cream-muted/40 text-xs mb-4 tracking-wide">
           signing up takes just a minute
         </p>
-
-        {/* Primary button */}
+        
         <button
           onClick={login}
-          className="w-full bg-white hover:bg-gray-50 text-gray-900 font-semibold py-4 px-6 rounded-xl border-2 border-gray-900 transition-colors mb-4"
+          className="w-full gold-shimmer text-surface font-bold py-4 px-6 rounded-full transition-all active:scale-[0.98] mb-4 text-lg tracking-wide"
         >
           get started
         </button>
-
-        {/* Secondary link */}
+        
         <button
           onClick={login}
-          className="w-full bg-white hover:bg-gray-50 text-gray-700 py-3 px-6 rounded-xl border border-gray-300 transition-colors text-sm"
+          className="w-full bg-surface-card border border-border-subtle text-cream-muted/70 font-medium py-4 px-6 rounded-full hover:border-gold-500/30 hover:text-cream transition-all active:scale-[0.98]"
         >
           already have an account? log in
         </button>

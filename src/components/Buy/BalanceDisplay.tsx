@@ -25,8 +25,9 @@ export function BalanceDisplay({ balance, loading, onRefresh }: BalanceDisplayPr
         onClick={onRefresh}
         disabled={loading}
         className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+        aria-label="Refresh balance"
       >
-        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+        <RefreshCw className={`size-4 ${loading ? 'animate-spin' : ''}`} />
       </button>
     </div>
   );

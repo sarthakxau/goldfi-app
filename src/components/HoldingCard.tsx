@@ -3,6 +3,7 @@
 import { formatINR, formatGrams, formatPercent } from '@/lib/utils';
 import type { HoldingWithValue, GoldPrice } from '@/types';
 import Decimal from 'decimal.js';
+import { Coins } from 'lucide-react';
 
 interface HoldingCardProps {
   holding: HoldingWithValue | null;
@@ -13,7 +14,7 @@ interface HoldingCardProps {
 export function HoldingCard({ holding, goldPrice, loading }: HoldingCardProps) {
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl p-6 text-white">
+      <div className="bg-gold-500 rounded-2xl p-6 text-white">
         <div className="space-y-4">
           <div className="h-4 w-24 bg-white/20 rounded animate-pulse" />
           <div className="h-8 w-32 bg-white/20 rounded animate-pulse" />
@@ -43,16 +44,16 @@ export function HoldingCard({ holding, goldPrice, loading }: HoldingCardProps) {
   const hasHoldings = holding && new Decimal(holding.xautAmount).greaterThan(0);
 
   return (
-    <div className="bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl p-6 text-white shadow-lg">
+    <div className="bg-gold-500 rounded-2xl p-6 text-white shadow-lg">
       <div className="flex items-start justify-between mb-4">
         <div>
           <p className="text-gold-100 text-sm">Your Gold Holdings</p>
-          <h2 className="text-3xl font-bold mt-1">
+          <h2 className="text-3xl font-bold mt-1 tabular-nums">
             {hasHoldings ? formatGrams(xautAmountGrams) : '0 g'}
           </h2>
         </div>
-        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-          <span className="text-2xl">🪙</span>
+        <div className="size-12 bg-white/20 rounded-full flex items-center justify-center">
+          <Coins className="size-6 text-white" />
         </div>
       </div>
 

@@ -39,12 +39,12 @@ export function TolaPriceDisplay({ className }: TolaPriceDisplayProps) {
   if (loading) {
     return (
       <div className={className}>
-        <div className="bg-green-100 border border-green-200 rounded-lg p-3 mb-2">
-          <div className="h-6 w-40 bg-green-200 rounded animate-pulse" />
+        <div className="bg-success/10 border border-success/20 rounded-xl p-4 mb-3">
+          <div className="h-6 w-40 skeleton rounded" />
         </div>
-        <div className="bg-red-50 border border-red-100 rounded-lg p-3 space-y-2">
-          <div className="h-5 w-36 bg-red-100 rounded animate-pulse" />
-          <div className="h-5 w-36 bg-red-100 rounded animate-pulse" />
+        <div className="bg-surface-card border border-border-subtle rounded-xl p-4 space-y-2">
+          <div className="h-5 w-36 skeleton rounded" />
+          <div className="h-5 w-36 skeleton rounded" />
         </div>
       </div>
     );
@@ -60,19 +60,20 @@ export function TolaPriceDisplay({ className }: TolaPriceDisplayProps) {
 
   return (
     <div className={className}>
-      {/* Tola price - highlighted in green */}
-      <div className="bg-green-100 border border-green-300 rounded-lg p-3 mb-2">
-        <span className="text-green-800 font-semibold">
+      {/* Tola price - highlighted in green with gold accent */}
+      <div className="bg-success/10 border border-success/20 rounded-xl p-4 mb-3 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-success/5 to-transparent" />
+        <span className="relative text-success font-serif text-xl">
           tola: {formatINR(tolaPrice)}
         </span>
       </div>
 
-      {/* Competitor prices - shown in red/pink */}
-      <div className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-1">
-        <div className="text-red-700 text-sm">
+      {/* Competitor prices - shown greyed out/struck */}
+      <div className="bg-surface-card border border-border-subtle rounded-xl p-4 space-y-2">
+        <div className="text-cream-muted/40 text-sm line-through">
           jar: {formatINR(jarPrice)}
         </div>
-        <div className="text-red-700 text-sm">
+        <div className="text-cream-muted/40 text-sm line-through">
           gullak: {formatINR(gullakPrice)}
         </div>
       </div>

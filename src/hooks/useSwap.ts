@@ -67,7 +67,7 @@ export function useSwap(): UseSwapReturn {
       if (data.success) {
         setUsdtBalance(data.data.balance);
       } else {
-        console.error('[useSwap] Balance API error:', data.error);
+      console.error('[useSwap] Balance API error:', data.error);
       }
     } catch (err) {
       console.error('[useSwap] Balance fetch error:', err);
@@ -196,9 +196,6 @@ export function useSwap(): UseSwapReturn {
       } else {
         console.log('[useSwap] Allowance sufficient, skipping approval');
       }
-
-      // Step 3: Execute swap
-      console.log('[useSwap] Step 3: Executing swap...');
       setStep('swap');
 
       const deadline = BigInt(Math.floor(Date.now() / 1000) + SWAP_DEADLINE_MINUTES * 60);
@@ -268,8 +265,6 @@ export function useSwap(): UseSwapReturn {
       });
       const recordData = await recordRes.json();
       console.log('[useSwap] Record API response:', recordData);
-
-      console.log('[useSwap] ========== SWAP SUCCESSFUL ==========');
       setStep('success');
 
       // Refresh balance
