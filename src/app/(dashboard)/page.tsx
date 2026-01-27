@@ -122,7 +122,7 @@ export default function DashboardPage() {
 
         {/* User Profile - Right */}
         <div className="flex flex-col items-end">
-          <span className="text-xs text-cream-muted/50 mb-1">hey!</span>
+          {/* <span className="text-xs text-cream-muted/50 mb-1">hey!</span> */}
           <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30 shadow-gold-glow">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -136,13 +136,12 @@ export default function DashboardPage() {
 
       {/* My Gold Card */}
       <section className="mb-8">
-        <h2 className="font-serif text-cream-muted/60 text-lg mb-4 ml-1">my gold</h2>
         <div className="card-gold p-8 text-center relative">
           {/* Luxury gold glow behind the card */}
           <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-gold-500/10 to-transparent pointer-events-none" />
-          
+
           {/* Value Display */}
-          <div className="relative mb-3">
+          <div className="relative mb-2">
             <h1 className="text-5xl font-serif text-cream tabular-nums tracking-tight">
               {viewMode === 'grams'
                 ? (hasHoldings ? `${formatGrams(xautAmountGrams)}` : '0.00 g')
@@ -150,6 +149,9 @@ export default function DashboardPage() {
               }
             </h1>
           </div>
+
+          {/* Label below value */}
+          <p className="font-serif text-cream-muted/60 text-sm">my holdings</p>
 
           {/* Toggle Switch */}
           <button 
@@ -181,7 +183,7 @@ export default function DashboardPage() {
         <div className="mb-10 flex justify-center">
           <Link 
             href="/buy" 
-            className="bg-gold-gradient text-surface font-bold py-3.5 px-10 rounded-full text-sm transform -rotate-1 hover:rotate-0 transition-transform"
+            className="bg-gold-gradient text-[#271F12] font-bold py-3.5 px-10 rounded-full text-sm border-2 border-yellow-400"
           >
             make your first investment
           </Link>
@@ -189,7 +191,7 @@ export default function DashboardPage() {
       )}
 
       {/* Gold Chart - Blurred with Coming Soon */}
-      <section className="mb-8 relative">
+      {/* <section className="mb-8 relative">
         <div className="blur-sm pointer-events-none select-none">
           <GoldChart />
         </div>
@@ -198,7 +200,7 @@ export default function DashboardPage() {
             <span className="text-cream-muted/60 font-medium text-sm">coming soon</span>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Primary Action Buttons - Golden Row */}
       <div className="flex gap-3 mb-6">
