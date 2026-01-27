@@ -15,20 +15,21 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 transition-opacity"
+      <div
+        className="fixed inset-0 bg-black/50 z-modalBackdrop transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* Content */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] animate-in slide-in-from-bottom duration-300 md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+      <div className="fixed bottom-0 left-0 right-0 z-modal bg-white rounded-t-3xl p-6 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] animate-in slide-in-from-bottom duration-300 md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Close modal"
           >
-            <X className="w-6 h-6" />
+            <X className="size-6" />
           </button>
         </div>
         {children}
@@ -54,7 +55,7 @@ export function CardDetailsModal({ isOpen, onClose }: CardDetailsModalProps) {
   const Field = ({ label, value, copyable = true }: { label: string, value: string, copyable?: boolean }) => (
     <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
       <div>
-        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-0.5">{label}</p>
+        <p className="text-xs text-gray-500 font-medium uppercase mb-0.5">{label}</p>
         <p className="text-gray-900 font-semibold text-lg">{value}</p>
       </div>
       {copyable && (
@@ -65,7 +66,7 @@ export function CardDetailsModal({ isOpen, onClose }: CardDetailsModalProps) {
             {copiedField === label ? (
                  <span className="text-xs font-bold text-green-600">Copied</span>
             ) : (
-                <Copy className="w-5 h-5" />
+                <Copy className="size-5" />
             )}
         </button>
       )}
@@ -98,11 +99,11 @@ export function CardMoreModal({ isOpen, onClose }: CardMoreModalProps) {
     )}>
       <div className="flex items-center gap-3">
         <div className={cn("p-2 rounded-lg", destructive ? "bg-red-100 text-red-600" : "bg-gold-100 text-gold-700")}>
-            <Icon className="w-5 h-5" />
+            <Icon className="size-5" />
         </div>
         <span className="font-semibold">{label}</span>
       </div>
-      <ChevronRight className="w-5 h-5 opacity-30" />
+      <ChevronRight className="size-5 opacity-30" />
     </button>
   );
 

@@ -87,12 +87,6 @@ export default function DashboardPage() {
   const buyingPricePerOz = goldPrice ? goldPrice.priceInr : 0;
   const buyingPricePerGram = goldPrice ? goldPrice.pricePerGramInr : 0;
   const buyingPricePer10g = buyingPricePerGram * 10;
-
-  console.log('holdings', holding);
-  console.log('goldPrice', goldPrice);
-  console.log('xautAmount', xautAmount);
-  console.log('xautAmountGrams', xautAmountGrams);
-  console.log('buyingPricePer10g', buyingPricePer10g);
   
   // Use pre-computed value from API when available
   const currentValueInr = holding?.currentValueInr ?? xautAmount.times(buyingPricePerOz).toNumber();
@@ -115,12 +109,12 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2">
             {/* Live Price Display */}
              <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-400 font-medium tracking-wide">LIVE PRICE</span>
+                <span className="text-xs text-gray-400 font-medium">LIVE PRICE</span>
                 <div className="flex items-center gap-2">
                     {priceLoading ? (
                          <div className="h-5 w-24 bg-gray-100 animate-pulse rounded" />
                     ) : (
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-gray-900 tabular-nums">
                             {formatINR(buyingPricePer10g)}<span className="text-gray-400 text-sm font-normal">/10g</span>
                         </span>
                     )}
@@ -128,8 +122,9 @@ export default function DashboardPage() {
                         onClick={handleRefresh}
                         disabled={refreshing}
                         className="text-gray-400 hover:text-gray-600 transition-colors"
+                        aria-label="Refresh price"
                      >
-                        <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`size-4 ${refreshing ? 'animate-spin' : ''}`} />
                     </button>
                 </div>
             </div>
@@ -142,8 +137,8 @@ export default function DashboardPage() {
         <div className="bg-yellow-50/50 border border-yellow-100 rounded-[2rem] p-8 text-center relative overflow-hidden">
             {/* Value Display */}
             <div className="mb-2">
-                 <h1 className="text-5xl font-bold text-gray-900 tracking-tight">
-                    {viewMode === 'grams' 
+                 <h1 className="text-5xl font-bold text-gray-900 tabular-nums text-balance">
+                    {viewMode === 'grams'
                         ? (hasHoldings ? `${formatGrams(xautAmountGrams)}` : '0.00g')
                         : (hasHoldings ? formatINR(currentValueInr) : '₹0.00')
                     }
@@ -175,7 +170,7 @@ export default function DashboardPage() {
                     inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium
                     ${profitLossInr >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}
                 `}>
-                    <span>7d returns: {profitLossInr > 0 ? '+' : ''}{formatGrams(profitLossGrams)} ({formatINR(profitLossInr)})</span>
+                    <span className="tabular-nums">7d returns: {profitLossInr > 0 ? '+' : ''}{formatGrams(profitLossGrams)} ({formatINR(profitLossInr)})</span>
                 </div>
             </div>
         )}
@@ -194,27 +189,27 @@ export default function DashboardPage() {
       <div className="grid grid-cols-3 gap-6 px-2">
         {/* Buy Gold */}
         <Link href="/buy" className="flex flex-col items-center gap-3 group">
-            <div className="w-16 h-16 rounded-2xl border-2 border-gray-100 flex items-center justify-center bg-white group-hover:border-gold-400 group-hover:shadow-md transition-all">
-                <Plus className="w-8 h-8 text-gray-800" strokeWidth={1.5} />
+            <div className="size-16 rounded-2xl border-2 border-gray-100 flex items-center justify-center bg-white group-hover:border-gold-400 group-hover:shadow-md transition-all">
+                <Plus className="size-8 text-gray-800" strokeWidth={1.5} />
             </div>
             <span className="text-sm font-medium text-gray-600">buy gold</span>
         </Link>
 
         {/* My Rewards */}
-        <button 
+        <button
             onClick={() => setShowRewardsModal(true)}
             className="flex flex-col items-center gap-3 group"
         >
-            <div className="w-16 h-16 rounded-2xl border-2 border-gray-100 flex items-center justify-center bg-white group-hover:border-gold-400 group-hover:shadow-md transition-all">
-                 <Gift className="w-8 h-8 text-gray-800" strokeWidth={1.5} />
+            <div className="size-16 rounded-2xl border-2 border-gray-100 flex items-center justify-center bg-white group-hover:border-gold-400 group-hover:shadow-md transition-all">
+                 <Gift className="size-8 text-gray-800" strokeWidth={1.5} />
             </div>
             <span className="text-sm font-medium text-gray-600">my rewards</span>
         </button>
 
          {/* Redeem */}
          <Link href="/sell" className="flex flex-col items-center gap-3 group">
-            <div className="w-16 h-16 rounded-2xl border-2 border-gray-100 flex items-center justify-center bg-white group-hover:border-gold-400 group-hover:shadow-md transition-all">
-                 <BadgePercent className="w-8 h-8 text-gray-800" strokeWidth={1.5} />
+            <div className="size-16 rounded-2xl border-2 border-gray-100 flex items-center justify-center bg-white group-hover:border-gold-400 group-hover:shadow-md transition-all">
+                 <BadgePercent className="size-8 text-gray-800" strokeWidth={1.5} />
             </div>
             <span className="text-sm font-medium text-gray-600">redeem</span>
         </Link>
@@ -222,10 +217,10 @@ export default function DashboardPage() {
 
       {/* Rewards Modal */}
       {showRewardsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50 animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl scale-100 animate-in zoom-in-95 duration-200 text-center">
-            <div className="mx-auto w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                <Gift className="w-8 h-8 text-yellow-600" />
+            <div className="mx-auto size-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+                <Gift className="size-8 text-yellow-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Rewards Coming Soon!</h3>
             <p className="text-gray-500 mb-6 text-sm">

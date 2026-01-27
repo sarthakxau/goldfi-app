@@ -122,10 +122,10 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
   const showProgress = ['approve', 'swap', 'confirming', 'success', 'error'].includes(step);
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-modal flex items-end sm:items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50"
         onClick={step === 'input' ? handleClose : undefined}
       />
 
@@ -137,8 +137,9 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
             onClick={handleClose}
             className="p-2 -ml-2 text-gray-500 hover:text-gray-900"
             disabled={showProgress && step !== 'success' && step !== 'error'}
+            aria-label="Close modal"
           >
-            <X className="w-6 h-6" />
+            <X className="size-6" />
           </button>
           <h2 className="text-xl font-bold text-gray-900">swap USDT to gold</h2>
           <div className="w-10" />

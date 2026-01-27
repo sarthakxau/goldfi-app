@@ -10,10 +10,8 @@ export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) 
   return (
     <div
       className={cn(
-        'relative w-full aspect-[1.586] rounded-2xl p-6 overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]',
-        'bg-gradient-to-br from-[#FDFBF7] via-[#E8E8E8] to-[#C0C0C0] border border-white/50', // Silver/Platinum-ish base for "Gold" card contrast, or maybe we go full gold? 
-        // Let's try a premium Gold gradient as requested by the app theme "Bullion"
-        'bg-gradient-to-br from-gold-100 via-gold-300 to-gold-500',
+        'relative w-full aspect-[1.586] rounded-2xl p-6 overflow-hidden shadow-2xl',
+        'bg-gold-400 border border-gold-300',
         className
       )}
     >
@@ -35,7 +33,7 @@ export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) 
 
         {/* Middle/Bottom Card Info */}
         <div className="mt-auto space-y-4">
-            <div className="text-xl font-medium tracking-widest flex items-center gap-2 text-white/90 drop-shadow-md font-mono">
+            <div className="text-xl font-medium flex items-center gap-2 text-white/90 drop-shadow-md font-mono">
                 <span>****</span>
                 <span>****</span>
                 <span>****</span>

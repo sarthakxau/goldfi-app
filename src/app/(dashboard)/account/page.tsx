@@ -9,6 +9,7 @@ import { Modal } from '@/components/CardModals';
 export default function AccountPage() {
   const { user, logout, exportWallet } = usePrivy();
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const userName = user?.email?.address?.split('@')[0] || 'User';
@@ -28,7 +29,7 @@ export default function AccountPage() {
       {/* Profile Header */}
       <div className="flex flex-col items-center justify-center pt-12 pb-8 bg-white border-b border-gray-100 rounded-b-[2rem] shadow-sm">
         <div className="relative mb-4">
-          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg ring-1 ring-gray-100">
+          <div className="size-24 rounded-full overflow-hidden border-4 border-white shadow-lg ring-1 ring-gray-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src={avatarUrl} 
@@ -37,9 +38,9 @@ export default function AccountPage() {
             />
           </div>
           {/* Online/Status Indicator (Optional visual flair) */}
-          <div className="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-4 border-white rounded-full"></div>
+          <div className="absolute bottom-1 right-1 size-5 bg-green-500 border-4 border-white rounded-full"></div>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{userName}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{userName}</h1>
         <p className="text-sm text-gray-500 font-medium">Gold Member</p>
       </div>
 
@@ -69,19 +70,50 @@ export default function AccountPage() {
               label="FAQ" 
               onClick={() => {}} 
             />
-            <SettingsItem 
-              icon={LogOut} 
-              label="Log Out" 
-              onClick={logout}
+            <SettingsItem
+              icon={LogOut}
+              label="Log Out"
+              onClick={() => setIsLogoutConfirmOpen(true)}
               destructive
             />
           </div>
         </div>
       </div>
 
+      {/* Logout Confirmation Modal */}
+      {isLogoutConfirmOpen && (
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setIsLogoutConfirmOpen(false)}
+          />
+          <div className="relative bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Log Out</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to log out of your account?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsLogoutConfirmOpen(false)}
+                className="flex-1 py-3 px-4 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setIsLogoutConfirmOpen(false);
+                  logout();
+                }}
+                className="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Account Modal */}
-      <Modal 
-        isOpen={isAccountModalOpen} 
+      <Modal
+        isOpen={isAccountModalOpen}
         onClose={() => setIsAccountModalOpen(false)}
         title="Account Details"
       >
@@ -94,11 +126,12 @@ export default function AccountPage() {
                 {walletAddress ? truncateAddress(walletAddress) : 'No wallet connected'}
               </code>
               {walletAddress && (
-                <button 
+                <button
                   onClick={handleCopyAddress}
                   className="p-2 -mr-2 text-gray-500 hover:bg-white hover:text-gold-600 rounded-lg transition-all"
+                  aria-label="Copy wallet address"
                 >
-                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="size-4 text-green-500" /> : <Copy className="size-4" />}
                 </button>
               )}
             </div>
@@ -113,14 +146,14 @@ export default function AccountPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-gray-100 rounded-lg text-gray-600 group-hover:bg-gold-100 group-hover:text-gold-700 transition-colors">
-                  <Key className="w-5 h-5" />
+                  <Key className="size-5" />
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-gray-900">Export Private Key</p>
                   <p className="text-xs text-gray-500">View your wallet's secret key</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gold-400" />
+              <ChevronRight className="size-5 text-gray-300 group-hover:text-gold-400" />
             </button>
           </div>
         </div>
@@ -154,7 +187,7 @@ function SettingsItem({
             ? "bg-red-50 text-red-500 group-hover:bg-red-100 group-hover:text-red-600"
             : "bg-gray-50 text-gray-500 group-hover:text-gold-600 group-hover:bg-gold-100"
         )}>
-          <Icon className="w-5 h-5" />
+          <Icon className="size-5" />
         </div>
         <span className={cn(
           "font-semibold",
@@ -162,7 +195,7 @@ function SettingsItem({
         )}>{label}</span>
       </div>
       <ChevronRight className={cn(
-        "w-5 h-5 transition-colors",
+        "size-5 transition-colors",
         destructive ? "text-red-200 group-hover:text-red-400" : "text-gray-300 group-hover:text-gold-400"
       )} />
     </button>

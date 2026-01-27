@@ -22,6 +22,11 @@ const config: Config = {
           900: '#78350F',
         },
       },
+      zIndex: {
+        dropdown: '30',
+        modalBackdrop: '40',
+        modal: '50',
+      },
     },
   },
   plugins: [],

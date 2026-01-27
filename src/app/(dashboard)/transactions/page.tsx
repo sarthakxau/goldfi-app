@@ -4,6 +4,7 @@ import { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { TransactionList } from '@/components/TransactionList';
+import { ClipboardList } from 'lucide-react';
 
 export default function TransactionsPage() {
   const searchParams = useSearchParams();
@@ -61,7 +62,9 @@ export default function TransactionsPage() {
         </div>
       ) : transactions.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-4xl mb-4">📋</div>
+          <div className="flex justify-center mb-4">
+            <ClipboardList className="size-12 text-gray-300" />
+          </div>
           <p className="text-gray-500">No transactions yet</p>
           <p className="text-sm text-gray-400 mt-1">
             Your buy and sell history will appear here

@@ -16,8 +16,9 @@ export default function BuyPage() {
         <button
           onClick={() => setShowHistoryModal(true)}
           className="p-2 text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+          aria-label="View transaction history"
         >
-            <Clock className="w-6 h-6" />
+            <Clock className="size-6" />
         </button>
       </div>
 

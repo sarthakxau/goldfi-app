@@ -3,6 +3,7 @@
 import { formatINR, formatGrams, formatDate, cn } from '@/lib/utils';
 import type { Transaction } from '@/types';
 import Decimal from 'decimal.js';
+import { ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -48,11 +49,15 @@ export function TransactionList({
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    'w-8 h-8 rounded-full flex items-center justify-center text-lg',
+                    'size-8 rounded-full flex items-center justify-center',
                     tx.type === 'buy' ? 'bg-gold-100' : 'bg-green-100'
                   )}
                 >
-                  {tx.type === 'buy' ? '💰' : '💸'}
+                  {tx.type === 'buy' ? (
+                    <ArrowDownCircle className="size-5 text-gold-600" />
+                  ) : (
+                    <ArrowUpCircle className="size-5 text-green-600" />
+                  )}
                 </span>
                 <div>
                   <p className="font-semibold text-gray-900 capitalize">
@@ -76,7 +81,7 @@ export function TransactionList({
             <div className="flex justify-between items-end">
               <div>
                 <p className="text-sm text-gray-500">Amount</p>
-                <p className="font-semibold text-gray-900">
+                <p className="font-semibold text-gray-900 tabular-nums">
                   {formatGrams(xautGrams)}
                 </p>
               </div>
@@ -84,7 +89,7 @@ export function TransactionList({
                 <p className="text-sm text-gray-500">Value</p>
                 <p
                   className={cn(
-                    'font-semibold',
+                    'font-semibold tabular-nums',
                     tx.type === 'buy' ? 'text-gold-600' : 'text-green-600'
                   )}
                 >

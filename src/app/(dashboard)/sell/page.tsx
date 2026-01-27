@@ -75,10 +75,6 @@ export default function SellPage() {
     step === 'input';
 
   const handleSell = useCallback(() => {
-    console.log('[SellPage] handleSell called');
-    console.log('[SellPage] grams:', grams);
-    console.log('[SellPage] quote:', quote);
-
     if (!grams) {
       console.log('[SellPage] No grams input, returning early');
       return;
@@ -121,8 +117,8 @@ export default function SellPage() {
           {/* Success State */}
           {step === 'success' && (
             <div className="text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-green-600" />
+              <div className="size-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="size-10 text-green-600" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Sell Successful!</h2>
               <p className="text-gray-600 mb-6">
@@ -151,8 +147,8 @@ export default function SellPage() {
           {/* Error State */}
           {step === 'error' && (
             <div className="text-center">
-              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertCircle className="w-10 h-10 text-red-600" />
+              <div className="size-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="size-10 text-red-600" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Sell Failed</h2>
               <p className="text-red-600 mb-6">{error || 'Something went wrong'}</p>
@@ -176,8 +172,8 @@ export default function SellPage() {
           {/* Processing States */}
           {['approve', 'swap', 'confirming'].includes(step) && (
             <div className="text-center">
-              <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+              <div className="size-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Loader2 className="size-10 text-amber-600 animate-spin" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 {step === 'approve' && 'Approving XAUT...'}
@@ -253,8 +249,9 @@ export default function SellPage() {
             onClick={fetchBalance}
             disabled={balanceLoading}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Refresh balance"
           >
-            <RefreshCw className={`w-5 h-5 ${balanceLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-5 ${balanceLoading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>

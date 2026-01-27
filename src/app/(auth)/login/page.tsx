@@ -39,7 +39,7 @@ export default function LoginPage() {
       </div>
 
       {/* Brand */}
-      <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
+      <h1 className="text-4xl font-bold text-center text-gray-900 mb-4 text-balance">
         tola
       </h1>
 
@@ -56,8 +56,8 @@ export default function LoginPage() {
       <div className="space-y-3 mb-8">
         {FEATURES.map((feature, index) => (
           <div key={index} className="flex items-center gap-3">
-            <div className="w-5 h-5 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
-              <Check className="w-3 h-3 text-white" strokeWidth={3} />
+            <div className="size-5 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
+              <Check className="size-3 text-white" strokeWidth={3} />
             </div>
             <span className="text-gray-700 text-sm">{feature}</span>
           </div>

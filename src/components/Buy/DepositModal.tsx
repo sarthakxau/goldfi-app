@@ -28,18 +28,18 @@ export function DepositModal({ isOpen, onClose, walletAddress }: DepositModalPro
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-modal flex items-end sm:items-center justify-center">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+      <div
+        className="absolute inset-0 bg-black/50 transition-opacity"
         onClick={onClose}
       />
       
       {/* Modal Content */}
       <div className="bg-white w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 animate-in slide-in-from-bottom duration-300 relative">
         <div className="flex justify-between items-center mb-6">
-            <button onClick={onClose} className="p-2 -ml-2 text-gray-500 hover:text-gray-900">
-                <X className="w-6 h-6" />
+            <button onClick={onClose} className="p-2 -ml-2 text-gray-500 hover:text-gray-900" aria-label="Close modal">
+                <X className="size-6" />
             </button>
             <div className="w-6" /> {/* Spacer for centering if needed, matches X width */}
         </div>
