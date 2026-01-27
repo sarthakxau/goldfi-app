@@ -4,7 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useCallback, useState } from 'react';
 import { useAppStore } from '@/store';
 import { formatINR, formatGrams } from '@/lib/utils';
-import { RefreshCw, Plus, BadgePercent, Sparkles } from 'lucide-react';
+import { RefreshCw, PiggyBank, BadgePercent, Calendar } from 'lucide-react';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
 import { GoldChart } from '@/components/GoldChart';
@@ -26,7 +26,7 @@ export default function DashboardPage() {
   } = useAppStore();
 
   const [viewMode, setViewMode] = useState<'grams' | 'inr'>('grams');
-  const [showRewardsModal, setShowRewardsModal] = useState(false);
+  const [showAutoSavingsModal, setShowAutoSavingsModal] = useState(false);
 
   const fetchPrice = useCallback(async () => {
     try {
@@ -98,31 +98,39 @@ export default function DashboardPage() {
     <div className="p-6 max-w-lg mx-auto min-h-screen gold-radial-bg">
       {/* Header / Price Strip */}
       <div className="flex items-center justify-between mb-8">
-        <div>
-          {/* Empty for asymmetric layout */}
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Live Price Display */}
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] tracking-widest text-cream-muted/50 font-medium uppercase">Live Price</span>
-            <div className="flex items-center gap-2">
-              {priceLoading ? (
-                <div className="h-6 w-28 skeleton rounded" />
-              ) : (
-                <span className="font-serif text-xl text-gold-400 tabular-nums">
-                  {formatINR(buyingPricePer10g)}<span className="text-cream-muted/40 text-sm font-sans">/10g</span>
-                </span>
-              )}
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="p-1.5 text-cream-muted/40 hover:text-gold-400 transition-colors rounded-full"
-                aria-label="Refresh price"
-              >
-                <RefreshCw className={`size-4 ${refreshing ? 'animate-spin' : ''}`} />
-              </button>
-            </div>
+        {/* Live Price Display - Left */}
+        <div className="flex flex-col items-start">
+          <span className="text-[10px] tracking-widest text-cream-muted/50 font-medium uppercase">Live Price</span>
+          <div className="flex items-center gap-2">
+            {priceLoading ? (
+              <div className="h-6 w-28 skeleton rounded" />
+            ) : (
+              <span className="font-serif text-xl text-gold-400 tabular-nums">
+                {formatINR(buyingPricePer10g)}<span className="text-cream-muted/40 text-sm font-sans">/10g</span>
+              </span>
+            )}
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="p-1.5 text-cream-muted/40 hover:text-gold-400 transition-colors rounded-full"
+              aria-label="Refresh price"
+            >
+              <RefreshCw className={`size-4 ${refreshing ? 'animate-spin' : ''}`} />
+            </button>
           </div>
+        </div>
+
+        {/* User Profile - Right */}
+        <div className="flex flex-col items-end">
+          <span className="text-xs text-cream-muted/50 mb-1">hey!</span>
+          <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30 shadow-gold-glow">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://api.dicebear.com/9.x/initials/svg?seed=${user?.email?.address?.split('@')[0] || 'User'}&backgroundColor=D4A012&textColor=ffffff`}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          </Link>
         </div>
       </div>
 
@@ -173,65 +181,89 @@ export default function DashboardPage() {
         <div className="mb-10 flex justify-center">
           <Link 
             href="/buy" 
-            className="gold-shimmer text-surface font-bold py-3.5 px-10 rounded-full text-sm transform -rotate-1 hover:rotate-0 transition-transform"
+            className="bg-gold-gradient text-surface font-bold py-3.5 px-10 rounded-full text-sm transform -rotate-1 hover:rotate-0 transition-transform"
           >
             make your first investment
           </Link>
         </div>
       )}
 
-      {/* Gold Chart */}
-      <section className="mb-10">
-        <GoldChart />
+      {/* Gold Chart - Blurred with Coming Soon */}
+      <section className="mb-8 relative">
+        <div className="blur-sm pointer-events-none select-none">
+          <GoldChart />
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="bg-surface-card/90 backdrop-blur-sm px-6 py-3 rounded-full border border-border-subtle">
+            <span className="text-cream-muted/60 font-medium text-sm">coming soon</span>
+          </div>
+        </div>
       </section>
 
-      {/* Action Grid */}
-      <div className="grid grid-cols-3 gap-6 px-2">
-        {/* Buy Gold */}
-        <Link href="/buy" className="flex flex-col items-center gap-3 group">
-          <div className="size-16 rounded-2xl border border-border-subtle flex items-center justify-center bg-surface-card group-hover:border-gold-500/40 group-hover:shadow-gold-glow transition-all duration-300">
-            <Plus className="size-7 text-cream-muted/60 group-hover:text-gold-400" strokeWidth={1.5} />
-          </div>
-          <span className="text-sm font-medium text-cream-muted/50 group-hover:text-cream-muted transition-colors">buy gold</span>
+      {/* Primary Action Buttons - Golden Row */}
+      <div className="flex gap-3 mb-6">
+        {/* Start Savings - 70% */}
+        <Link 
+          href="/buy" 
+          className="flex-[7] bg-gold-gradient text-surface font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
+        >
+          {/* <PiggyBank className="size-5" /> */}
+          <span>start savings</span>
         </Link>
 
-        {/* Rewards */}
-        <button
-          onClick={() => setShowRewardsModal(true)}
-          className="flex flex-col items-center gap-3 group"
+        {/* Redeem - 30% */}
+        <Link 
+          href="/sell" 
+          className="flex-[3] bg-gold-gradient text-surface font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
         >
-          <div className="size-16 rounded-2xl border border-border-subtle flex items-center justify-center bg-surface-card group-hover:border-gold-500/40 group-hover:shadow-gold-glow transition-all duration-300">
-            <Sparkles className="size-7 text-cream-muted/60 group-hover:text-gold-400" strokeWidth={1.5} />
-          </div>
-          <span className="text-sm font-medium text-cream-muted/50 group-hover:text-cream-muted transition-colors">rewards</span>
-        </button>
-
-        {/* Redeem / Sell */}
-        <Link href="/sell" className="flex flex-col items-center gap-3 group">
-          <div className="size-16 rounded-2xl border border-border-subtle flex items-center justify-center bg-surface-card group-hover:border-gold-500/40 group-hover:shadow-gold-glow transition-all duration-300">
-            <BadgePercent className="size-7 text-cream-muted/60 group-hover:text-gold-400" strokeWidth={1.5} />
-          </div>
-          <span className="text-sm font-medium text-cream-muted/50 group-hover:text-cream-muted transition-colors">redeem</span>
+          <BadgePercent className="size-5" />
         </Link>
       </div>
 
-      {/* Rewards Modal */}
-      {showRewardsModal && (
+      {/* Auto Savings Plan Button */}
+      <button
+        onClick={() => setShowAutoSavingsModal(true)}
+        className="w-full card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-xl bg-gold-500/15 flex items-center justify-center text-gold-400">
+            <Calendar className="size-5" />
+          </div>
+          <div className="text-left">
+            <p className="font-semibold text-cream text-sm">auto savings plan</p>
+            <p className="text-xs text-cream-muted/40">set up recurring investments</p>
+          </div>
+        </div>
+        <span className="badge badge-gold text-[10px]">coming soon</span>
+      </button>
+
+      {/* Auto Savings Modal */}
+      {showAutoSavingsModal && (
         <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="card-elevated p-8 max-w-sm w-full text-center animate-in zoom-in-95 duration-200">
             <div className="mx-auto size-16 bg-gold-500/15 rounded-full flex items-center justify-center mb-5">
-              <Sparkles className="size-8 text-gold-400" />
+              <Calendar className="size-8 text-gold-400" />
             </div>
-            <h3 className="text-2xl font-serif text-cream mb-2">Rewards Coming Soon!</h3>
+            <h3 className="text-2xl font-serif text-cream mb-2">Auto Savings Plan</h3>
             <p className="text-cream-muted/60 mb-6 text-sm">
-              We&apos;re working on something exciting. Check back later for exclusive rewards.
+              Set up automatic recurring investments in gold. Choose your amount, frequency, and let your savings grow effortlessly.
             </p>
-            <button
-              onClick={() => setShowRewardsModal(false)}
-              className="w-full bg-surface-card text-cream font-medium py-3.5 px-8 rounded-xl border border-border-subtle hover:border-gold-500/30 transition-all"
-            >
-              Close
-            </button>
+            <div className="space-y-3">
+              <div className="bg-surface-card border border-border-subtle rounded-xl p-4 text-left">
+                <p className="text-cream-muted/40 text-xs mb-1">Features coming soon</p>
+                <ul className="text-cream-muted/60 text-sm space-y-1">
+                  <li>• Daily, weekly, or monthly savings</li>
+                  <li>• Flexible amount from ₹100</li>
+                  <li>• Pause or cancel anytime</li>
+                </ul>
+              </div>
+              <button
+                onClick={() => setShowAutoSavingsModal(false)}
+                className="w-full bg-surface-card text-cream font-medium py-3.5 px-8 rounded-xl border border-border-subtle hover:border-gold-500/30 transition-all"
+              >
+                Got it
+              </button>
+            </div>
           </div>
         </div>
       )}
