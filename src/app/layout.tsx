@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'tola',
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
 };
 
 export const viewport: Viewport = {

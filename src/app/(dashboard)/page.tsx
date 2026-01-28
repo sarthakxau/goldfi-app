@@ -124,18 +124,22 @@ export default function DashboardPage() {
       {/* Header / Price Strip */}
       <div className="flex items-center justify-between mb-8">
         {/* Live Price Display - Left */}
-        <div className="flex flex-col items-start">
-          <span className="text-[10px] tracking-widest text-cream-muted/50 font-medium uppercase">Live Price</span>
+        <Link href="/gold-charts" className="flex flex-col items-start group">
+          <span className="text-[10px] tracking-widest text-cream-muted/50 font-medium uppercase group-hover:text-cream-muted/70 transition-colors">Live Price</span>
           <div className="flex items-center gap-2">
             {priceLoading ? (
               <div className="h-6 w-28 skeleton rounded" />
             ) : (
-              <span className="font-serif text-xl text-gold-400 tabular-nums">
+              <span className="font-serif text-xl text-gold-400 tabular-nums group-hover:text-gold-300 transition-colors">
                 {formatINR(buyingPricePer10g)}<span className="text-cream-muted/40 text-sm font-sans">/10g</span>
               </span>
             )}
             <button
-              onClick={handleRefresh}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleRefresh();
+              }}
               disabled={refreshing}
               className="p-1.5 text-cream-muted/40 hover:text-gold-400 transition-colors rounded-full"
               aria-label="Refresh price"
@@ -143,7 +147,7 @@ export default function DashboardPage() {
               <RefreshCw className={`size-4 ${refreshing ? 'animate-spin' : ''}`} />
             </button>
           </div>
-        </div>
+        </Link>
 
         {/* User Profile - Right */}
         <div className="flex flex-col items-end">
