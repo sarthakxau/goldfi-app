@@ -12,18 +12,13 @@ Bullion is a Progressive Web App (PWA) for digital gold savings. Users can buy a
 
 ### Installation
 
-1.  **Clone the repository:**
-    ```bash
     git clone <repository-url>
-    cd bullion-app
-    ```
+    
+2. **Install dependencies:**
 
-2.  **Install dependencies:**
     ```bash
     pnpm install
     ```
-
-3.  **Set up environment variables:**
 
     Create a `.env` file in the root of the project and populate it with the required variables. See the "Environment Variables" section below for details.
 
@@ -37,51 +32,45 @@ Bullion is a Progressive Web App (PWA) for digital gold savings. Users can buy a
 ### Development
 
 To start the development server:
-
-```bash
-pnpm dev
-```
+    ```bash
+        pnpm dev
+    ```
 
 The application will be available at `http://localhost:3000`.
 
 ### Other useful commands:
-
-```bash
-pnpm build        # Build for production
-pnpm start        # Start production server
-pnpm lint         # Run ESLint
-pnpm db:generate  # Generate Prisma client after schema changes
-pnpm db:studio    # Open Prisma Studio GUI
-```
+    pnpm build        # Build for production
+    pnpm start        # Start production server
+    pnpm lint         # Run ESLint
+    pnpm db:generate  # Generate Prisma client after schema changes
+    pnpm db:studio    # Open Prisma Studio GUI
 
 ## Environment Variables
 
 The application requires the following environment variables to be set in a `.env` file.
 
-```
-# Database
-DATABASE_URL="postgresql://..."
+    # Database
+    DATABASE_URL="postgresql://..."
 
-# Caching
-REDIS_URL="redis://..."
+    # Caching
+    REDIS_URL="redis://..."
 
-# Privy Auth
-NEXT_PUBLIC_PRIVY_APP_ID="..."
-PRIVY_APP_SECRET="..."
+    # Privy Auth
+    NEXT_PUBLIC_PRIVY_APP_ID="..."
+    PRIVY_APP_SECRET="..."
 
-# Blockchain
-ARBITRUM_RPC_URL="..."
-TREASURY_PRIVATE_KEY="..." # Important: Keep this secret
-TREASURY_WALLET_ADDRESS="..."
+    # Blockchain
+    ARBITRUM_RPC_URL="..."
+    TREASURY_PRIVATE_KEY="..." # Important: Keep this secret
+    TREASURY_WALLET_ADDRESS="..."
 
-# Services
-COINGECKO_API_KEY="..."
-NEXT_PUBLIC_SUPABASE_URL="..."
-SUPABASE_SERVICE_ROLE_KEY="..."
-ONMETA_API_KEY="..."
-ONMETA_MERCHANT_ID="..."
-ONMETA_WEBHOOK_SECRET="..."
-```
+    # Services
+    COINGECKO_API_KEY="..."
+    NEXT_PUBLIC_SUPABASE_URL="..."
+    SUPABASE_SERVICE_ROLE_KEY="..."
+    ONMETA_API_KEY="..."
+    ONMETA_MERCHANT_ID="..."
+    ONMETA_WEBHOOK_SECRET="..."
 
 ## API Endpoints
 

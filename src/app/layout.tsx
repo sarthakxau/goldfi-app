@@ -31,7 +31,7 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
-      <body className="min-h-screen bg-white antialiased">
+      <body className="min-h-screen bg-[#1A1612] antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

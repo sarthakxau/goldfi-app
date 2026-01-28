@@ -1,11 +1,21 @@
 'use client';
 
 import { usePrivy } from '@privy-io/react-auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { TolaPriceDisplay } from '@/components/TolaPrice';
 import { CheckCircle, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
-  const { login } = usePrivy();
+  const { login, ready, authenticated } = usePrivy();
+  const router = useRouter();
+
+  // Redirect to dashboard when user becomes authenticated
+  useEffect(() => {
+    if (ready && authenticated) {
+      router.replace('/');
+    }
+  }, [ready, authenticated, router]);
 
   const features = [
     'pure 24K gold',

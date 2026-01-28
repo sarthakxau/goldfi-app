@@ -24,11 +24,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'your-privy-app-id'}
       config={{
-        loginMethods: ['email', 'sms'],
+        loginMethods: ['email'],
         appearance: {
           theme: 'light',
           accentColor: '#F59E0B',
           logo: '/icon-192x192.png',
+          showWalletLoginFirst: false,
         },
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',

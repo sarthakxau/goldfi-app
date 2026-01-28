@@ -46,3 +46,4 @@ prisma/*.db-journal
 
 # misc
 todos.md
+errors.md
