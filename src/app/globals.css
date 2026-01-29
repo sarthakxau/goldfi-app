@@ -227,11 +227,11 @@ h1, h2, h3, .font-serif {
 }
 
 .segmented-control-item {
-  @apply flex-1 px-4 py-2.5 rounded-full text-sm font-medium text-cream/50 transition-all duration-300;
+  @apply flex-1 px-4 py-2.5 rounded-full text-sm font-medium text-cream/50 transition-all duration-300 focus:outline-none;
 }
 
 .segmented-control-item-active {
-  @apply bg-surface-card text-cream border border-border-subtle shadow-gold-inner;
+  @apply bg-surface-card text-cream border-none shadow-gold-inner;
 }
 
 /* Gold coin icon - Premium */

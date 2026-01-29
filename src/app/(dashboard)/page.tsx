@@ -7,7 +7,6 @@ import { formatINR, formatGrams } from '@/lib/utils';
 import { RefreshCw, PiggyBank, BadgePercent, Calendar } from 'lucide-react';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
-import { GoldChart } from '@/components/GoldChart';
 
 export default function DashboardPage() {
   const { user } = usePrivy();
@@ -107,17 +106,12 @@ export default function DashboardPage() {
     return `${xautAmount.times(1000).toFixed(2)} scudo`;
   };
 
-  const getNextModeText = () => {
-    if (viewMode === 'grams') return 'INR';
-    if (viewMode === 'inr') return 'Scudo';
-    return 'grams';
-  };
+  const goldHoldingUnits = [
+    { key: 'grams', label: 'grams' },
+    { key: 'inr', label: '₹' },
+    { key: 'scudo', label: 'scudo' },
+  ] as const;
 
-  const handleToggle = () => {
-    if (viewMode === 'grams') setViewMode('inr');
-    else if (viewMode === 'inr') setViewMode('scudo');
-    else setViewMode('grams');
-  };
 
   return (
     <div className="p-6 max-w-lg mx-auto min-h-screen gold-radial-bg">
@@ -151,9 +145,7 @@ export default function DashboardPage() {
 
         {/* User Profile - Right */}
         <div className="flex flex-col items-end">
-          {/* <span className="text-xs text-cream-muted/50 mb-1">hey!</span> */}
           <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30 shadow-gold-glow">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://api.dicebear.com/9.x/initials/svg?seed=${user?.email?.address?.split('@')[0] || 'User'}&backgroundColor=D4A012&textColor=ffffff`}
               alt="Profile"
@@ -163,39 +155,41 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* My Gold Card */}
+      {/* My Gold Holdings */}
       <section className="mb-8">
         <div className="card-gold p-8 relative">
           {/* Luxury gold glow behind the card */}
           <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-gold-500/10 to-transparent pointer-events-none" />
 
-          <div className="flex justify-between items-center relative z-10">
-            <div className="text-left">
-              {/* Value Display */}
-              <div className="relative mb-2">
-                <h1 className="text-4xl font-serif text-cream tabular-nums tracking-tight">
-                  {getDisplayValue()}
-                </h1>
-              </div>
-
-              {/* Label below value */}
-              <p className="font-serif text-cream-muted/60 text-sm">my holdings</p>
+          <div className="relative z-10">
+            {/* Value Display */}
+            <div className="relative mb-2">
+              <h1 className="text-4xl font-serif text-cream tabular-nums tracking-tight">
+                {getDisplayValue()}
+              </h1>
             </div>
 
-            {/* Toggle Switch */}
-            <button 
-              onClick={handleToggle}
-              className="px-2.5 py-1 text-xs font-medium rounded-lg bg-surface-elevated border border-border-subtle text-cream-muted/60 hover:text-gold-400 hover:border-gold-500/30 transition-all"
-              title="Switch View"
-            >
-              {getNextModeText()}
-            </button>
+            {/* Label + Unit Selector */}
+            <div className="flex items-center justify-between">
+              <p className="font-serif text-cream-muted/60 text-sm">my holdings</p>
+              <div className="segmented-control !p-0.5">
+                {goldHoldingUnits.map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => setViewMode(key)}
+                    className={`segmented-control-item !px-3 !py-1.5 !text-xs ${viewMode === key ? 'segmented-control-item-active' : ''}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Returns Badge */}
         {hasHoldings && (
-          <div className="flex justify-center -mt-3 relative z-10">
+          <div className="flex justify-center -mt-4 relative z-10">
             <div className={`
               inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm
               ${profitLossInr >= 0 
