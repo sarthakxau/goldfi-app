@@ -75,7 +75,7 @@ export default function LoginPage() {
         
         <button
           onClick={login}
-          className="w-full gold-shimmer text-surface font-bold py-4 px-6 rounded-full transition-all active:scale-[0.98] mb-4 text-lg tracking-wide"
+          className="w-full bg-gold-gradient text-surface font-bold py-4 px-6 rounded-full transition-all active:scale-[0.98] mb-4 text-lg tracking-wide"
         >
           get started
         </button>

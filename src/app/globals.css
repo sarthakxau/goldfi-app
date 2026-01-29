@@ -197,7 +197,7 @@ h1, h2, h3, .font-serif {
 }
 
 .card-gold {
-  @apply bg-surface-card rounded-2xl border border-gold-500/20 shadow-gold-glow;
+  @apply bg-surface-card rounded-2xl border border-gold-500/20;
 }
 
 /* Status badge styles - Premium */

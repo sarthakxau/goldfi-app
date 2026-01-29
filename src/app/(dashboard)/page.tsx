@@ -145,7 +145,7 @@ export default function DashboardPage() {
 
         {/* User Profile - Right */}
         <div className="flex flex-col items-end">
-          <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30 shadow-gold-glow">
+          <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30">
             <img
               src={`https://api.dicebear.com/9.x/initials/svg?seed=${user?.email?.address?.split('@')[0] || 'User'}&backgroundColor=D4A012&textColor=ffffff`}
               alt="Profile"
@@ -164,7 +164,7 @@ export default function DashboardPage() {
           <div className="relative z-10">
             {/* Value Display */}
             <div className="relative mb-2">
-              <h1 className="text-4xl font-serif text-cream tabular-nums tracking-tight">
+              <h1 className="text-5xl font-serif text-cream tabular-nums tracking-tight">
                 {getDisplayValue()}
               </h1>
             </div>
@@ -230,19 +230,20 @@ export default function DashboardPage() {
       <div className="flex gap-3 mb-6">
         {/* Start Savings - 70% */}
         <Link 
-          href="/buy" 
-          className="flex-[7] bg-gold-gradient text-surface font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
+          href="/buy"
+          className="flex-[6] bg-gold-gradient text-surface font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
         >
           {/* <PiggyBank className="size-5" /> */}
           <span>start savings</span>
         </Link>
 
         {/* Redeem - 30% */}
-        <Link 
-          href="/sell" 
-          className="flex-[3] bg-gold-gradient text-surface font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
+        <Link
+          href="/sell"
+          className="flex-[4] bg-surface-card border border-border-subtle text-cream-muted/50 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/30 transition-all"
         >
           <BadgePercent className="size-5" />
+          <span>redeem</span>
         </Link>
       </div>
 

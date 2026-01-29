@@ -31,7 +31,7 @@ export default function AccountPage() {
         <div className="relative mb-4">
           <div className="size-24 rounded-full overflow-hidden border-4 border-surface ring-2 ring-gold-500/30">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
+            <img
               src={avatarUrl} 
               alt={userName} 
               className="w-full h-full object-cover"
