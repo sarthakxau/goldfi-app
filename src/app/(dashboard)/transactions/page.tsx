@@ -45,7 +45,7 @@ export default function TransactionsPage() {
       {/* Header with brand */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-serif text-gold-gradient">tola</h1>
-        <div className="size-9 rounded-full overflow-hidden gold-shimmer">
+        <div className="size-9 rounded-full overflow-hidden bg-gold-gradient">
           <div className="w-full h-full" />
         </div>
       </div>

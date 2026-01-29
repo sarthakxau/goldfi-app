@@ -51,12 +51,13 @@ A refined, premium aesthetic that evokes the weight and warmth of physical gold 
 <div className="card-gold p-6">Gold accent border</div>
 ```
 
-### Gold Shimmer Button (Primary CTA)
+### Gold Gradient Button (Primary CTA)
 ```tsx
-<button className="gold-shimmer text-surface font-bold py-4 px-6 rounded-full">
+<button className="bg-gold-gradient text-surface font-bold py-4 px-6 rounded-full">
   Get Started
 </button>
 ```
+> **Note:** Do not use animated shimmer/shine effects on buttons. Use the static `bg-gold-gradient` class instead.
 
 ### Success Button
 ```tsx
@@ -101,12 +102,13 @@ A refined, premium aesthetic that evokes the weight and warmth of physical gold 
 </div>
 ```
 
-### Animated Gold Shine
+### Gold Gradient (Static)
 ```tsx
-<button className="gold-shimmer">
-  {/* Animated shine sweeps across */}
+<button className="bg-gold-gradient">
+  {/* Static gold gradient — no animated shimmer */}
 </button>
 ```
+> **Deprecated:** The `gold-shimmer` class has been removed. Always use `bg-gold-gradient` for gold-styled elements.
 
 ## Text Hierarchy
 

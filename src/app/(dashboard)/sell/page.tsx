@@ -69,6 +69,7 @@ export default function SellPage() {
     Number(grams) <= maxGrams &&
     !inputError &&
     !quoteLoading &&
+    !!quote &&
     step === 'input';
 
   const handleSell = useCallback(() => {

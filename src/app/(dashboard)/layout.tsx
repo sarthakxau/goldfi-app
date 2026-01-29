@@ -47,7 +47,7 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-surface pb-24">
       {children}
 
-      {/* Bottom Navigation - Luxury */}
+      {/* Bottom Navigation */}
       <nav className={cn(
         'fixed bottom-0 left-0 right-0 bg-surface-card/95 backdrop-blur-xl border-t border-border-subtle safe-area-bottom'
       )}>

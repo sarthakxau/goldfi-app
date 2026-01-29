@@ -60,35 +60,6 @@ h1, h2, h3, .font-serif {
   background: var(--gold-primary);
 }
 
-/* Gold shimmer effect - Premium */
-@keyframes gold-shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.gold-shimmer {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #D4A012 0%, #F5B832 50%, #D4A012 100%);
-}
-
-.gold-shimmer::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: gold-shimmer 3s ease-in-out infinite;
-}
 
 /* Floating gold particles effect */
 @keyframes float-up {
@@ -148,7 +119,6 @@ h1, h2, h3, .font-serif {
 @media (prefers-reduced-motion: reduce) {
   .animate-spin,
   .animate-pulse,
-  .gold-shimmer::after,
   .chart-glow {
     animation: none;
   }
@@ -197,7 +167,7 @@ h1, h2, h3, .font-serif {
 }
 
 .card-gold {
-  @apply bg-surface-card rounded-2xl border border-gold-500/20 shadow-gold-glow;
+  @apply bg-surface-card rounded-2xl border border-gold-500/20;
 }
 
 /* Status badge styles - Premium */
@@ -227,11 +197,11 @@ h1, h2, h3, .font-serif {
 }
 
 .segmented-control-item {
-  @apply flex-1 px-4 py-2.5 rounded-full text-sm font-medium text-cream/50 transition-all duration-300;
+  @apply flex-1 px-4 py-2.5 rounded-full text-sm font-medium text-cream/50 transition-all duration-300 focus:outline-none;
 }
 
 .segmented-control-item-active {
-  @apply bg-surface-card text-cream border border-border-subtle shadow-gold-inner;
+  @apply bg-surface-card text-cream border-none shadow-gold-inner;
 }
 
 /* Gold coin icon - Premium */

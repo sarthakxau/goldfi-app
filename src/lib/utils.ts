@@ -32,7 +32,7 @@ export function formatINR(amount: number | string | Decimal): string {
 export function formatGrams(grams: number | string | Decimal): string {
   const num = new Decimal(grams);
   if (num.lessThan(0.001)) {
-    return `${num.toFixed(6)} g`;
+    return `${num.toFixed(3)} g`;
   }
   if (num.lessThan(1)) {
     return `${num.toFixed(4)} g`;

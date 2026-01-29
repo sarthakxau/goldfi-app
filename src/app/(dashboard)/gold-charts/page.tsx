@@ -19,16 +19,16 @@ function ChartSkeleton() {
   );
 }
 
-type ChartTab = 'gold-usd' | 'gold-inr' | 'gold-nifty';
+type ChartTab = 'xaut-usd' | 'xau-inr' | 'gold-nifty';
 
 const tabs: { id: ChartTab; label: string; symbol: string }[] = [
-  { id: 'gold-usd', label: 'Gold/USD', symbol: 'TVC:GOLD' },
-  { id: 'gold-inr', label: 'Gold/INR', symbol: 'FX_IDC:XAUINR' },
-  { id: 'gold-nifty', label: 'Gold ETF', symbol: 'AMEX:GLD' },
+  { id: 'xaut-usd', label: 'XAUT/USD', symbol: 'XAUTUSD' },
+  { id: 'xau-inr', label: 'XAU/INR', symbol: 'XAUINR' },
+  { id: 'gold-nifty', label: 'XAUT ETF', symbol: 'AMEX:GLD' },
 ];
 
 export default function GoldChartsPage() {
-  const [activeTab, setActiveTab] = useState<ChartTab>('gold-usd');
+  const [activeTab, setActiveTab] = useState<ChartTab>('xaut-usd');
 
   const currentTab = tabs.find((t) => t.id === activeTab)!;
 
@@ -65,7 +65,7 @@ export default function GoldChartsPage() {
       </div>
 
       {/* Chart Container - needs explicit height for TradingView */}
-      <div className="flex-1 rounded-xl overflow-hidden border border-border-subtle bg-[#0F0F0F] relative">
+      <div className="flex-1 rounded-none overflow-hidden border border-border-subtle bg-[#0F0F0F] relative">
         <div className="absolute inset-0">
           <TradingViewWidget
             key={currentTab.id}

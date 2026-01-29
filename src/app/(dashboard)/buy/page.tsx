@@ -32,9 +32,9 @@ export default function BuyPage() {
         <div className="w-full">
           <button
             disabled
-            className="w-full gold-shimmer text-surface font-bold text-lg py-5 rounded-2xl hover:shadow-gold-glow-strong active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
+            className="w-full bg-gold-gradient text-surface font-bold text-lg py-5 rounded-2xl hover:shadow-gold-glow-strong active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
           >
-            <span className="relative z-10">buy with INR (onramp)</span>
+            <span className="relative z-10">buy with UPI</span>
             <span className="absolute top-2 right-3 text-xs bg-surface/20 px-2 py-0.5 rounded-full">coming soon</span>
           </button>
           <p className="text-center text-xs text-cream-muted/40 mt-2">1% TDS applicable</p>
