@@ -16,20 +16,17 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-modalBackdrop transition-opacity"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-modalBackdrop transition-opacity"
         onClick={onClose}
       />
 
       {/* Content */}
-      <div className="fixed bottom-0 left-0 right-0 z-modal bg-surface-card rounded-t-3xl p-6 shadow-luxury animate-in slide-in-from-bottom duration-300 md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl border-t border-border-subtle md:border">
-        {/* Gold accent line at top */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/30 to-transparent" />
-        
+      <div className="fixed bottom-0 left-0 right-0 z-modal bg-white rounded-t-3xl p-6 shadow-card animate-in slide-in-from-bottom duration-300 md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl border-t border-border-subtle md:border">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-serif text-cream">{title}</h3>
+          <h3 className="text-xl font-bold text-text-primary">{title}</h3>
           <button
             onClick={onClose}
-            className="p-2 -mr-2 text-cream-muted/50 hover:text-cream hover:bg-surface-elevated rounded-full transition-colors"
+            className="p-2 -mr-2 text-text-muted hover:text-text-primary hover:bg-surface-elevated rounded-full transition-colors"
             aria-label="Close modal"
           >
             <X className="size-6" />
@@ -58,13 +55,13 @@ export function CardDetailsModal({ isOpen, onClose }: CardDetailsModalProps) {
   const Field = ({ label, value, copyable = true }: { label: string, value: string, copyable?: boolean }) => (
     <div className="flex items-center justify-between py-3 border-b border-border-subtle last:border-0">
       <div>
-        <p className="text-xs text-cream-muted/40 font-medium uppercase tracking-wider mb-0.5">{label}</p>
-        <p className="text-cream font-serif text-lg">{value}</p>
+        <p className="text-xs text-text-muted font-medium uppercase tracking-wider mb-0.5">{label}</p>
+        <p className="text-text-primary font-bold text-lg">{value}</p>
       </div>
       {copyable && (
-        <button 
+        <button
           onClick={() => copyToClipboard(value, label)}
-          className="p-2 text-gold-400 hover:bg-gold-500/10 rounded-lg transition-colors"
+          className="p-2 text-gold-500 hover:bg-gold-100 rounded-lg transition-colors"
         >
           {copiedField === label ? (
             <Check className="size-5 text-success" />
@@ -98,23 +95,23 @@ export function CardMoreModal({ isOpen, onClose }: CardMoreModalProps) {
     <button className={cn(
       "w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle mb-3 transition-all duration-300 active:scale-[0.98]",
       "hover:border-gold-500/30 hover:bg-surface-elevated",
-      destructive && "hover:border-error/30 hover:bg-error/10"
+      destructive && "hover:border-error/30 hover:bg-error-light"
     )}>
       <div className="flex items-center gap-3">
         <div className={cn(
           "p-2 rounded-lg",
-          destructive ? "bg-error/10 text-error" : "bg-gold-500/10 text-gold-400"
+          destructive ? "bg-error-light text-error" : "bg-gold-100 text-gold-500"
         )}>
           <Icon className="size-5" />
         </div>
         <span className={cn(
           "font-semibold",
-          destructive ? "text-error" : "text-cream-muted/80"
+          destructive ? "text-error" : "text-text-secondary"
         )}>{label}</span>
       </div>
       <ChevronRight className={cn(
         "size-5",
-        destructive ? "text-error/50" : "text-cream-muted/30"
+        destructive ? "text-error/50" : "text-text-muted"
       )} />
     </button>
   );

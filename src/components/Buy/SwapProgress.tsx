@@ -31,8 +31,8 @@ export function SwapProgress({
   if (step === 'success') {
     return (
       <div className="text-center py-8">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Check className="w-8 h-8 text-green-600" />
+        <div className="w-16 h-16 bg-success-light rounded-full flex items-center justify-center mx-auto mb-4">
+          <Check className="w-8 h-8 text-success" />
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">Swap Successful!</h3>
         <p className="text-gray-500 mb-4">Your gold has been added to your holdings</p>
@@ -41,7 +41,7 @@ export function SwapProgress({
             href={`${ARBISCAN_URL}${swapTxHash}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mb-6"
+            className="inline-flex items-center gap-1 text-sm text-gold-500 hover:underline mb-6"
           >
             View on Arbiscan <ExternalLink className="w-3 h-3" />
           </a>
@@ -59,11 +59,11 @@ export function SwapProgress({
   if (step === 'error') {
     return (
       <div className="text-center py-8">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <X className="w-8 h-8 text-red-600" />
+        <div className="w-16 h-16 bg-error-light rounded-full flex items-center justify-center mx-auto mb-4">
+          <X className="w-8 h-8 text-error" />
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">Swap Failed</h3>
-        <p className="text-red-500 mb-6 text-sm">{error || 'Something went wrong'}</p>
+        <p className="text-error mb-6 text-sm">{error || 'Something went wrong'}</p>
         <div className="space-y-3">
           <button
             onClick={onRetry}
@@ -85,7 +85,7 @@ export function SwapProgress({
   return (
     <div className="py-6">
       <div className="flex justify-center mb-8">
-        <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
+        <Loader2 className="w-12 h-12 text-gold-500 animate-spin" />
       </div>
       <div className="space-y-4">
         {steps.map((s, index) => {
@@ -97,8 +97,8 @@ export function SwapProgress({
             <div key={s.key} className="flex items-center gap-3">
               <div className={`
                 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium
-                ${isPast ? 'bg-green-500 text-white' : ''}
-                ${isActive ? 'bg-amber-500 text-white' : ''}
+                ${isPast ? 'bg-success text-white' : ''}
+                ${isActive ? 'bg-gold-500 text-white' : ''}
                 ${!isPast && !isActive ? 'bg-gray-200 text-gray-400' : ''}
               `}>
                 {isPast ? <Check className="w-4 h-4" /> : index + 1}
@@ -106,7 +106,7 @@ export function SwapProgress({
               <span className={`text-sm ${isActive ? 'font-medium text-gray-900' : 'text-gray-400'}`}>
                 {s.label}
               </span>
-              {isActive && <Loader2 className="w-4 h-4 text-amber-500 animate-spin ml-auto" />}
+              {isActive && <Loader2 className="w-4 h-4 text-gold-500 animate-spin ml-auto" />}
             </div>
           );
         })}
@@ -117,7 +117,7 @@ export function SwapProgress({
           href={`${ARBISCAN_URL}${approvalTxHash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block text-center text-xs text-blue-600 hover:underline mt-4"
+          className="block text-center text-xs text-gold-500 hover:underline mt-4"
         >
           View approval tx <ExternalLink className="w-3 h-3 inline" />
         </a>

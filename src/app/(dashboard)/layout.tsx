@@ -48,9 +48,7 @@ export default function DashboardLayout({
       {children}
 
       {/* Bottom Navigation */}
-      <nav className={cn(
-        'fixed bottom-0 left-0 right-0 bg-surface-card/95 backdrop-blur-xl border-t border-border-subtle safe-area-bottom'
-      )}>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-nav safe-area-bottom">
         <div className="max-w-lg mx-auto flex justify-around">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -63,13 +61,13 @@ export default function DashboardLayout({
                 className={cn(
                   'flex flex-col items-center py-3 px-4 text-xs transition-all duration-300',
                   isActive
-                    ? 'text-gold-400'
-                    : 'text-cream-muted/40 hover:text-cream-muted/70'
+                    ? 'text-gold-500'
+                    : 'text-text-muted hover:text-text-secondary'
                 )}
               >
                 <div className={cn(
                   "p-2 rounded-xl mb-1 transition-all duration-300",
-                  isActive && "bg-gold-500/10"
+                  isActive && "bg-gold-100"
                 )}>
                   <Icon className={cn("w-5 h-5", isActive ? "stroke-[2.5px]" : "stroke-[1.5px]")} />
                 </div>

@@ -161,14 +161,14 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
           <>
             {/* Wallet Address Display */}
             {walletAddress && (
-              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
+              <div className="flex items-center justify-between bg-gold-50 border border-gold-200 rounded-xl p-3 mb-4">
                 <div>
-                  <p className="text-xs text-amber-600 mb-0.5">your wallet (Arbitrum)</p>
+                  <p className="text-xs text-gold-500 mb-0.5">your wallet (Arbitrum)</p>
                   <p className="text-sm font-mono text-gray-900">{truncateAddress(walletAddress)}</p>
                 </div>
                 <button
                   onClick={handleCopyAddress}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-amber-200 hover:bg-amber-50 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gold-200 hover:bg-gold-50 transition-colors"
                 >
                   {copied ? (
                     <>
@@ -177,8 +177,8 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5 text-amber-600" />
-                      <span className="text-xs font-medium text-amber-600">copy</span>
+                      <Copy className="w-3.5 h-3.5 text-gold-500" />
+                      <span className="text-xs font-medium text-gold-500">copy</span>
                     </>
                   )}
                 </button>
@@ -201,12 +201,12 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
                   value={inputAmount}
                   onChange={(e) => setInputAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full text-3xl font-bold bg-gray-50 rounded-xl p-4 pr-24 outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full text-3xl font-bold bg-gray-50 rounded-xl p-4 pr-24 outline-none focus:ring-2 focus:ring-gold-500"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button
                     onClick={handleMaxClick}
-                    className="text-xs text-amber-600 font-medium hover:text-amber-700"
+                    className="text-xs text-gold-500 font-medium hover:text-gold-600"
                   >
                     MAX
                   </button>

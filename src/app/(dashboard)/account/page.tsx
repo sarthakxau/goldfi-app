@@ -13,7 +13,7 @@ export default function AccountPage() {
   const [copied, setCopied] = useState(false);
 
   const userName = user?.email?.address?.split('@')[0] || 'User';
-  const avatarUrl = `https://api.dicebear.com/9.x/initials/svg?seed=${userName}&backgroundColor=D4A012&textColor=ffffff`;
+  const avatarUrl = `https://api.dicebear.com/9.x/initials/svg?seed=${userName}&backgroundColor=B8860B&textColor=ffffff`;
   const walletAddress = user?.wallet?.address;
 
   const handleCopyAddress = () => {
@@ -25,50 +25,50 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="min-h-screen pb-24 gold-radial-bg">
+    <div className="min-h-screen pb-24">
       {/* Profile Header */}
-      <div className="flex flex-col items-center justify-center pt-12 pb-8 bg-surface-card border-b border-border-subtle rounded-b-[2rem]">
+      <div className="flex flex-col items-center justify-center pt-12 pb-8 bg-white border-b border-border-subtle rounded-b-[2rem]">
         <div className="relative mb-4">
           <div className="size-24 rounded-full overflow-hidden border-4 border-surface ring-2 ring-gold-500/30">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={avatarUrl} 
-              alt={userName} 
+              src={avatarUrl}
+              alt={userName}
               className="w-full h-full object-cover"
             />
           </div>
           {/* Online Indicator */}
-          <div className="absolute bottom-1 right-1 size-5 bg-success border-4 border-surface rounded-full"></div>
+          <div className="absolute bottom-1 right-1 size-5 bg-success border-4 border-white rounded-full"></div>
         </div>
-        <h1 className="text-2xl font-serif text-cream">{userName}</h1>
-        <p className="text-sm text-gold-400 font-medium">Gold Member</p>
+        <h1 className="text-2xl font-bold text-text-primary">{userName}</h1>
+        <p className="text-sm text-gold-500 font-medium">Gold Member</p>
       </div>
 
       {/* Settings Section */}
       <div className="p-6 max-w-md mx-auto">
-        <h2 className="text-lg font-serif text-cream mb-4 px-2">Settings</h2>
-        
+        <h2 className="text-lg font-bold text-text-primary mb-4 px-2">Settings</h2>
+
         <div className="card overflow-hidden">
           <div className="divide-y divide-border-subtle">
-            <SettingsItem 
-              icon={User} 
-              label="Account" 
-              onClick={() => setIsAccountModalOpen(true)} 
+            <SettingsItem
+              icon={User}
+              label="Account"
+              onClick={() => setIsAccountModalOpen(true)}
             />
-            <SettingsItem 
-              icon={Shield} 
-              label="Security" 
-              onClick={() => {}} 
+            <SettingsItem
+              icon={Shield}
+              label="Security"
+              onClick={() => {}}
             />
-            <SettingsItem 
-              icon={Info} 
-              label="About" 
-              onClick={() => {}} 
+            <SettingsItem
+              icon={Info}
+              label="About"
+              onClick={() => {}}
             />
-            <SettingsItem 
-              icon={HelpCircle} 
-              label="FAQ" 
-              onClick={() => {}} 
+            <SettingsItem
+              icon={HelpCircle}
+              label="FAQ"
+              onClick={() => {}}
             />
             <SettingsItem
               icon={LogOut}
@@ -84,16 +84,16 @@ export default function AccountPage() {
       {isLogoutConfirmOpen && (
         <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setIsLogoutConfirmOpen(false)}
           />
-          <div className="relative card-elevated p-6 max-w-sm w-full">
-            <h3 className="text-lg font-serif text-cream mb-2">Log Out</h3>
-            <p className="text-cream-muted/60 mb-6">Are you sure you want to log out of your account?</p>
+          <div className="relative bg-white rounded-2xl border border-border-subtle p-6 max-w-sm w-full">
+            <h3 className="text-lg font-bold text-text-primary mb-2">Log Out</h3>
+            <p className="text-text-secondary mb-6">Are you sure you want to log out of your account?</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setIsLogoutConfirmOpen(false)}
-                className="flex-1 py-3 px-4 rounded-xl border border-border text-cream-muted/70 font-medium hover:bg-surface-card transition-colors"
+                className="flex-1 py-3 px-4 rounded-xl border border-border text-text-secondary font-medium hover:bg-surface-elevated transition-colors"
               >
                 Cancel
               </button>
@@ -120,15 +120,15 @@ export default function AccountPage() {
         <div className="space-y-6">
           {/* Wallet Address */}
           <div>
-            <label className="text-sm font-medium text-cream-muted/50 mb-2 block">Wallet Address</label>
-            <div className="flex items-center justify-between p-4 bg-surface rounded-xl border border-border-subtle">
-              <code className="text-sm font-mono text-cream">
+            <label className="text-sm font-medium text-text-muted mb-2 block">Wallet Address</label>
+            <div className="flex items-center justify-between p-4 bg-surface-elevated rounded-xl border border-border-subtle">
+              <code className="text-sm font-mono text-text-primary">
                 {walletAddress ? truncateAddress(walletAddress) : 'No wallet connected'}
               </code>
               {walletAddress && (
                 <button
                   onClick={handleCopyAddress}
-                  className="p-2 -mr-2 text-cream-muted/50 hover:text-gold-400 rounded-lg transition-all"
+                  className="p-2 -mr-2 text-text-muted hover:text-gold-500 rounded-lg transition-all"
                   aria-label="Copy wallet address"
                 >
                   {copied ? <Check className="size-4 text-success" /> : <Copy className="size-4" />}
@@ -139,21 +139,21 @@ export default function AccountPage() {
 
           {/* Export Private Key */}
           <div>
-            <label className="text-sm font-medium text-cream-muted/50 mb-2 block">Security</label>
+            <label className="text-sm font-medium text-text-muted mb-2 block">Security</label>
             <button
               onClick={exportWallet}
-              className="w-full flex items-center justify-between p-4 bg-surface border border-border-subtle rounded-xl hover:border-gold-500/30 hover:bg-surface-elevated transition-all group"
+              className="w-full flex items-center justify-between p-4 bg-surface-elevated border border-border-subtle rounded-xl hover:border-gold-500/30 transition-all group"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-surface-elevated rounded-lg text-cream-muted/50 group-hover:bg-gold-500/15 group-hover:text-gold-400 transition-colors">
+                <div className="p-2 bg-white rounded-lg text-text-muted group-hover:bg-gold-100 group-hover:text-gold-500 transition-colors">
                   <Key className="size-5" />
                 </div>
                 <div className="text-left">
-                  <p className="font-semibold text-cream">Export Private Key</p>
-                  <p className="text-xs text-cream-muted/40">View your wallet&apos;s secret key</p>
+                  <p className="font-semibold text-text-primary">Export Private Key</p>
+                  <p className="text-xs text-text-muted">View your wallet&apos;s secret key</p>
                 </div>
               </div>
-              <ChevronRight className="size-5 text-cream-muted/30 group-hover:text-gold-400" />
+              <ChevronRight className="size-5 text-text-muted group-hover:text-gold-500" />
             </button>
           </div>
         </div>
@@ -162,19 +162,19 @@ export default function AccountPage() {
   );
 }
 
-function SettingsItem({ 
-  icon: Icon, 
-  label, 
+function SettingsItem({
+  icon: Icon,
+  label,
   onClick,
   destructive = false
-}: { 
-  icon: React.ElementType, 
-  label: string, 
+}: {
+  icon: React.ElementType,
+  label: string,
   onClick: () => void,
   destructive?: boolean
 }) {
   return (
-    <button 
+    <button
       onClick={onClick}
       className={cn(
         "w-full flex items-center justify-between p-4 transition-all hover:bg-surface-elevated active:bg-surface group"
@@ -183,20 +183,20 @@ function SettingsItem({
       <div className="flex items-center gap-4">
         <div className={cn(
           "p-2 rounded-xl transition-colors",
-          destructive 
-            ? "bg-error/10 text-error group-hover:bg-error/20"
-            : "bg-surface-elevated text-cream-muted/50 group-hover:text-gold-400 group-hover:bg-gold-500/10"
+          destructive
+            ? "bg-error-light text-error group-hover:bg-error/20"
+            : "bg-surface-elevated text-text-muted group-hover:text-gold-500 group-hover:bg-gold-100"
         )}>
           <Icon className="size-5" />
         </div>
         <span className={cn(
           "font-semibold",
-          destructive ? "text-error" : "text-cream-muted/80"
+          destructive ? "text-error" : "text-text-secondary"
         )}>{label}</span>
       </div>
       <ChevronRight className={cn(
         "size-5 transition-colors",
-        destructive ? "text-error/50 group-hover:text-error" : "text-cream-muted/30 group-hover:text-gold-400"
+        destructive ? "text-error/50 group-hover:text-error" : "text-text-muted group-hover:text-gold-500"
       )} />
     </button>
   );

@@ -3,22 +3,20 @@
 @tailwind utilities;
 
 /* ============================================
-   LIQUID GOLD LUXURY - Design System
+   TOLA - Light Mode Design System
    ============================================ */
 
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 :root {
-  --foreground: #F5F0E6;
-  --background: #1A1612;
-  --surface-card: #221E19;
-  --surface-elevated: #2A2520;
-  --gold-primary: #D4A012;
-  --gold-light: #F5B832;
-  --cream: #F5F0E6;
-  --cream-muted: #E6DFD1;
-  --border-subtle: #2E2A24;
+  --foreground: #1F2937;
+  --background: #F5F5F5;
+  --surface-card: #FFFFFF;
+  --surface-elevated: #F0F0F0;
+  --gold-primary: #B8860B;
+  --gold-light: #D4A012;
+  --border-subtle: #E5E7EB;
 }
 
 body {
@@ -27,76 +25,28 @@ body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Elegant serif headings */
-h1, h2, h3, .font-serif {
-  font-family: 'DM Serif Display', Georgia, serif;
-}
-
-/* Grain texture overlay for luxury feel */
-.grain-overlay::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* Custom scrollbar - Luxury gold */
+/* Custom scrollbar - Light */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: #F5F5F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3D3830;
+  background: #D1D5DB;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-primary);
+  background: #9CA3AF;
 }
 
-
-/* Floating gold particles effect */
-@keyframes float-up {
-  0% {
-    transform: translateY(100%) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* Chart glow - Enhanced */
-@keyframes chartGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 12px rgba(212, 160, 18, 0.4));
-  }
-  50% {
-    filter: drop-shadow(0 0 24px rgba(212, 160, 18, 0.6));
-  }
-}
-
-.chart-glow {
-  animation: chartGlow 3s ease-in-out infinite;
-}
-
-/* Skeleton loading - Warm */
+/* Skeleton loading - Light */
 .skeleton {
   @apply bg-surface-elevated animate-pulse rounded;
-  background: linear-gradient(90deg, #2A2520 25%, #3D3830 50%, #2A2520 75%);
+  background: linear-gradient(90deg, #F0F0F0 25%, #E5E7EB 50%, #F0F0F0 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s ease-in-out infinite;
 }
@@ -118,8 +68,7 @@ h1, h2, h3, .font-serif {
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .animate-spin,
-  .animate-pulse,
-  .chart-glow {
+  .animate-pulse {
     animation: none;
   }
 
@@ -138,90 +87,78 @@ h1, h2, h3, .font-serif {
 }
 
 .pill-button-primary {
-  @apply bg-gold-500 text-surface hover:bg-gold-400 active:scale-[0.98] shadow-gold-glow;
+  @apply bg-gold-500 text-white hover:bg-gold-400 active:scale-[0.98];
 }
 
 .pill-button-outline {
-  @apply bg-transparent border border-border text-cream hover:border-gold-500/50 hover:bg-surface-elevated active:scale-[0.98];
+  @apply bg-transparent border border-border text-text-primary hover:border-gold-500/50 hover:bg-surface-elevated active:scale-[0.98];
 }
 
-/* Card styles - Luxury */
+/* Card styles - Light */
 .card {
-  @apply bg-surface-card rounded-2xl border border-border-subtle shadow-card;
-  position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212, 160, 18, 0.3), transparent);
+  @apply bg-white rounded-2xl border border-border-subtle shadow-card;
 }
 
 .card-elevated {
-  @apply bg-surface-elevated rounded-2xl border border-border-subtle shadow-luxury;
+  @apply bg-surface-elevated rounded-2xl border border-border-subtle;
 }
 
 .card-gold {
-  @apply bg-surface-card rounded-2xl border border-gold-500/20;
+  @apply bg-white rounded-2xl border border-gold-500/20;
 }
 
-/* Status badge styles - Premium */
+/* Status badge styles */
 .badge {
   @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide;
 }
 
 .badge-success {
-  @apply bg-success/15 text-success border border-success/20;
+  @apply bg-success-light text-success border border-success/20;
 }
 
 .badge-error {
-  @apply bg-error/15 text-error border border-error/20;
+  @apply bg-error-light text-error border border-error/20;
 }
 
 .badge-warning {
-  @apply bg-warning/15 text-warning border border-warning/20;
+  @apply bg-warning-light text-warning-dark border border-warning/20;
 }
 
 .badge-gold {
-  @apply bg-gold-500/15 text-gold-400 border border-gold-500/20;
+  @apply bg-gold-100 text-gold-500 border border-gold-500/20;
 }
 
-/* Segmented control - Luxury */
+/* Segmented control - Light */
 .segmented-control {
   @apply flex bg-surface-elevated rounded-full p-1 border border-border-subtle;
 }
 
 .segmented-control-item {
-  @apply flex-1 px-4 py-2.5 rounded-full text-sm font-medium text-cream/50 transition-all duration-300 focus:outline-none;
+  @apply flex-1 px-4 py-2.5 rounded-full text-sm font-medium text-text-muted transition-all duration-300 focus:outline-none;
 }
 
 .segmented-control-item-active {
-  @apply bg-surface-card text-cream border-none shadow-gold-inner;
+  @apply bg-white text-text-primary border-none shadow-card;
 }
 
-/* Gold coin icon - Premium */
+/* Gold coin icon */
 .gold-coin {
-  @apply w-10 h-10 rounded-full flex items-center justify-center text-surface font-bold;
+  @apply w-10 h-10 rounded-full flex items-center justify-center text-white font-bold;
   background: linear-gradient(135deg, #F5B832 0%, #D4A012 50%, #B8860B 100%);
-  box-shadow: 0 4px 12px rgba(212, 160, 18, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(184, 134, 11, 0.3);
 }
 
-/* Input styles - Luxury dark */
+/* Input styles - Light */
 input[type="number"],
 input[type="text"] {
-  @apply bg-surface-elevated border border-border-subtle text-cream placeholder:text-cream/30 rounded-xl;
+  @apply bg-surface-elevated border border-border-subtle text-text-primary placeholder:text-text-muted rounded-xl;
   transition: all 0.3s ease;
 }
 
 input[type="number"]:focus,
 input[type="text"]:focus {
   @apply outline-none border-gold-500/50;
-  box-shadow: 0 0 0 3px rgba(212, 160, 18, 0.15);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
 }
 
 /* Hide number input spinners */
@@ -233,62 +170,4 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
-}
-
-/* ============================================
-   LUXURY EFFECTS
-   ============================================ */
-
-/* Gold border glow on hover */
-.gold-border-glow {
-  position: relative;
-}
-
-.gold-border-glow::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, #D4A012, #F5B832, #D4A012);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.gold-border-glow:hover::after {
-  opacity: 0.5;
-}
-
-/* Radial gold glow background */
-.gold-radial-bg {
-  position: relative;
-}
-
-.gold-radial-bg::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200%;
-  height: 100%;
-  background: radial-gradient(ellipse at center, rgba(212, 160, 18, 0.1) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-/* Cream text for contrast */
-.text-cream {
-  color: #F5F0E6;
-}
-
-.text-cream-muted {
-  color: #E6DFD1;
-}
-
-/* Brand text with gold gradient */
-.text-gold-gradient {
-  background: linear-gradient(135deg, #F5B832 0%, #D4A012 50%, #B8860B 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }

@@ -41,10 +41,10 @@ export default function TransactionsPage() {
   }, [fetchTransactions]);
 
   return (
-    <div className="p-6 gold-radial-bg min-h-screen">
+    <div className="p-6 min-h-screen">
       {/* Header with brand */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-serif text-gold-gradient">tola</h1>
+        <h1 className="text-xl font-bold text-gold-500">tola</h1>
         <div className="size-9 rounded-full overflow-hidden bg-gold-gradient">
           <div className="w-full h-full" />
         </div>
@@ -70,15 +70,15 @@ export default function TransactionsPage() {
         <>
           {/* All Transactions Header */}
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-serif text-cream">All transactions</h2>
-            <button className="p-2 text-cream-muted/50 hover:text-gold-400 rounded-lg hover:bg-surface-elevated transition-colors">
+            <h2 className="text-lg font-bold text-text-primary">All transactions</h2>
+            <button className="p-2 text-text-muted hover:text-gold-500 rounded-lg hover:bg-surface-elevated transition-colors">
               <SlidersHorizontal className="size-5" />
             </button>
           </div>
 
           {/* Search */}
           <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-cream-muted/30" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-text-muted" />
             <input
               type="text"
               placeholder="Search"
@@ -107,11 +107,11 @@ export default function TransactionsPage() {
             <div className="text-center py-12">
               <div className="flex justify-center mb-4">
                 <div className="p-4 bg-surface-elevated rounded-full">
-                  <ClipboardList className="size-12 text-cream-muted/30" />
+                  <ClipboardList className="size-12 text-text-muted" />
                 </div>
               </div>
-              <p className="text-cream-muted/70 font-medium">No transactions yet</p>
-              <p className="text-sm text-cream-muted/40 mt-1">
+              <p className="text-text-secondary font-medium">No transactions yet</p>
+              <p className="text-sm text-text-muted mt-1">
                 Your buy and sell history will appear here
               </p>
             </div>
@@ -126,10 +126,10 @@ export default function TransactionsPage() {
         /* Statistics View */
         <div className="text-center py-12">
           <div className="p-4 bg-surface-elevated rounded-full inline-block mb-4">
-            <ClipboardList className="size-12 text-cream-muted/30" />
+            <ClipboardList className="size-12 text-text-muted" />
           </div>
-          <p className="text-cream-muted/70 font-medium">Statistics coming soon</p>
-          <p className="text-sm text-cream-muted/40 mt-1">
+          <p className="text-text-secondary font-medium">Statistics coming soon</p>
+          <p className="text-sm text-text-muted mt-1">
             View your investment analytics and insights
           </p>
         </div>
