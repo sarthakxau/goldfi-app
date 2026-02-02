@@ -31,11 +31,11 @@ export function SwapProgress({
   if (step === 'success') {
     return (
       <div className="text-center py-8">
-        <div className="w-16 h-16 bg-success-light rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-success-light dark:bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <Check className="w-8 h-8 text-success" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Swap Successful!</h3>
-        <p className="text-gray-500 mb-4">Your gold has been added to your holdings</p>
+        <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2">Swap Successful!</h3>
+        <p className="text-text-muted dark:text-[#6B7280] mb-4">Your gold has been added to your holdings</p>
         {swapTxHash && (
           <a
             href={`${ARBISCAN_URL}${swapTxHash}`}
@@ -48,7 +48,7 @@ export function SwapProgress({
         )}
         <button
           onClick={onClose}
-          className="w-full bg-gray-900 text-white font-medium py-4 rounded-xl"
+          className="w-full bg-text-primary dark:bg-[#F0F0F0] text-white dark:text-[#0F0F0F] font-medium py-4 rounded-xl"
         >
           Done
         </button>
@@ -59,21 +59,21 @@ export function SwapProgress({
   if (step === 'error') {
     return (
       <div className="text-center py-8">
-        <div className="w-16 h-16 bg-error-light rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-error-light dark:bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <X className="w-8 h-8 text-error" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Swap Failed</h3>
+        <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2">Swap Failed</h3>
         <p className="text-error mb-6 text-sm">{error || 'Something went wrong'}</p>
         <div className="space-y-3">
           <button
             onClick={onRetry}
-            className="w-full bg-gray-900 text-white font-medium py-4 rounded-xl"
+            className="w-full bg-text-primary dark:bg-[#F0F0F0] text-white dark:text-[#0F0F0F] font-medium py-4 rounded-xl"
           >
             Try Again
           </button>
           <button
             onClick={onClose}
-            className="w-full border border-gray-200 text-gray-600 font-medium py-4 rounded-xl"
+            className="w-full border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-medium py-4 rounded-xl"
           >
             Cancel
           </button>
@@ -99,11 +99,11 @@ export function SwapProgress({
                 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium
                 ${isPast ? 'bg-success text-white' : ''}
                 ${isActive ? 'bg-gold-500 text-white' : ''}
-                ${!isPast && !isActive ? 'bg-gray-200 text-gray-400' : ''}
+                ${!isPast && !isActive ? 'bg-surface-elevated dark:bg-[#242424] text-text-muted dark:text-[#6B7280]' : ''}
               `}>
                 {isPast ? <Check className="w-4 h-4" /> : index + 1}
               </div>
-              <span className={`text-sm ${isActive ? 'font-medium text-gray-900' : 'text-gray-400'}`}>
+              <span className={`text-sm ${isActive ? 'font-medium text-text-primary dark:text-[#F0F0F0]' : 'text-text-muted dark:text-[#6B7280]'}`}>
                 {s.label}
               </span>
               {isActive && <Loader2 className="w-4 h-4 text-gold-500 animate-spin ml-auto" />}

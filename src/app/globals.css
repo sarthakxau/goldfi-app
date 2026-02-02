@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ============================================
-   TOLA - Light Mode Design System
+   Design System
    ============================================ */
 
 /* Google Fonts Import */
@@ -17,6 +17,16 @@
   --gold-primary: #B8860B;
   --gold-light: #D4A012;
   --border-subtle: #E5E7EB;
+}
+
+.dark {
+  --foreground: #F0F0F0;
+  --background: #0F0F0F;
+  --surface-card: #1A1A1A;
+  --surface-elevated: #242424;
+  --gold-primary: #D4A012;
+  --gold-light: #F5B832;
+  --border-subtle: #2D2D2D;
 }
 
 body {
@@ -34,21 +44,38 @@ body {
   background: #F5F5F5;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #0F0F0F;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #D1D5DB;
   border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #3D3D3D;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9CA3AF;
 }
 
-/* Skeleton loading - Light */
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Skeleton loading */
 .skeleton {
   @apply bg-surface-elevated animate-pulse rounded;
   background: linear-gradient(90deg, #F0F0F0 25%, #E5E7EB 50%, #F0F0F0 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #242424 25%, #2D2D2D 50%, #242424 75%);
+  background-size: 200% 100%;
 }
 
 @keyframes skeleton-loading {
@@ -91,20 +118,32 @@ body {
 }
 
 .pill-button-outline {
-  @apply bg-transparent border border-border text-text-primary hover:border-gold-500/50 hover:bg-surface-elevated active:scale-[0.98];
+  @apply bg-transparent border border-border text-text-primary hover:border-gold-500/50 active:scale-[0.98];
+}
+.dark .pill-button-outline {
+  @apply hover:bg-[#242424];
 }
 
-/* Card styles - Light */
+/* Card styles */
 .card {
   @apply bg-white rounded-2xl border border-border-subtle shadow-card;
+}
+.dark .card {
+  @apply bg-[#1A1A1A] border-[#2D2D2D];
 }
 
 .card-elevated {
   @apply bg-surface-elevated rounded-2xl border border-border-subtle;
 }
+.dark .card-elevated {
+  @apply bg-[#242424] border-[#2D2D2D];
+}
 
 .card-gold {
   @apply bg-white rounded-2xl border border-gold-500/20;
+}
+.dark .card-gold {
+  @apply bg-[#1A1A1A] border-gold-500/30;
 }
 
 /* Status badge styles */
@@ -115,22 +154,37 @@ body {
 .badge-success {
   @apply bg-success-light text-success border border-success/20;
 }
+.dark .badge-success {
+  @apply bg-success/10 text-success border-success/30;
+}
 
 .badge-error {
   @apply bg-error-light text-error border border-error/20;
+}
+.dark .badge-error {
+  @apply bg-error/10 text-error border-error/30;
 }
 
 .badge-warning {
   @apply bg-warning-light text-warning-dark border border-warning/20;
 }
+.dark .badge-warning {
+  @apply bg-warning/10 text-warning border-warning/30;
+}
 
 .badge-gold {
   @apply bg-gold-100 text-gold-500 border border-gold-500/20;
 }
+.dark .badge-gold {
+  @apply bg-gold-500/10 text-gold-400 border-gold-500/30;
+}
 
-/* Segmented control - Light */
+/* Segmented control */
 .segmented-control {
   @apply flex bg-surface-elevated rounded-full p-1 border border-border-subtle;
+}
+.dark .segmented-control {
+  @apply bg-[#242424] border-[#2D2D2D];
 }
 
 .segmented-control-item {
@@ -140,6 +194,9 @@ body {
 .segmented-control-item-active {
   @apply bg-white text-text-primary border-none shadow-card;
 }
+.dark .segmented-control-item-active {
+  @apply bg-[#1A1A1A] text-[#F0F0F0];
+}
 
 /* Gold coin icon */
 .gold-coin {
@@ -148,17 +205,26 @@ body {
   box-shadow: 0 2px 8px rgba(184, 134, 11, 0.3);
 }
 
-/* Input styles - Light */
+/* Input styles */
 input[type="number"],
 input[type="text"] {
   @apply bg-surface-elevated border border-border-subtle text-text-primary placeholder:text-text-muted rounded-xl;
   transition: all 0.3s ease;
+}
+.dark input[type="number"],
+.dark input[type="text"] {
+  @apply bg-[#242424] border-[#2D2D2D] text-[#F0F0F0] placeholder:text-[#6B7280];
 }
 
 input[type="number"]:focus,
 input[type="text"]:focus {
   @apply outline-none border-gold-500/50;
   box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+}
+
+.dark input[type="number"]:focus,
+.dark input[type="text"]:focus {
+  box-shadow: 0 0 0 3px rgba(212, 160, 18, 0.15);
 }
 
 /* Hide number input spinners */

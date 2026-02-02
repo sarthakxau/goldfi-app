@@ -130,18 +130,18 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
       />
 
       {/* Modal */}
-      <div className="bg-white w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 relative animate-in slide-in-from-bottom duration-300">
+      <div className="bg-white dark:bg-[#1A1A1A] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 relative animate-in slide-in-from-bottom duration-300">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={handleClose}
-            className="p-2 -ml-2 text-gray-500 hover:text-gray-900"
+            className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0]"
             disabled={showProgress && step !== 'success' && step !== 'error'}
             aria-label="Close modal"
           >
             <X className="size-6" />
           </button>
-          <h2 className="text-xl font-bold text-gray-900">swap USDT to gold</h2>
+          <h2 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">swap USDT to gold</h2>
           <div className="w-10" />
         </div>
 
@@ -161,14 +161,14 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
           <>
             {/* Wallet Address Display */}
             {walletAddress && (
-              <div className="flex items-center justify-between bg-gold-50 border border-gold-200 rounded-xl p-3 mb-4">
+              <div className="flex items-center justify-between bg-gold-50 dark:bg-gold-500/5 border border-gold-200 dark:border-gold-500/20 rounded-xl p-3 mb-4">
                 <div>
                   <p className="text-xs text-gold-500 mb-0.5">your wallet (Arbitrum)</p>
-                  <p className="text-sm font-mono text-gray-900">{truncateAddress(walletAddress)}</p>
+                  <p className="text-sm font-mono text-text-primary dark:text-[#F0F0F0]">{truncateAddress(walletAddress)}</p>
                 </div>
                 <button
                   onClick={handleCopyAddress}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gold-200 hover:bg-gold-50 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#242424] border border-gold-200 dark:border-gold-500/20 hover:bg-gold-50 dark:hover:bg-gold-500/5 transition-colors"
                 >
                   {copied ? (
                     <>
@@ -194,14 +194,14 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
 
             {/* Input Section */}
             <div className="mb-4">
-              <label className="text-sm text-gray-500 mb-2 block">you pay</label>
+              <label className="text-sm text-text-muted dark:text-[#6B7280] mb-2 block">you pay</label>
               <div className="relative">
                 <input
                   type="number"
                   value={inputAmount}
                   onChange={(e) => setInputAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full text-3xl font-bold bg-gray-50 rounded-xl p-4 pr-24 outline-none focus:ring-2 focus:ring-gold-500"
+                  className="w-full text-3xl font-bold bg-surface-elevated dark:bg-[#242424] text-text-primary dark:text-[#F0F0F0] rounded-xl p-4 pr-24 outline-none focus:ring-2 focus:ring-gold-500 border border-border-subtle dark:border-[#2D2D2D]"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button
@@ -210,7 +210,7 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
                   >
                     MAX
                   </button>
-                  <span className="text-gray-400 font-medium">USDT</span>
+                  <span className="text-text-muted dark:text-[#6B7280] font-medium">USDT</span>
                 </div>
               </div>
               {inputError && (
@@ -221,9 +221,9 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
             </div>
 
             {/* Arrow */}
-            <div className="flex justify-center my-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                <ArrowDown className="w-5 h-5 text-gray-400" />
+              <div className="flex justify-center my-4">
+              <div className="w-10 h-10 bg-surface-elevated dark:bg-[#242424] rounded-full flex items-center justify-center">
+                <ArrowDown className="w-5 h-5 text-text-muted dark:text-[#6B7280]" />
               </div>
             </div>
 
@@ -234,13 +234,13 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
             <button
               onClick={handleSwap}
               disabled={!canSwap}
-              className="w-full bg-[#A3F4B5] text-gray-900 font-bold py-4 rounded-xl border-2 border-gray-900 shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-success text-white font-bold py-4 rounded-xl hover:bg-success-dark active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {quoteLoading ? 'Getting quote...' : 'swap to gold'}
             </button>
 
             {/* Info */}
-            <p className="text-center text-xs text-gray-400 mt-4">
+            <p className="text-center text-xs text-text-muted dark:text-[#6B7280] mt-4">
               Swap powered by Camelot DEX on Arbitrum
             </p>
           </>

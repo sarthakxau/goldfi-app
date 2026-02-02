@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, memo } from 'react';
+import { useTheme } from '@/lib/theme';
 
 interface TradingViewWidgetProps {
   symbol: string;
@@ -8,6 +9,7 @@ interface TradingViewWidgetProps {
 
 function TradingViewWidget({ symbol }: TradingViewWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -15,6 +17,8 @@ function TradingViewWidget({ symbol }: TradingViewWidgetProps) {
 
     // Clear any existing content
     container.innerHTML = '';
+
+    const isDark = resolvedTheme === 'dark';
 
     const script = document.createElement('script');
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
@@ -34,10 +38,10 @@ function TradingViewWidget({ symbol }: TradingViewWidgetProps) {
       save_image: false,
       style: '1',
       symbol: symbol,
-      theme: 'dark',
+      theme: isDark ? 'dark' : 'light',
       timezone: 'Asia/Kolkata',
-      backgroundColor: '#0F0F0F',
-      gridColor: 'rgba(242, 242, 242, 0.06)',
+      backgroundColor: isDark ? '#0F0F0F' : '#FFFFFF',
+      gridColor: isDark ? 'rgba(242, 242, 242, 0.06)' : 'rgba(0, 0, 0, 0.06)',
       watchlist: [],
       withdateranges: true,
       compareSymbols: [],
@@ -50,7 +54,7 @@ function TradingViewWidget({ symbol }: TradingViewWidgetProps) {
     return () => {
       container.innerHTML = '';
     };
-  }, [symbol]);
+  }, [symbol, resolvedTheme]);
 
   return (
     <div

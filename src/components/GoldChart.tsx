@@ -144,8 +144,8 @@ export function GoldChart() {
             className={cn(
               'px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300',
               timeRange === range
-                ? 'bg-white text-text-primary border border-border-subtle shadow-card'
-                : 'text-text-muted hover:text-text-secondary'
+                ? 'bg-white dark:bg-[#1A1A1A] text-text-primary dark:text-[#F0F0F0] border border-border-subtle dark:border-[#2D2D2D] shadow-card'
+                : 'text-text-muted dark:text-[#6B7280] hover:text-text-secondary dark:hover:text-[#9CA3AF]'
             )}
           >
             {range}

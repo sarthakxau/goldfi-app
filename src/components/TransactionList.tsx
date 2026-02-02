@@ -65,7 +65,7 @@ export function TransactionList({
     <div className="space-y-6">
       {Object.entries(groupedTransactions).map(([dateLabel, txs]) => (
         <div key={dateLabel}>
-          <h3 className="text-sm font-medium text-text-muted mb-3">{dateLabel}</h3>
+          <h3 className="text-sm font-medium text-text-muted dark:text-[#6B7280] mb-3">{dateLabel}</h3>
           <div className="space-y-3">
             {txs.map((tx) => {
               const xautGrams = tx.xautAmount
@@ -86,32 +86,32 @@ export function TransactionList({
                     <div className="flex items-center gap-3">
                       {/* Gold Coin Icon */}
                       <div className="gold-coin">
-                        <span className="text-sm font-bold">₹</span>
+                        <span className="text-sm font-bold">&#8377;</span>
                       </div>
                       <div>
-                        <p className="font-semibold text-text-primary capitalize">
+                        <p className="font-semibold text-text-primary dark:text-[#F0F0F0] capitalize">
                           {tx.type === 'buy' ? 'Purchased' : 'Sold'}
                         </p>
                         <span className={cn('badge', statusColors[tx.status as keyof typeof statusColors])}>
-                          • {statusLabels[tx.status as keyof typeof statusLabels]}
+                          &bull; {statusLabels[tx.status as keyof typeof statusLabels]}
                         </span>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className={cn(
                         'font-bold tabular-nums text-lg',
-                        tx.type === 'buy' ? 'text-text-primary' : 'text-success'
+                        tx.type === 'buy' ? 'text-text-primary dark:text-[#F0F0F0]' : 'text-success'
                       )}>
                         {tx.type === 'buy' ? '+' : '-'}{formatINR(tx.inrAmount || 0)}
                       </p>
-                      <p className="text-sm text-text-muted tabular-nums">
+                      <p className="text-sm text-text-muted dark:text-[#6B7280] tabular-nums">
                         {formatGrams(xautGrams)}
                       </p>
                     </div>
                   </div>
 
                   {tx.blockchainTxHash && (
-                    <div className="mt-3 pt-3 border-t border-border-subtle">
+                    <div className="mt-3 pt-3 border-t border-border-subtle dark:border-[#2D2D2D]">
                       <a
                         href={`https://arbiscan.io/tx/${tx.blockchainTxHash}`}
                         target="_blank"
@@ -124,7 +124,7 @@ export function TransactionList({
                   )}
 
                   {tx.status === 'failed' && tx.errorMessage && (
-                    <div className="mt-3 pt-3 border-t border-border-subtle">
+                    <div className="mt-3 pt-3 border-t border-border-subtle dark:border-[#2D2D2D]">
                       <p className="text-xs text-error">{tx.errorMessage}</p>
                     </div>
                   )}

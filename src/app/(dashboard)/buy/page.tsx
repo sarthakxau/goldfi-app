@@ -14,13 +14,13 @@ export default function BuyPage() {
     <div className="p-6 max-w-lg mx-auto min-h-screen relative">
       {/* Header */}
       <div className="flex items-center justify-between mb-12">
-        <Link href="/" className="p-2 -ml-2 text-text-muted hover:text-text-primary transition-colors">
+        <Link href="/" className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors">
           <ArrowLeft className="size-6" />
         </Link>
-        <h1 className="text-xl font-bold text-text-primary">buy gold</h1>
+        <h1 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">buy gold</h1>
         <button
           onClick={() => setShowHistoryModal(true)}
-          className="p-2 -mr-2 text-text-muted hover:text-text-primary rounded-full transition-colors"
+          className="p-2 -mr-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] rounded-full transition-colors"
           aria-label="View transaction history"
         >
           <Clock className="size-5" />
@@ -37,7 +37,7 @@ export default function BuyPage() {
             <span className="relative z-10">buy with UPI</span>
             <span className="absolute top-2 right-3 text-xs bg-white/20 px-2 py-0.5 rounded-full">coming soon</span>
           </button>
-          <p className="text-center text-xs text-text-muted mt-2">1% TDS applicable</p>
+          <p className="text-center text-xs text-text-muted dark:text-[#6B7280] mt-2">1% TDS applicable</p>
         </div>
 
         {/* Buy with USDT */}
@@ -52,7 +52,7 @@ export default function BuyPage() {
             href="https://www.investopedia.com/terms/t/tether-usdt.asp"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-center text-xs text-text-muted mt-2 underline underline-offset-2 hover:text-text-secondary"
+            className="block text-center text-xs text-text-muted dark:text-[#6B7280] mt-2 underline underline-offset-2 hover:text-text-secondary dark:hover:text-[#9CA3AF]"
           >
             what is USDT?
           </a>

@@ -8,10 +8,10 @@ export default function YieldPage() {
     <div className="p-6 max-w-lg mx-auto min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-12">
-        <Link href="/" className="p-2 -ml-2 text-text-muted hover:text-text-primary transition-colors">
+        <Link href="/" className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors">
           <ArrowLeft className="size-6" />
         </Link>
-        <h1 className="text-xl font-bold text-text-primary">earn yield</h1>
+        <h1 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">earn yield</h1>
         <div className="size-10" />
       </div>
 
@@ -35,14 +35,14 @@ export default function YieldPage() {
         <div className="w-full">
           <Link
             href="/yield/jewellers"
-            className="w-full block bg-white border border-border-subtle text-text-primary font-bold text-lg py-5 rounded-2xl text-center hover:border-gold-500/30 active:scale-[0.98] transition-all"
+            className="w-full block bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-primary dark:text-[#F0F0F0] font-bold text-lg py-5 rounded-2xl text-center hover:border-gold-500/30 active:scale-[0.98] transition-all"
           >
             <span className="flex items-center justify-center gap-2">
               <Store className="size-5" />
               lend to jewellers
             </span>
           </Link>
-          <p className="text-center text-sm text-text-muted mt-2 font-medium">8% p.a.</p>
+          <p className="text-center text-sm text-text-muted dark:text-[#6B7280] mt-2 font-medium">8% p.a.</p>
         </div>
       </div>
     </div>

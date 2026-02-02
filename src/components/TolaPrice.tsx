@@ -39,10 +39,10 @@ export function TolaPriceDisplay({ className }: TolaPriceDisplayProps) {
   if (loading) {
     return (
       <div className={className}>
-        <div className="bg-success-light border border-success/20 rounded-xl p-4 mb-3">
+        <div className="bg-success-light dark:bg-success/10 border border-success/20 dark:border-success/30 rounded-xl p-4 mb-3">
           <div className="h-6 w-40 skeleton rounded" />
         </div>
-        <div className="bg-white border border-border-subtle rounded-xl p-4 space-y-2">
+        <div className="bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-xl p-4 space-y-2">
           <div className="h-5 w-36 skeleton rounded" />
           <div className="h-5 w-36 skeleton rounded" />
         </div>
@@ -61,18 +61,18 @@ export function TolaPriceDisplay({ className }: TolaPriceDisplayProps) {
   return (
     <div className={className}>
       {/* Tola price - highlighted in green */}
-      <div className="bg-success-light border border-success/20 rounded-xl p-4 mb-3 relative overflow-hidden">
+      <div className="bg-success-light dark:bg-success/10 border border-success/20 dark:border-success/30 rounded-xl p-4 mb-3 relative overflow-hidden">
         <span className="relative text-success font-bold text-xl">
           tola: {formatINR(tolaPrice)}
         </span>
       </div>
 
       {/* Competitor prices - shown greyed out/struck */}
-      <div className="bg-white border border-border-subtle rounded-xl p-4 space-y-2">
-        <div className="text-text-muted text-sm line-through">
+      <div className="bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-xl p-4 space-y-2">
+        <div className="text-text-muted dark:text-[#6B7280] text-sm line-through">
           jar: {formatINR(jarPrice)}
         </div>
-        <div className="text-text-muted text-sm line-through">
+        <div className="text-text-muted dark:text-[#6B7280] text-sm line-through">
           gullak: {formatINR(gullakPrice)}
         </div>
       </div>

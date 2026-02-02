@@ -119,13 +119,13 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-8">
         {/* Live Price Display - Left */}
         <Link href="/gold-charts" className="flex flex-col items-start group">
-          <span className="text-[10px] tracking-widest text-text-muted font-medium uppercase group-hover:text-text-secondary transition-colors">Live Price</span>
+          <span className="text-[10px] tracking-widest text-text-muted dark:text-[#6B7280] font-medium uppercase group-hover:text-text-secondary transition-colors">Live Price</span>
           <div className="flex items-center gap-2">
             {priceLoading ? (
               <div className="h-6 w-28 skeleton rounded" />
             ) : (
               <span className="text-xl font-bold text-gold-500 tabular-nums group-hover:text-gold-400 transition-colors">
-                {formatINR(buyingPricePer10g)}<span className="text-text-muted text-sm">/10g</span>
+                {formatINR(buyingPricePer10g)}<span className="text-text-muted dark:text-[#6B7280] text-sm">/10g</span>
               </span>
             )}
             <button
@@ -135,7 +135,7 @@ export default function DashboardPage() {
                 handleRefresh();
               }}
               disabled={refreshing}
-              className="p-1.5 text-text-muted hover:text-gold-500 transition-colors rounded-full"
+              className="p-1.5 text-text-muted dark:text-[#6B7280] hover:text-gold-500 transition-colors rounded-full"
               aria-label="Refresh price"
             >
               <RefreshCw className={`size-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -161,14 +161,14 @@ export default function DashboardPage() {
           <div className="relative z-10">
             {/* Value Display */}
             <div className="relative mb-2">
-              <h1 className="text-5xl font-bold text-text-primary tabular-nums tracking-tight">
+              <h1 className="text-5xl font-bold text-text-primary dark:text-[#F0F0F0] tabular-nums tracking-tight">
                 {getDisplayValue()}
               </h1>
             </div>
 
             {/* Label + Unit Selector */}
             <div className="flex items-center justify-between">
-              <p className="text-text-secondary text-sm font-medium">my holdings</p>
+              <p className="text-text-secondary dark:text-[#9CA3AF] text-sm font-medium">my holdings</p>
               <div className="segmented-control !p-0.5">
                 {goldHoldingUnits.map(({ key, label }) => (
                   <button
@@ -190,8 +190,8 @@ export default function DashboardPage() {
             <div className={`
               inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium
               ${profitLossInr >= 0
-                ? 'bg-success-light text-success border border-success/20'
-                : 'bg-error-light text-error border border-error/20'}
+                ? 'bg-success-light dark:bg-success/10 text-success border border-success/20 dark:border-success/30'
+                : 'bg-error-light dark:bg-error/10 text-error border border-error/20 dark:border-error/30'}
             `}>
               <span className="tabular-nums">7d returns: {profitLossInr > 0 ? '+' : ''}{formatGrams(profitLossGrams)} ({formatINR(profitLossInr)})</span>
             </div>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
 
         <Link
           href="/yield"
-          className="w-full bg-white border border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
+          className="w-full bg-white dark:bg-[#1A1A1A] border border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
         >
           <TrendingUp className="size-5" />
           <span>earn up to 15% on gold</span>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
 
         <Link
           href="/sell"
-          className="w-full bg-white border border-border-subtle text-text-secondary font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/30 transition-all"
+          className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/30 transition-all"
         >
           <BadgePercent className="size-5" />
           <span>redeem your gold</span>
@@ -244,12 +244,12 @@ export default function DashboardPage() {
         className="w-full card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all"
       >
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-gold-100 flex items-center justify-center text-gold-500">
+          <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
             <Calendar className="size-5" />
           </div>
           <div className="text-left">
-            <p className="font-semibold text-text-primary text-sm">auto savings plan</p>
-            <p className="text-xs text-text-muted">set up recurring investments</p>
+            <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">auto savings plan</p>
+            <p className="text-xs text-text-muted dark:text-[#6B7280]">set up recurring investments</p>
           </div>
         </div>
         <span className="badge badge-gold text-[10px]">coming soon</span>
@@ -258,26 +258,26 @@ export default function DashboardPage() {
       {/* Auto Savings Modal */}
       {showAutoSavingsModal && (
         <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl border border-border-subtle p-8 max-w-sm w-full text-center animate-in zoom-in-95 duration-200">
-            <div className="mx-auto size-16 bg-gold-100 rounded-full flex items-center justify-center mb-5">
+          <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-8 max-w-sm w-full text-center animate-in zoom-in-95 duration-200">
+            <div className="mx-auto size-16 bg-gold-100 dark:bg-gold-500/10 rounded-full flex items-center justify-center mb-5">
               <Calendar className="size-8 text-gold-500" />
             </div>
-            <h3 className="text-2xl font-bold text-text-primary mb-2">Auto Savings Plan</h3>
-            <p className="text-text-secondary mb-6 text-sm">
+            <h3 className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2">Auto Savings Plan</h3>
+            <p className="text-text-secondary dark:text-[#9CA3AF] mb-6 text-sm">
               Set up automatic recurring investments in gold. Choose your amount, frequency, and let your savings grow effortlessly.
             </p>
             <div className="space-y-3">
-              <div className="bg-surface-elevated border border-border-subtle rounded-xl p-4 text-left">
-                <p className="text-text-muted text-xs mb-1">Features coming soon</p>
-                <ul className="text-text-secondary text-sm space-y-1">
-                  <li>• Daily, weekly, or monthly savings</li>
-                  <li>• Flexible amount from ₹100</li>
-                  <li>• Pause or cancel anytime</li>
+              <div className="bg-surface-elevated dark:bg-[#242424] border border-border-subtle dark:border-[#2D2D2D] rounded-xl p-4 text-left">
+                <p className="text-text-muted dark:text-[#6B7280] text-xs mb-1">Features coming soon</p>
+                <ul className="text-text-secondary dark:text-[#9CA3AF] text-sm space-y-1">
+                  <li>- Daily, weekly, or monthly savings</li>
+                  <li>- Flexible amount from INR 100</li>
+                  <li>- Pause or cancel anytime</li>
                 </ul>
               </div>
               <button
                 onClick={() => setShowAutoSavingsModal(false)}
-                className="w-full bg-surface-elevated text-text-primary font-medium py-3.5 px-8 rounded-xl border border-border-subtle hover:border-gold-500/30 transition-all"
+                className="w-full bg-surface-elevated dark:bg-[#242424] text-text-primary dark:text-[#F0F0F0] font-medium py-3.5 px-8 rounded-xl border border-border-subtle dark:border-[#2D2D2D] hover:border-gold-500/30 transition-all"
               >
                 Got it
               </button>

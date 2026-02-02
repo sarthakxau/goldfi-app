@@ -10,8 +10,8 @@ import { CheckCircle, Sparkles } from 'lucide-react';
 
 function ChartIllustration() {
   return (
-    <div className="bg-white border border-border-subtle rounded-2xl p-5 w-full">
-      <p className="text-xs text-text-muted mb-1">1 year annualised performance</p>
+    <div className="bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-2xl p-5 w-full">
+      <p className="text-xs text-text-muted dark:text-[#6B7280] mb-1">1 year annualised performance</p>
       <p className="text-2xl font-bold text-success mb-0.5">+96.28%</p>
       <p className="text-sm text-gold-500">+ 15% extra returns</p>
       <svg viewBox="0 0 300 120" className="w-full mt-4" fill="none">
@@ -56,20 +56,20 @@ function ChatIllustration() {
     <div className="w-full space-y-3 px-2">
       {/* Sent bubble - left aligned (sender) */}
       <div className="flex justify-start">
-        <div className="bg-gold-100 border border-gold-500/20 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[75%]">
-          <p className="text-gold-600 text-sm font-medium">happy birthday beta!</p>
+        <div className="bg-gold-100 dark:bg-gold-500/10 border border-gold-500/20 dark:border-gold-500/30 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[75%]">
+          <p className="text-gold-600 dark:text-gold-400 text-sm font-medium">happy birthday beta!</p>
         </div>
       </div>
       {/* Notification bubble - left aligned */}
       <div className="flex justify-start">
-        <div className="bg-success-light border border-success/20 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[80%]">
+        <div className="bg-success-light dark:bg-success/10 border border-success/20 dark:border-success/30 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[80%]">
           <p className="text-success text-sm font-medium">sent you 0.3g gold<br />(INR 4878.6) on tola</p>
         </div>
       </div>
       {/* Reply bubble - right aligned */}
       <div className="flex justify-end">
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[75%]">
-          <p className="text-blue-600 text-sm font-medium">omggg thanku appa</p>
+        <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[75%]">
+          <p className="text-blue-600 dark:text-blue-400 text-sm font-medium">omggg thanku appa</p>
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ function MapIllustration() {
   return (
     <div className="w-full relative">
       {/* Map background */}
-      <div className="bg-[#7DB4D8] rounded-2xl overflow-hidden relative" style={{ aspectRatio: '4/3' }}>
+      <div className="bg-[#7DB4D8] dark:bg-[#3A6B8A] rounded-2xl overflow-hidden relative" style={{ aspectRatio: '4/3' }}>
         {/* Road grid */}
         <svg viewBox="0 0 300 225" className="w-full h-full absolute inset-0" fill="none">
           {/* Background blocks (buildings) */}
@@ -102,10 +102,10 @@ function MapIllustration() {
           </g>
         </svg>
         {/* Jeweller card overlay */}
-        <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-sm rounded-xl p-3 border border-border-subtle">
+        <div className="absolute bottom-3 left-3 right-3 bg-white/95 dark:bg-[#1A1A1A]/95 backdrop-blur-sm rounded-xl p-3 border border-border-subtle dark:border-[#2D2D2D]">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <p className="text-text-primary text-sm font-semibold">manohar lal jewellers</p>
+              <p className="text-text-primary dark:text-[#F0F0F0] text-sm font-semibold">manohar lal jewellers</p>
               <div className="flex items-center gap-1 mt-0.5">
                 <div className="flex">
                   {[1, 2, 3, 4].map((i) => (
@@ -113,19 +113,19 @@ function MapIllustration() {
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   ))}
-                  <svg className="size-3 text-text-muted" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="size-3 text-text-muted dark:text-[#6B7280]" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 </div>
-                <span className="text-xs text-text-muted ml-1">1.3km away</span>
+                <span className="text-xs text-text-muted dark:text-[#6B7280] ml-1">1.3km away</span>
               </div>
             </div>
           </div>
           <div className="flex gap-2">
-            <div className="flex-1 bg-gold-100 border border-gold-500/20 rounded-lg py-1.5 text-center text-xs font-semibold text-gold-500">
+            <div className="flex-1 bg-gold-100 dark:bg-gold-500/10 border border-gold-500/20 dark:border-gold-500/30 rounded-lg py-1.5 text-center text-xs font-semibold text-gold-500">
               redeem
             </div>
-            <div className="flex-1 bg-surface-elevated border border-border-subtle rounded-lg py-1.5 text-center text-xs font-semibold text-text-secondary">
+            <div className="flex-1 bg-surface-elevated dark:bg-[#242424] border border-border-subtle dark:border-[#2D2D2D] rounded-lg py-1.5 text-center text-xs font-semibold text-text-secondary dark:text-[#9CA3AF]">
               directions
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-surface flex flex-col overflow-hidden">
+    <div className="w-full min-h-screen bg-surface dark:bg-[#0F0F0F] flex flex-col overflow-hidden">
       {/* Slide Indicators */}
       <div className="flex items-center justify-center gap-2 pt-6 pb-4 relative z-10">
         {Array.from({ length: slideCount }).map((_, i) => (
@@ -240,7 +240,7 @@ export default function LoginPage() {
                 </div>
                 <h1 className="text-4xl font-bold text-gold-500 tracking-tight">tola</h1>
               </div>
-              <p className="text-text-secondary text-sm tracking-wide">
+              <p className="text-text-secondary dark:text-[#9CA3AF] text-sm tracking-wide">
                 invest in gold with <span className="text-success font-semibold">ZERO</span> fees
               </p>
             </div>
@@ -250,10 +250,10 @@ export default function LoginPage() {
             <div className="py-4 space-y-3">
               {features.map((feature) => (
                 <div key={feature} className="flex items-center gap-3">
-                  <div className="size-6 rounded-full bg-success-light flex items-center justify-center flex-shrink-0">
+                  <div className="size-6 rounded-full bg-success-light dark:bg-success/10 flex items-center justify-center flex-shrink-0">
                     <CheckCircle className="size-4 text-success" />
                   </div>
-                  <span className="text-text-secondary text-sm">{feature}</span>
+                  <span className="text-text-secondary dark:text-[#9CA3AF] text-sm">{feature}</span>
                 </div>
               ))}
             </div>
@@ -263,7 +263,7 @@ export default function LoginPage() {
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
             <div className="flex flex-col items-center pt-4 pb-6">
               <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">tola</h1>
-              <p className="text-text-primary text-lg font-bold text-center leading-snug">
+              <p className="text-text-primary dark:text-[#F0F0F0] text-lg font-bold text-center leading-snug">
                 earn up to 15% returns<br />on your gold holdings
               </p>
             </div>
@@ -276,7 +276,7 @@ export default function LoginPage() {
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
             <div className="flex flex-col items-center pt-4 pb-6">
               <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">tola</h1>
-              <p className="text-text-primary text-lg font-bold text-center leading-snug">
+              <p className="text-text-primary dark:text-[#F0F0F0] text-lg font-bold text-center leading-snug">
                 send and receive gold<br />from anyone
               </p>
             </div>
@@ -289,7 +289,7 @@ export default function LoginPage() {
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
             <div className="flex flex-col items-center pt-4 pb-6">
               <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">tola</h1>
-              <p className="text-text-primary text-lg font-bold text-center leading-snug">
+              <p className="text-text-primary dark:text-[#F0F0F0] text-lg font-bold text-center leading-snug">
                 redeem your gold<br />at 1000+ jewellers across india
               </p>
             </div>
@@ -302,7 +302,7 @@ export default function LoginPage() {
 
       {/* Fixed CTA Section */}
       <div className="px-6 pt-4 pb-8 mb-6 safe-area-bottom relative z-10">
-        <p className="text-center text-text-muted text-xs mb-4 tracking-wide">
+        <p className="text-center text-text-muted dark:text-[#6B7280] text-xs mb-4 tracking-wide">
           signing up takes just a minute
         </p>
         <button
@@ -313,7 +313,7 @@ export default function LoginPage() {
         </button>
         <button
           onClick={login}
-          className="w-full bg-white border border-border-subtle text-text-secondary font-medium py-4 px-6 rounded-full hover:border-gold-500/30 hover:text-text-primary transition-all active:scale-[0.98]"
+          className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-medium py-4 px-6 rounded-full hover:border-gold-500/30 hover:text-text-primary dark:hover:text-[#F0F0F0] transition-all active:scale-[0.98]"
         >
           already have an account? log in
         </button>

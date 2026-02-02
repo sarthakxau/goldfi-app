@@ -70,15 +70,15 @@ export default function TransactionsPage() {
         <>
           {/* All Transactions Header */}
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-text-primary">All transactions</h2>
-            <button className="p-2 text-text-muted hover:text-gold-500 rounded-lg hover:bg-surface-elevated transition-colors">
+            <h2 className="text-lg font-bold text-text-primary dark:text-[#F0F0F0]">All transactions</h2>
+            <button className="p-2 text-text-muted dark:text-[#6B7280] hover:text-gold-500 rounded-lg hover:bg-surface-elevated dark:hover:bg-[#242424] transition-colors">
               <SlidersHorizontal className="size-5" />
             </button>
           </div>
 
           {/* Search */}
           <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-text-muted" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-text-muted dark:text-[#6B7280]" />
             <input
               type="text"
               placeholder="Search"
@@ -106,12 +106,12 @@ export default function TransactionsPage() {
           ) : transactions.length === 0 ? (
             <div className="text-center py-12">
               <div className="flex justify-center mb-4">
-                <div className="p-4 bg-surface-elevated rounded-full">
-                  <ClipboardList className="size-12 text-text-muted" />
+                <div className="p-4 bg-surface-elevated dark:bg-[#242424] rounded-full">
+                  <ClipboardList className="size-12 text-text-muted dark:text-[#6B7280]" />
                 </div>
               </div>
-              <p className="text-text-secondary font-medium">No transactions yet</p>
-              <p className="text-sm text-text-muted mt-1">
+              <p className="text-text-secondary dark:text-[#9CA3AF] font-medium">No transactions yet</p>
+              <p className="text-sm text-text-muted dark:text-[#6B7280] mt-1">
                 Your buy and sell history will appear here
               </p>
             </div>
@@ -125,11 +125,11 @@ export default function TransactionsPage() {
       ) : (
         /* Statistics View */
         <div className="text-center py-12">
-          <div className="p-4 bg-surface-elevated rounded-full inline-block mb-4">
-            <ClipboardList className="size-12 text-text-muted" />
+          <div className="p-4 bg-surface-elevated dark:bg-[#242424] rounded-full inline-block mb-4">
+            <ClipboardList className="size-12 text-text-muted dark:text-[#6B7280]" />
           </div>
-          <p className="text-text-secondary font-medium">Statistics coming soon</p>
-          <p className="text-sm text-text-muted mt-1">
+          <p className="text-text-secondary dark:text-[#9CA3AF] font-medium">Statistics coming soon</p>
+          <p className="text-sm text-text-muted dark:text-[#6B7280] mt-1">
             View your investment analytics and insights
           </p>
         </div>

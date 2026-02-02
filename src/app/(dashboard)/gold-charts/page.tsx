@@ -13,7 +13,7 @@ const TradingViewWidget = dynamic(
 
 function ChartSkeleton() {
   return (
-    <div className="w-full h-full bg-white rounded-xl animate-pulse flex items-center justify-center">
+    <div className="w-full h-full bg-white dark:bg-[#1A1A1A] rounded-xl animate-pulse flex items-center justify-center">
       <div className="size-8 border-2 border-gold-500/30 border-t-gold-500 rounded-full animate-spin" />
     </div>
   );
@@ -38,11 +38,11 @@ export default function GoldChartsPage() {
       <div className="flex items-center justify-between mb-4">
         <Link
           href="/"
-          className="p-2 -ml-2 text-text-muted hover:text-text-primary transition-colors"
+          className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors"
         >
           <ArrowLeft className="size-6" />
         </Link>
-        <h1 className="text-xl font-bold text-text-primary">live charts</h1>
+        <h1 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">live charts</h1>
         <div className="w-10" /> {/* Spacer for alignment */}
       </div>
 
@@ -55,8 +55,8 @@ export default function GoldChartsPage() {
             className={cn(
               'flex-1 py-2.5 px-3 rounded-xl text-sm font-medium transition-all',
               activeTab === tab.id
-                ? 'bg-gold-100 text-gold-500 border border-gold-500/30'
-                : 'bg-white text-text-secondary border border-border-subtle hover:border-gold-500/20 hover:text-text-primary'
+                ? 'bg-gold-100 dark:bg-gold-500/10 text-gold-500 border border-gold-500/30'
+                : 'bg-white dark:bg-[#1A1A1A] text-text-secondary dark:text-[#9CA3AF] border border-border-subtle dark:border-[#2D2D2D] hover:border-gold-500/20 hover:text-text-primary dark:hover:text-[#F0F0F0]'
             )}
           >
             {tab.label}
@@ -65,7 +65,7 @@ export default function GoldChartsPage() {
       </div>
 
       {/* Chart Container */}
-      <div className="flex-1 rounded-none overflow-hidden border border-border-subtle bg-white relative">
+      <div className="flex-1 rounded-none overflow-hidden border border-border-subtle dark:border-[#2D2D2D] bg-white dark:bg-[#1A1A1A] relative">
         <div className="absolute inset-0">
           <TradingViewWidget
             key={currentTab.id}
@@ -75,7 +75,7 @@ export default function GoldChartsPage() {
       </div>
 
       {/* Info Footer */}
-      <p className="text-center text-xs text-text-muted mt-3 shrink-0">
+      <p className="text-center text-xs text-text-muted dark:text-[#6B7280] mt-3 shrink-0">
         Charts powered by TradingView
       </p>
     </div>
