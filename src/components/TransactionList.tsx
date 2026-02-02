@@ -33,7 +33,7 @@ function groupByDate(transactions: Transaction[]) {
   transactions.forEach((tx) => {
     const txDate = new Date(tx.createdAt).toDateString();
     let label: string;
-    
+
     if (txDate === today) {
       label = 'Today';
     } else if (txDate === yesterday) {
@@ -65,7 +65,7 @@ export function TransactionList({
     <div className="space-y-6">
       {Object.entries(groupedTransactions).map(([dateLabel, txs]) => (
         <div key={dateLabel}>
-          <h3 className="text-sm font-medium text-cream-muted/40 mb-3 font-serif">{dateLabel}</h3>
+          <h3 className="text-sm font-medium text-text-muted dark:text-[#6B7280] mb-3">{dateLabel}</h3>
           <div className="space-y-3">
             {txs.map((tx) => {
               const xautGrams = tx.xautAmount
@@ -78,7 +78,7 @@ export function TransactionList({
                   className={cn(
                     'card p-4 transition-all duration-300',
                     tx.id === highlightId
-                      ? 'border-gold-500 ring-1 ring-gold-500/30 shadow-gold-glow'
+                      ? 'border-gold-500 ring-1 ring-gold-500/30'
                       : ''
                   )}
                 >
@@ -86,37 +86,37 @@ export function TransactionList({
                     <div className="flex items-center gap-3">
                       {/* Gold Coin Icon */}
                       <div className="gold-coin">
-                        <span className="text-sm font-bold">₹</span>
+                        <span className="text-sm font-bold">&#8377;</span>
                       </div>
                       <div>
-                        <p className="font-semibold text-cream capitalize">
+                        <p className="font-semibold text-text-primary dark:text-[#F0F0F0] capitalize">
                           {tx.type === 'buy' ? 'Purchased' : 'Sold'}
                         </p>
                         <span className={cn('badge', statusColors[tx.status as keyof typeof statusColors])}>
-                          • {statusLabels[tx.status as keyof typeof statusLabels]}
+                          &bull; {statusLabels[tx.status as keyof typeof statusLabels]}
                         </span>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className={cn(
-                        'font-serif tabular-nums text-lg',
-                        tx.type === 'buy' ? 'text-cream' : 'text-success'
+                        'font-bold tabular-nums text-lg',
+                        tx.type === 'buy' ? 'text-text-primary dark:text-[#F0F0F0]' : 'text-success'
                       )}>
                         {tx.type === 'buy' ? '+' : '-'}{formatINR(tx.inrAmount || 0)}
                       </p>
-                      <p className="text-sm text-cream-muted/40 tabular-nums">
+                      <p className="text-sm text-text-muted dark:text-[#6B7280] tabular-nums">
                         {formatGrams(xautGrams)}
                       </p>
                     </div>
                   </div>
 
                   {tx.blockchainTxHash && (
-                    <div className="mt-3 pt-3 border-t border-border-subtle">
+                    <div className="mt-3 pt-3 border-t border-border-subtle dark:border-[#2D2D2D]">
                       <a
                         href={`https://arbiscan.io/tx/${tx.blockchainTxHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-gold-400 hover:text-gold-300 inline-flex items-center gap-1"
+                        className="text-xs text-gold-500 hover:text-gold-400 inline-flex items-center gap-1"
                       >
                         View on Arbiscan <ExternalLink className="size-3" />
                       </a>
@@ -124,7 +124,7 @@ export function TransactionList({
                   )}
 
                   {tx.status === 'failed' && tx.errorMessage && (
-                    <div className="mt-3 pt-3 border-t border-border-subtle">
+                    <div className="mt-3 pt-3 border-t border-border-subtle dark:border-[#2D2D2D]">
                       <p className="text-xs text-error">{tx.errorMessage}</p>
                     </div>
                   )}

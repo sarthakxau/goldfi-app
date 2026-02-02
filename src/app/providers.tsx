@@ -3,6 +3,33 @@
 import { PrivyProvider } from '@privy-io/react-auth';
 import { arbitrum } from 'viem/chains';
 import { useEffect, useState } from 'react';
+import { ThemeProvider, useTheme } from '@/lib/theme';
+
+function PrivyWrapper({ children }: { children: React.ReactNode }) {
+  const { resolvedTheme } = useTheme();
+
+  return (
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'your-privy-app-id'}
+      config={{
+        loginMethods: ['email'],
+        appearance: {
+          theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+          accentColor: '#B8860B',
+          logo: '/icon-192x192.png',
+          showWalletLoginFirst: false,
+        },
+        embeddedWallets: {
+          createOnLogin: 'users-without-wallets',
+        },
+        defaultChain: arbitrum,
+        supportedChains: [arbitrum],
+      }}
+    >
+      {children}
+    </PrivyProvider>
+  );
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -21,24 +48,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'your-privy-app-id'}
-      config={{
-        loginMethods: ['email'],
-        appearance: {
-          theme: 'light',
-          accentColor: '#F59E0B',
-          logo: '/icon-192x192.png',
-          showWalletLoginFirst: false,
-        },
-        embeddedWallets: {
-          createOnLogin: 'users-without-wallets',
-        },
-        defaultChain: arbitrum,
-        supportedChains: [arbitrum],
-      }}
-    >
-      {children}
-    </PrivyProvider>
+    <ThemeProvider>
+      <PrivyWrapper>{children}</PrivyWrapper>
+    </ThemeProvider>
   );
 }
