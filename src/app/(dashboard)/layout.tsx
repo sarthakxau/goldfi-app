@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, getAccessToken } from '@privy-io/react-auth';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { ready, authenticated, user } = usePrivy();
+  const hasSyncedRef = useRef(false);
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -22,11 +23,45 @@ export default function DashboardLayout({
     }
   }, [ready, authenticated]);
 
+  // Sync user to database when authenticated
   useEffect(() => {
-    if (user?.wallet?.address) {
-      console.log('Connected wallet:', user.wallet.address);
+    async function syncUser() {
+      if (!ready || !authenticated || !user?.wallet?.address || hasSyncedRef.current) {
+        return;
+      }
+
+      try {
+        hasSyncedRef.current = true;
+        const token = await getAccessToken();
+        
+        const res = await fetch('/api/auth/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            walletAddress: user.wallet.address,
+            email: user.email?.address || null,
+          }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          console.log('User synced to database:', data.data);
+        } else {
+          console.error('Failed to sync user:', data.error);
+          // Reset flag to allow retry on next mount
+          hasSyncedRef.current = false;
+        }
+      } catch (error) {
+        console.error('Error syncing user:', error);
+        hasSyncedRef.current = false;
+      }
     }
-  }, [user?.wallet?.address]);
+
+    syncUser();
+  }, [ready, authenticated, user?.wallet?.address, user?.email?.address]);
 
   if (!ready || !authenticated) {
     return (

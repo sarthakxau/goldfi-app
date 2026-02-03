@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import supabase from '@/lib/supabase';
 import { TX_STATUS } from '@/lib/constants';
 import { swapUsdtToXaut, swapXautToUsdt, transferXaut } from './dexService';
 import { createOnmetaPayout } from './onmetaService';
@@ -7,12 +7,14 @@ import Decimal from 'decimal.js';
 
 // Process a completed buy payment
 export async function processBuyTransaction(transactionId: string): Promise<void> {
-  const transaction = await prisma.transaction.findUnique({
-    where: { id: transactionId },
-    include: { user: true },
-  });
+  // Fetch transaction with user
+  const { data: transaction, error: txError } = await supabase
+    .from('transactions')
+    .select('*, users(*)')
+    .eq('id', transactionId)
+    .single();
 
-  if (!transaction) {
+  if (txError || !transaction) {
     throw new Error('Transaction not found');
   }
 
@@ -20,10 +22,15 @@ export async function processBuyTransaction(transactionId: string): Promise<void
     throw new Error('Transaction is not in processing state');
   }
 
+  const user = transaction.users;
+  if (!user) {
+    throw new Error('User not found for transaction');
+  }
+
   try {
     // 1. Swap USDT to XAUT on Camelot DEX
     const usdtAmount = parseUnits(
-      new Decimal(transaction.usdtAmount || 0).toString(),
+      new Decimal(transaction.usdt_amount || 0).toString(),
       6
     );
 
@@ -37,71 +44,68 @@ export async function processBuyTransaction(transactionId: string): Promise<void
 
     // 2. Transfer XAUT to user's wallet
     const xautAmount = parseUnits(
-      new Decimal(transaction.xautAmount || 0).toString(),
+      new Decimal(transaction.xaut_amount || 0).toString(),
       6
     );
 
-    const transferTxHash = await transferXaut(xautAmount, transaction.user.walletAddress);
+    const transferTxHash = await transferXaut(xautAmount, user.wallet_address);
 
-    // 3. Update transaction and holdings
-    await prisma.$transaction(async (tx) => {
-      // Update transaction
-      await tx.transaction.update({
-        where: { id: transactionId },
-        data: {
-          status: TX_STATUS.COMPLETED,
-          dexSwapTxHash: swapTxHash,
-          blockchainTxHash: transferTxHash,
-          completedAt: new Date(),
-        },
+    // 3. Update transaction
+    await supabase
+      .from('transactions')
+      .update({
+        status: TX_STATUS.COMPLETED,
+        dex_swap_tx_hash: swapTxHash,
+        blockchain_tx_hash: transferTxHash,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', transactionId);
+
+    // 4. Update holdings
+    const { data: holding } = await supabase
+      .from('holdings')
+      .select('*')
+      .eq('user_id', transaction.user_id)
+      .single();
+
+    const txXautAmount = new Decimal(transaction.xaut_amount || 0);
+    const txInrAmount = new Decimal(transaction.inr_amount || 0);
+
+    if (holding) {
+      const currentAmount = new Decimal(holding.xaut_amount || 0);
+      const currentInvested = new Decimal(holding.total_invested_inr || 0);
+      const newAmount = currentAmount.plus(txXautAmount);
+      const newInvested = currentInvested.plus(txInrAmount);
+      const newAvgPrice = newInvested.dividedBy(newAmount);
+
+      await supabase
+        .from('holdings')
+        .update({
+          xaut_amount: newAmount.toNumber(),
+          total_invested_inr: newInvested.toNumber(),
+          avg_buy_price_inr: newAvgPrice.toNumber(),
+        })
+        .eq('user_id', transaction.user_id);
+    } else {
+      await supabase.from('holdings').insert({
+        user_id: transaction.user_id,
+        xaut_amount: txXautAmount.toNumber(),
+        total_invested_inr: txInrAmount.toNumber(),
+        avg_buy_price_inr: new Decimal(transaction.gold_price_inr || 0).toNumber(),
       });
-
-      // Update holdings
-      const holding = await tx.holding.findUnique({
-        where: { userId: transaction.userId },
-      });
-
-      const txXautAmount = new Decimal(transaction.xautAmount || 0);
-      const txInrAmount = new Decimal(transaction.inrAmount || 0);
-
-      if (holding) {
-        const currentAmount = new Decimal(holding.xautAmount);
-        const currentInvested = new Decimal(holding.totalInvestedInr);
-        const newAmount = currentAmount.plus(txXautAmount);
-        const newInvested = currentInvested.plus(txInrAmount);
-        const newAvgPrice = newInvested.dividedBy(newAmount);
-
-        await tx.holding.update({
-          where: { userId: transaction.userId },
-          data: {
-            xautAmount: newAmount.toDecimalPlaces(6),
-            totalInvestedInr: newInvested.toDecimalPlaces(2),
-            avgBuyPriceInr: newAvgPrice.toDecimalPlaces(2),
-          },
-        });
-      } else {
-        await tx.holding.create({
-          data: {
-            userId: transaction.userId,
-            xautAmount: txXautAmount.toDecimalPlaces(6),
-            totalInvestedInr: txInrAmount.toDecimalPlaces(2),
-            avgBuyPriceInr: new Decimal(transaction.goldPriceInr || 0).toDecimalPlaces(2),
-          },
-        });
-      }
-    });
+    }
 
     console.log(`Buy transaction ${transactionId} completed successfully`);
   } catch (error) {
     console.error(`Buy transaction ${transactionId} failed:`, error);
 
-    await prisma.transaction.update({
-      where: { id: transactionId },
-      data: {
+    await supabase
+      .from('transactions')
+      .update({
         status: TX_STATUS.FAILED,
-        errorMessage: error instanceof Error ? error.message : 'Transaction processing failed',
-      },
-    });
+        error_message: error instanceof Error ? error.message : 'Transaction processing failed',
+      })
+      .eq('id', transactionId);
 
     throw error;
   }
@@ -109,12 +113,14 @@ export async function processBuyTransaction(transactionId: string): Promise<void
 
 // Process a sell transaction after user transfers XAUT
 export async function processSellTransaction(transactionId: string): Promise<void> {
-  const transaction = await prisma.transaction.findUnique({
-    where: { id: transactionId },
-    include: { user: true },
-  });
+  // Fetch transaction with user
+  const { data: transaction, error: txError } = await supabase
+    .from('transactions')
+    .select('*, users(*)')
+    .eq('id', transactionId)
+    .single();
 
-  if (!transaction) {
+  if (txError || !transaction) {
     throw new Error('Transaction not found');
   }
 
@@ -122,10 +128,15 @@ export async function processSellTransaction(transactionId: string): Promise<voi
     throw new Error('Transaction is not in processing state');
   }
 
+  const user = transaction.users;
+  if (!user) {
+    throw new Error('User not found for transaction');
+  }
+
   try {
     // 1. Swap XAUT to USDT on Camelot DEX
     const xautAmount = parseUnits(
-      new Decimal(transaction.xautAmount || 0).toString(),
+      new Decimal(transaction.xaut_amount || 0).toString(),
       6
     );
 
@@ -138,9 +149,9 @@ export async function processSellTransaction(transactionId: string): Promise<voi
 
     // 2. Create Onmeta payout order (USDT -> INR to user's bank)
     const payoutResult = await createOnmetaPayout({
-      amount: new Decimal(transaction.usdtAmount || 0).toNumber(),
+      amount: new Decimal(transaction.usdt_amount || 0).toNumber(),
       currency: 'USDT',
-      bankAccountId: transaction.user.id, // In production, use actual bank account ID
+      bankAccountId: user.id, // In production, use actual bank account ID
       orderId: transaction.id,
     });
 
@@ -148,58 +159,57 @@ export async function processSellTransaction(transactionId: string): Promise<voi
       throw new Error(payoutResult.error || 'Failed to create payout');
     }
 
-    // 3. Update transaction and holdings
-    await prisma.$transaction(async (tx) => {
-      // Update transaction
-      await tx.transaction.update({
-        where: { id: transactionId },
-        data: {
-          status: TX_STATUS.COMPLETED,
-          dexSwapTxHash: swapTxHash,
-          onmetaOrderId: payoutResult.orderId,
-          completedAt: new Date(),
-        },
-      });
+    // 3. Update transaction
+    await supabase
+      .from('transactions')
+      .update({
+        status: TX_STATUS.COMPLETED,
+        dex_swap_tx_hash: swapTxHash,
+        onmeta_order_id: payoutResult.orderId,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', transactionId);
 
-      // Update holdings
-      const holding = await tx.holding.findUnique({
-        where: { userId: transaction.userId },
-      });
+    // 4. Update holdings
+    const { data: holding } = await supabase
+      .from('holdings')
+      .select('*')
+      .eq('user_id', transaction.user_id)
+      .single();
 
-      if (holding) {
-        const currentAmount = new Decimal(holding.xautAmount);
-        const currentInvested = new Decimal(holding.totalInvestedInr);
-        const txXautAmount = new Decimal(transaction.xautAmount || 0);
+    if (holding) {
+      const currentAmount = new Decimal(holding.xaut_amount || 0);
+      const currentInvested = new Decimal(holding.total_invested_inr || 0);
+      const txXautAmount = new Decimal(transaction.xaut_amount || 0);
 
-        const newAmount = currentAmount.minus(txXautAmount);
-        const soldProportion = txXautAmount.dividedBy(currentAmount);
-        const investedReduction = currentInvested.times(soldProportion);
-        const newInvested = currentInvested.minus(investedReduction);
+      const newAmount = currentAmount.minus(txXautAmount);
+      const soldProportion = txXautAmount.dividedBy(currentAmount);
+      const investedReduction = currentInvested.times(soldProportion);
+      const newInvested = currentInvested.minus(investedReduction);
 
-        await tx.holding.update({
-          where: { userId: transaction.userId },
-          data: {
-            xautAmount: newAmount.toDecimalPlaces(6),
-            totalInvestedInr: newInvested.toDecimalPlaces(2),
-            avgBuyPriceInr: newAmount.isZero()
-              ? null
-              : newInvested.dividedBy(newAmount).toDecimalPlaces(2),
-          },
-        });
-      }
-    });
+      await supabase
+        .from('holdings')
+        .update({
+          xaut_amount: newAmount.toNumber(),
+          total_invested_inr: newInvested.toNumber(),
+          avg_buy_price_inr: newAmount.isZero()
+            ? null
+            : newInvested.dividedBy(newAmount).toNumber(),
+        })
+        .eq('user_id', transaction.user_id);
+    }
 
     console.log(`Sell transaction ${transactionId} completed successfully`);
   } catch (error) {
     console.error(`Sell transaction ${transactionId} failed:`, error);
 
-    await prisma.transaction.update({
-      where: { id: transactionId },
-      data: {
+    await supabase
+      .from('transactions')
+      .update({
         status: TX_STATUS.FAILED,
-        errorMessage: error instanceof Error ? error.message : 'Transaction processing failed',
-      },
-    });
+        error_message: error instanceof Error ? error.message : 'Transaction processing failed',
+      })
+      .eq('id', transactionId);
 
     throw error;
   }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets, getAccessToken } from '@privy-io/react-auth';
 import { parseUnits, encodeFunctionData } from 'viem';
 import {
   clientPublicClient,
@@ -270,9 +270,13 @@ export function useSellSwap(): UseSellSwapReturn {
 
       // Step 4: Record transaction on server
       console.log('[useSellSwap] Step 4: Recording transaction...');
+      const token = await getAccessToken();
       const recordRes = await fetch('/api/sell/record', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           xautAmount,
           usdtAmount: quote.expectedUsdt,

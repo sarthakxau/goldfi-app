@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import supabase from '@/lib/supabase';
+import { verifyAuth } from '@/lib/auth';
 import { getGoldPrice } from '@/services/priceOracle';
 import { publicClient, ERC20_ABI } from '@/lib/viem';
 import { CONTRACTS, XAUT_DECIMALS, GRAMS_PER_OUNCE } from '@/lib/constants';
 import Decimal from 'decimal.js';
-
-async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const privyToken = cookieStore.get('privy-token');
-  if (!privyToken) return null;
-  return { privyUserId: 'dev-user' };
-}
 
 async function getOnChainBalance(walletAddress: string): Promise<Decimal> {
   try {
@@ -63,7 +56,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Otherwise, use database-backed authentication
-    const authUser = await getCurrentUser();
+    const authUser = await verifyAuth();
 
     if (!authUser) {
       return NextResponse.json(

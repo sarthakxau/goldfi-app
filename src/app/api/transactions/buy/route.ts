@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import supabase from '@/lib/supabase';
+import { verifyAuth } from '@/lib/auth';
 import { getGoldPrice } from '@/services/priceOracle';
 import { TX_STATUS } from '@/lib/constants';
 import Decimal from 'decimal.js';
 
-async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const privyToken = cookieStore.get('privy-token');
-  if (!privyToken) return null;
-  return { privyUserId: 'dev-user' };
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const authUser = await getCurrentUser();
+    const authUser = await verifyAuth();
 
     if (!authUser) {
       return NextResponse.json(
