@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import supabase from '@/lib/supabase';
 import { TX_STATUS } from '@/lib/constants';
 
 // Verify webhook signature (implement based on Onmeta docs)
@@ -43,12 +43,13 @@ export async function POST(request: NextRequest) {
     console.log('Onmeta webhook received:', payload);
 
     // Find transaction by Onmeta order ID
-    const transaction = await prisma.transaction.findFirst({
-      where: { onmetaOrderId: payload.orderId },
-      include: { user: true },
-    });
+    const { data: transaction, error: txError } = await supabase
+      .from('transactions')
+      .select('*, users(*)')
+      .eq('onmeta_order_id', payload.orderId)
+      .single();
 
-    if (!transaction) {
+    if (txError || !transaction) {
       console.error('Transaction not found for order:', payload.orderId);
       return NextResponse.json(
         { error: 'Transaction not found' },
@@ -65,12 +66,10 @@ export async function POST(request: NextRequest) {
         // 3. Update holdings
         // 4. Update transaction status
 
-        await prisma.transaction.update({
-          where: { id: transaction.id },
-          data: {
-            status: TX_STATUS.PROCESSING,
-          },
-        });
+        await supabase
+          .from('transactions')
+          .update({ status: TX_STATUS.PROCESSING })
+          .eq('id', transaction.id);
 
         // TODO: Trigger DEX swap and token transfer
         // This should be done in a background job for reliability
@@ -78,13 +77,13 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'failed':
-        await prisma.transaction.update({
-          where: { id: transaction.id },
-          data: {
+        await supabase
+          .from('transactions')
+          .update({
             status: TX_STATUS.FAILED,
-            errorMessage: 'Payment failed',
-          },
-        });
+            error_message: 'Payment failed',
+          })
+          .eq('id', transaction.id);
         break;
 
       case 'pending':

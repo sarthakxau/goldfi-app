@@ -1,6 +1,6 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, getAccessToken } from '@privy-io/react-auth';
 import { useEffect, useCallback, useState } from 'react';
 import { useAppStore } from '@/store';
 import { formatINR, formatGrams } from '@/lib/utils';
@@ -30,6 +30,7 @@ export default function DashboardPage() {
   const fetchPrice = useCallback(async () => {
     try {
       setPriceLoading(true);
+      // Price endpoint is public, no auth needed
       const res = await fetch('/api/prices');
       const data = await res.json();
       if (data.success) {
@@ -51,7 +52,12 @@ export default function DashboardPage() {
       const url = walletAddress
         ? `/api/holdings?walletAddress=${encodeURIComponent(walletAddress)}`
         : '/api/holdings';
-      const res = await fetch(url);
+      
+      // Include auth token for authenticated holdings fetch
+      const token = await getAccessToken();
+      const res = await fetch(url, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
       const data = await res.json();
       if (data.success) {
         setHolding(data.data);

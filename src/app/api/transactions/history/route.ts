@@ -1,17 +1,10 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import supabase from '@/lib/supabase';
-
-async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const privyToken = cookieStore.get('privy-token');
-  if (!privyToken) return null;
-  return { privyUserId: 'dev-user' };
-}
+import { verifyAuth } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const authUser = await getCurrentUser();
+    const authUser = await verifyAuth();
 
     if (!authUser) {
       return NextResponse.json(

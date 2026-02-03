@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { getAccessToken } from '@privy-io/react-auth';
 import { useAppStore } from '@/store';
 import { TransactionList } from '@/components/TransactionList';
 import { ClipboardList, Search, SlidersHorizontal } from 'lucide-react';
@@ -22,7 +23,10 @@ export default function TransactionsPage() {
   const fetchTransactions = useCallback(async () => {
     try {
       setTransactionsLoading(true);
-      const res = await fetch('/api/transactions/history');
+      const token = await getAccessToken();
+      const res = await fetch('/api/transactions/history', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
       const data = await res.json();
       if (data.success) {
         setTransactions(data.data);
