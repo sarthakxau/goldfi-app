@@ -1,14 +1,15 @@
-import { verifyAccessToken } from '@privy-io/node';
-import { createRemoteJWKSet } from 'jose';
+import { PrivyClient } from '@privy-io/node';
 import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
 
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID!;
+const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET!;
 
-// Create JWKS key fetcher for Privy (caches keys automatically)
-const privyJWKS = createRemoteJWKSet(
-  new URL(`https://auth.privy.io/api/v1/apps/${PRIVY_APP_ID}/.well-known/jwks.json`)
-);
+// Create a singleton PrivyClient instance
+const privy = new PrivyClient({
+  appId: PRIVY_APP_ID,
+  appSecret: PRIVY_APP_SECRET,
+});
 
 export interface AuthUser {
   privyUserId: string;
@@ -37,11 +38,8 @@ export async function verifyAuth(): Promise<AuthUser | null> {
       return null;
     }
 
-    const verifiedClaims = await verifyAccessToken({
-      access_token: accessToken,
-      app_id: PRIVY_APP_ID,
-      verification_key: privyJWKS,
-    });
+    // Use PrivyClient to verify the access token
+    const verifiedClaims = await privy.utils().auth().verifyAccessToken(accessToken);
 
     return { privyUserId: verifiedClaims.user_id };
   } catch (error) {
