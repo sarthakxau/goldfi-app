@@ -3,13 +3,43 @@ import './globals.css';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: 'tola - Gold Savings',
-  description: 'Invest in gold with zero fees',
+  metadataBase: new URL('https://tola-one.vercel.app'),
+  title: {
+    template: '%s | tola',
+    default: 'tola - Digital Gold Savings',
+  },
+  description: 'Save in digital gold with zero fees. Buy and sell gold in grams with instant settlements on tola.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/icon-192x192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'tola',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    url: '/',
+    siteName: 'tola',
+    title: 'tola - Digital Gold Savings',
+    description: 'Save in digital gold with zero fees. Buy and sell gold in grams with instant settlements.',
+    images: [
+      {
+        url: '/icon-512x512.png',
+        width: 512,
+        height: 512,
+        alt: 'tola - Gold Savings',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'tola - Digital Gold Savings',
+    description: 'Save in digital gold with zero fees. Buy and sell gold in grams with instant settlements.',
+    images: ['/icon-512x512.png'],
   },
   other: {
     'mobile-web-app-capable': 'yes',
@@ -33,9 +63,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-IN" suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
