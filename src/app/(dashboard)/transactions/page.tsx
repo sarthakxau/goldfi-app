@@ -75,7 +75,7 @@ export default function TransactionsPage() {
           {/* All Transactions Header */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-text-primary dark:text-[#F0F0F0]">All transactions</h2>
-            <button className="p-2 text-text-muted dark:text-[#6B7280] hover:text-gold-500 rounded-lg hover:bg-surface-elevated dark:hover:bg-[#242424] transition-colors">
+            <button className="p-2 text-text-muted dark:text-[#6B7280] hover:text-gold-500 rounded-lg hover:bg-surface-elevated dark:hover:bg-[#242424] transition-colors" aria-label="Filter transactions">
               <SlidersHorizontal className="size-5" />
             </button>
           </div>

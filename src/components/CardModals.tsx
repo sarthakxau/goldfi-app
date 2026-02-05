@@ -92,11 +92,13 @@ interface CardMoreModalProps {
 
 export function CardMoreModal({ isOpen, onClose }: CardMoreModalProps) {
   const ActionButton = ({ icon: Icon, label, destructive = false }: { icon: React.ElementType, label: string, destructive?: boolean }) => (
-    <button className={cn(
-      "w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle dark:border-[#2D2D2D] mb-3 transition-all duration-300 active:scale-[0.98]",
-      "hover:border-gold-500/30 hover:bg-surface-elevated dark:hover:bg-[#242424]",
-      destructive && "hover:border-error/30 hover:bg-error-light dark:hover:bg-error/10"
-    )}>
+    <button 
+      aria-label={label}
+      className={cn(
+        "w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle dark:border-[#2D2D2D] mb-3 transition-all duration-300 active:scale-[0.98]",
+        "hover:border-gold-500/30 hover:bg-surface-elevated dark:hover:bg-[#242424]",
+        destructive && "hover:border-error/30 hover:bg-error-light dark:hover:bg-error/10"
+      )}>
       <div className="flex items-center gap-3">
         <div className={cn(
           "p-2 rounded-lg",

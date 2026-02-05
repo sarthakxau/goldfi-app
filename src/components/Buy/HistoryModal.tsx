@@ -105,12 +105,12 @@ export function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
                 )}
             </div>
 
-            <a href="#" className="block text-center text-sm text-text-muted dark:text-[#6B7280] mt-6 hover:text-text-secondary dark:hover:text-[#9CA3AF]">view more</a>
+            <button className="block w-full text-center text-sm text-text-muted dark:text-[#6B7280] mt-6 hover:text-text-secondary dark:hover:text-[#9CA3AF] disabled:opacity-50" disabled>view more</button>
 
             <div className="mt-8 space-y-2 text-sm text-text-secondary dark:text-[#9CA3AF]">
-                <a href="#" className="block hover:text-text-primary dark:hover:text-[#F0F0F0]">get support</a>
-                <a href="#" className="block hover:text-text-primary dark:hover:text-[#F0F0F0]">why can't i see my deposit?</a>
-                <a href="#" className="block hover:text-text-primary dark:hover:text-[#F0F0F0]">see FAQs</a>
+                <button className="block w-full text-left hover:text-text-primary dark:hover:text-[#F0F0F0] disabled:opacity-50" disabled>get support</button>
+                <button className="block w-full text-left hover:text-text-primary dark:hover:text-[#F0F0F0] disabled:opacity-50" disabled>why can't i see my deposit?</button>
+                <button className="block w-full text-left hover:text-text-primary dark:hover:text-[#F0F0F0] disabled:opacity-50" disabled>see FAQs</button>
             </div>
        </div>
     </div>,

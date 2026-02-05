@@ -100,6 +100,7 @@ export default function SellPage() {
             onClick={() => step === 'success' || step === 'error' ? handleDone() : undefined}
             disabled={step !== 'success' && step !== 'error'}
             className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] disabled:opacity-50 transition-colors"
+            aria-label="Go back to dashboard"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -216,7 +217,7 @@ export default function SellPage() {
     <div className="p-6 min-h-screen">
       {/* Header */}
       <div className="flex items-center mb-6">
-        <Link href="/" className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors">
+        <Link href="/" className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors" aria-label="Go back to dashboard">
           <ArrowLeft className="w-6 h-6" />
         </Link>
         <h1 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] ml-2">Sell Gold</h1>
@@ -251,11 +252,12 @@ export default function SellPage() {
 
       {/* Amount Input */}
       <div className="card-elevated p-6">
-        <label className="block text-sm font-medium text-text-muted dark:text-[#6B7280] mb-2">
+        <label htmlFor="grams-input" className="block text-sm font-medium text-text-muted dark:text-[#6B7280] mb-2">
           Enter amount in grams
         </label>
         <div className="relative">
           <input
+            id="grams-input"
             type="number"
             value={grams}
             onChange={(e) => setGrams(e.target.value)}
@@ -263,6 +265,8 @@ export default function SellPage() {
             max={maxGrams}
             step="0.001"
             className="w-full text-3xl font-bold pl-4 pr-10 py-4 rounded-xl"
+            aria-invalid={!!inputError}
+            aria-describedby={inputError ? "grams-error" : undefined}
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-text-muted dark:text-[#6B7280]">
             g
@@ -271,7 +275,7 @@ export default function SellPage() {
 
         {/* Input Error */}
         {inputError && (
-          <p className="text-error text-xs mt-2 flex items-center gap-1">
+          <p id="grams-error" className="text-error text-xs mt-2 flex items-center gap-1" role="alert">
             <AlertCircle className="w-3 h-3" /> {inputError}
           </p>
         )}
@@ -287,6 +291,7 @@ export default function SellPage() {
                 setGrams(value.toString());
               }}
               disabled={maxGrams === 0}
+              aria-label={`Set amount to ${pct}% of available balance`}
               className="flex-1 py-2 px-3 text-sm font-medium text-text-secondary dark:text-[#9CA3AF] bg-white dark:bg-[#1A1A1A] hover:bg-surface-elevated dark:hover:bg-[#242424] hover:text-text-primary dark:hover:text-[#F0F0F0] border border-border-subtle dark:border-[#2D2D2D] disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all"
             >
               {pct}%

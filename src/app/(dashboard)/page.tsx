@@ -151,11 +151,12 @@ export default function DashboardPage() {
 
         {/* User Profile - Right */}
         <div className="flex flex-col items-end">
-          <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30">
+          <Link href="/account" className="size-10 rounded-full overflow-hidden border-2 border-gold-500/30" aria-label="Account settings">
             <img
               src={`https://api.dicebear.com/9.x/initials/svg?seed=${user?.email?.address?.split('@')[0] || 'User'}&backgroundColor=B8860B&textColor=ffffff`}
-              alt="Profile"
+              alt=""
               className="w-full h-full object-cover"
+              role="presentation"
             />
           </Link>
         </div>
@@ -167,9 +168,9 @@ export default function DashboardPage() {
           <div className="relative z-10">
             {/* Value Display */}
             <div className="relative mb-2">
-              <h1 className="text-5xl font-bold text-text-primary dark:text-[#F0F0F0] tabular-nums tracking-tight">
+              <p className="text-5xl font-bold text-text-primary dark:text-[#F0F0F0] tabular-nums tracking-tight" aria-live="polite">
                 {getDisplayValue()}
-              </h1>
+              </p>
             </div>
 
             {/* Label + Unit Selector */}

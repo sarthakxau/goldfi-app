@@ -65,7 +65,7 @@ export function TransactionList({
     <div className="space-y-6">
       {Object.entries(groupedTransactions).map(([dateLabel, txs]) => (
         <div key={dateLabel}>
-          <h3 className="text-sm font-medium text-text-muted dark:text-[#6B7280] mb-3">{dateLabel}</h3>
+          <h2 className="text-sm font-medium text-text-muted dark:text-[#6B7280] mb-3">{dateLabel}</h2>
           <div className="space-y-3">
             {txs.map((tx) => {
               const xautGrams = tx.xautAmount
