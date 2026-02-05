@@ -234,22 +234,24 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Primary Action Buttons - Stacked */}
+      {/* Primary Action Buttons */}
       <div className="flex flex-col gap-3 mb-6">
-        <Link
-          href="/buy"
-          className="w-full bg-gold-gradient text-white font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
-        >
-          {/* <PiggyBank className="size-5" /> */}
-          <span>buy gold</span>
-        </Link>
+        {/* Buy and Sell row */}
+        <div className="flex gap-3">
+          <Link
+            href="/buy"
+            className="w-1/2 bg-gold-gradient text-white font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
+          >
+            <span>buy</span>
+          </Link>
 
-        <Link
-          href="/redeem"
-          className="w-full bg-white dark:bg-[#1A1A1A] border border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
-        >
-          <span>redeem</span>
-        </Link>
+          <Link
+            href="/redeem"
+            className="w-1/2 bg-gold-50 dark:bg-gold-500/10 border border-gold-200 dark:border-gold-500/20 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
+          >
+            <span>sell</span>
+          </Link>
+        </div>
 
         <Link
           href="/yield"
