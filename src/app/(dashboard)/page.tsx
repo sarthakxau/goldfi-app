@@ -4,7 +4,7 @@ import { usePrivy, getAccessToken } from '@privy-io/react-auth';
 import { useEffect, useCallback, useState } from 'react';
 import { useAppStore } from '@/store';
 import { formatINR, formatGrams } from '@/lib/utils';
-import { RefreshCw, PiggyBank, BadgePercent, TrendingUp, Calendar } from 'lucide-react';
+import { RefreshCw, Calendar, Info } from 'lucide-react';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
 
@@ -24,7 +24,7 @@ export default function DashboardPage() {
     setRefreshing,
   } = useAppStore();
 
-  const [viewMode, setViewMode] = useState<'grams' | 'inr' | 'scudo'>('grams');
+  const [viewMode, setViewMode] = useState<'grams' | 'inr' | 'usd' | 'scudo'>('grams');
   const [showAutoSavingsModal, setShowAutoSavingsModal] = useState(false);
 
   const fetchPrice = useCallback(async () => {
@@ -108,6 +108,10 @@ export default function DashboardPage() {
 
     if (viewMode === 'grams') return `${formatGrams(xautAmountGrams)}`;
     if (viewMode === 'inr') return formatINR(currentValueInr);
+    if (viewMode === 'usd') {
+      const usdValue = xautAmount.times(goldPrice?.priceUsd || 0).toNumber();
+      return `$${usdValue.toFixed(2)}`;
+    }
     // 1 Scudo = 1/1000 XAUT
     return `${xautAmount.times(1000).toFixed(2)} scudo`;
   };
@@ -115,6 +119,7 @@ export default function DashboardPage() {
   const goldHoldingUnits = [
     { key: 'grams', label: 'grams' },
     { key: 'inr', label: '₹' },
+    { key: 'usd', label: '$' },
     { key: 'scudo', label: 'scudo' },
   ] as const;
 
@@ -176,16 +181,26 @@ export default function DashboardPage() {
             {/* Label + Unit Selector */}
             <div className="flex items-center justify-between">
               <p className="text-text-secondary dark:text-[#9CA3AF] text-sm font-medium">my holdings</p>
-              <div className="segmented-control !p-0.5">
-                {goldHoldingUnits.map(({ key, label }) => (
-                  <button
-                    key={key}
-                    onClick={() => setViewMode(key)}
-                    className={`segmented-control-item !px-3 !py-1.5 !text-xs ${viewMode === key ? 'segmented-control-item-active' : ''}`}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <div className="segmented-control !p-0.5">
+                  {goldHoldingUnits.map(({ key, label }) => (
+                    <button
+                      key={key}
+                      onClick={() => setViewMode(key)}
+                      className={`segmented-control-item !px-3 !py-1.5 !text-xs ${viewMode === key ? 'segmented-control-item-active' : ''}`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                {/* Scudo Info Tooltip */}
+                <div className="group relative">
+                  <Info className="size-4 text-text-muted dark:text-[#6B7280] cursor-help" />
+                  <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-lg shadow-lg text-xs text-text-secondary dark:text-[#9CA3AF] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                    1 Scudo = 1/1000 XAUT (approx. 31.1 mg gold)
+                    <div className="absolute top-full right-2 w-2 h-2 bg-white dark:bg-[#1A1A1A] border-r border-b border-border-subtle dark:border-[#2D2D2D] transform rotate-45 -mt-1"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -224,15 +239,15 @@ export default function DashboardPage() {
           href="/buy"
           className="w-full bg-gold-gradient text-white font-bold py-4 rounded-2xl text-center flex items-center justify-center gap-2"
         >
-          <PiggyBank className="size-5" />
-          <span>start savings</span>
+          {/* <PiggyBank className="size-5" /> */}
+          <span>buy gold</span>
         </Link>
 
         <Link
           href="/yield"
           className="w-full bg-white dark:bg-[#1A1A1A] border border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
         >
-          <TrendingUp className="size-5" />
+          {/* <TrendingUp className="size-5" /> */}
           <span>earn up to 15% on gold</span>
         </Link>
 
@@ -240,7 +255,7 @@ export default function DashboardPage() {
           href="/sell"
           className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/30 transition-all"
         >
-          <BadgePercent className="size-5" />
+          {/* <BadgePercent className="size-5" /> */}
           <span>redeem your gold</span>
         </Link>
       </div>
