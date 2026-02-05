@@ -24,7 +24,7 @@ export default function DashboardPage() {
     setRefreshing,
   } = useAppStore();
 
-  const [viewMode, setViewMode] = useState<'grams' | 'inr' | 'usd' | 'scudo'>('grams');
+  const [viewMode, setViewMode] = useState<'grams' | 'inr' | 'usd' | 'scudo'>('inr');
   const [showAutoSavingsModal, setShowAutoSavingsModal] = useState(false);
 
   const fetchPrice = useCallback(async () => {
@@ -117,9 +117,9 @@ export default function DashboardPage() {
   };
 
   const goldHoldingUnits = [
-    { key: 'grams', label: 'grams' },
     { key: 'inr', label: '₹' },
     { key: 'usd', label: '$' },
+    { key: 'grams', label: 'grams' },
     { key: 'scudo', label: 'scudo' },
   ] as const;
 
@@ -191,7 +191,7 @@ export default function DashboardPage() {
 
             {/* Label + Unit Selector */}
             <div className="flex items-center justify-between">
-              <p className="text-text-secondary dark:text-[#9CA3AF] text-sm font-medium">my holdings</p>
+              <p className="text-gold-500 dark:text-gold-400 text-sm font-medium">my savings</p>
               <div className="segmented-control !p-0.5">
                 {goldHoldingUnits.map(({ key, label }) => (
                   <button

@@ -1,13 +1,7 @@
-'use client';
-
-import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { SellModal } from '@/components/Sell/SellModal';
 
 export default function RedeemPage() {
-  const [showSellModal, setShowSellModal] = useState(false);
-
   return (
     <div className="p-6 max-w-lg mx-auto min-h-screen">
       {/* Header */}
@@ -22,12 +16,12 @@ export default function RedeemPage() {
       <div className="space-y-6 flex flex-col items-center">
         {/* Swap to USDT */}
         <div className="w-full">
-          <button
-            onClick={() => setShowSellModal(true)}
-            className="w-full bg-success text-white font-bold text-lg py-5 rounded-2xl border border-success-dark hover:bg-success-dark active:scale-[0.98] transition-all"
+          <Link
+            href="/sell"
+            className="w-full block bg-success text-white font-bold text-lg py-5 rounded-2xl border border-success-dark hover:bg-success-dark active:scale-[0.98] transition-all text-center"
           >
             swap to USDT
-          </button>
+          </Link>
         </div>
 
         {/* Sell to Jewellers */}
@@ -40,11 +34,6 @@ export default function RedeemPage() {
           </Link>
         </div>
       </div>
-
-      <SellModal
-        isOpen={showSellModal}
-        onClose={() => setShowSellModal(false)}
-      />
     </div>
   );
 }
