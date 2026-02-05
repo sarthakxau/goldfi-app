@@ -1,0 +1,1 @@
+export const TERMS_AND_CONDITIONS = "Digital gold is backed by Tether Gold (XAUT). Prices are based on real-time market rates. Blockchain transactions are irreversible and final. Users are responsible for wallet security. Service fees may apply. Your email is used only for authentication and wallet recovery."

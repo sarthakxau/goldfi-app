@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { TolaPriceDisplay } from '@/components/TolaPrice';
 import { CheckCircle, Sparkles } from 'lucide-react';
+import { TERMS_AND_CONDITIONS } from '@/lib/copy';
 
 // --- SVG Illustrations ---
 
@@ -145,6 +146,8 @@ export default function LoginPage() {
   const { login, ready, authenticated } = usePrivy();
   const router = useRouter();
   const [activeSlide, setActiveSlide] = useState(0);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -305,8 +308,9 @@ export default function LoginPage() {
         <p className="text-center text-text-muted dark:text-[#6B7280] text-xs mb-4 tracking-wide">
           signing up takes just a minute
         </p>
+
         <button
-          onClick={login}
+          onClick={() => setShowTermsModal(true)}
           className="w-full bg-gold-gradient text-white font-bold py-4 px-6 rounded-full transition-all active:scale-[0.98] mb-4 text-lg tracking-wide"
         >
           get started
@@ -318,6 +322,62 @@ export default function LoginPage() {
           already have an account? log in
         </button>
       </div>
+
+      {/* T&C Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] mb-4 text-center">
+              Terms & Conditions
+            </h3>
+            
+            <div className="space-y-4 mb-6">
+              <p className="text-sm text-text-secondary dark:text-[#9CA3AF]">
+                {TERMS_AND_CONDITIONS}
+              </p>
+            </div>
+
+            {/* T&C Checkbox */}
+            <label className="flex items-start gap-3 mb-6 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-border-subtle dark:border-[#2D2D2D] text-gold-500 focus:ring-gold-500"
+              />
+              <span className="text-sm text-text-secondary dark:text-[#9CA3AF] leading-relaxed">
+                I agree to the{' '}
+                <a href="#" className="text-gold-500 hover:underline">Terms & Conditions</a>,{' '}
+                Marketing Communications, and{' '}
+                <a href="#" className="text-gold-500 hover:underline">Privacy Policy</a>.
+              </span>
+            </label>
+
+            <button
+              onClick={() => {
+                if (agreedToTerms) {
+                  setShowTermsModal(false);
+                  login();
+                }
+              }}
+              disabled={!agreedToTerms}
+              className="w-full bg-gold-gradient text-white font-bold py-4 px-6 rounded-full transition-all active:scale-[0.98] mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              create account
+            </button>
+            
+            <button
+              onClick={() => {
+                setShowTermsModal(false);
+                setAgreedToTerms(false);
+              }}
+              className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-medium py-3 px-6 rounded-full hover:border-gold-500/30 transition-all"
+            >
+              cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

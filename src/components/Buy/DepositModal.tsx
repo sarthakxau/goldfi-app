@@ -67,7 +67,7 @@ export function DepositModal({ isOpen, onClose, walletAddress }: DepositModalPro
             <div className="mb-4 text-text-muted dark:text-[#6B7280] text-sm">or scan QR</div>
             
             {/* QR Code */}
-            <div className="p-4 bg-white dark:bg-[#F5F5F5] border border-border-subtle dark:border-[#2D2D2D] rounded-2xl shadow-sm mb-6">
+            <div className="p-4 bg-white dark:bg-surface border border-border-subtle dark:border-[#2D2D2D] rounded-2xl shadow-sm mb-6">
                 <QRCodeSVG value={walletAddress} size={180} />
             </div>
 

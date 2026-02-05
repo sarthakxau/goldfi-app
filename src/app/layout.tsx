@@ -83,7 +83,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-[#F5F5F5] dark:bg-[#0F0F0F] antialiased transition-colors">
+      <body className="min-h-screen bg-surface dark:bg-[#0F0F0F] antialiased transition-colors">
         <Providers>{children}</Providers>
       </body>
     </html>
