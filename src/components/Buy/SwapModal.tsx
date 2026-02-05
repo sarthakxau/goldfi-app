@@ -194,14 +194,17 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
 
             {/* Input Section */}
             <div className="mb-4">
-              <label className="text-sm text-text-muted dark:text-[#6B7280] mb-2 block">you pay</label>
+              <label htmlFor="usdt-amount" className="text-sm text-text-muted dark:text-[#6B7280] mb-2 block">you pay</label>
               <div className="relative">
                 <input
+                  id="usdt-amount"
                   type="number"
                   value={inputAmount}
                   onChange={(e) => setInputAmount(e.target.value)}
                   placeholder="0.00"
                   className="w-full text-3xl font-bold bg-surface-elevated dark:bg-[#242424] text-text-primary dark:text-[#F0F0F0] rounded-xl p-4 pr-24 outline-none focus:ring-2 focus:ring-gold-500 border border-border-subtle dark:border-[#2D2D2D]"
+                  aria-invalid={!!inputError}
+                  aria-describedby={inputError ? "usdt-error" : undefined}
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button
@@ -214,7 +217,7 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
                 </div>
               </div>
               {inputError && (
-                <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
+                <p id="usdt-error" className="text-red-500 text-xs mt-2 flex items-center gap-1" role="alert">
                   <AlertCircle className="w-3 h-3" /> {inputError}
                 </p>
               )}
