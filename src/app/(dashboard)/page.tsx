@@ -176,31 +176,32 @@ export default function DashboardPage() {
               <p className="text-5xl font-bold text-text-primary dark:text-[#F0F0F0] tabular-nums tracking-tight" aria-live="polite">
                 {getDisplayValue()}
               </p>
+              
+              {/* Scudo Info Tooltip - Only visible when scudo is selected */}
+              {viewMode === 'scudo' && (
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 group z-50">
+                  <Info className="size-4 text-text-muted dark:text-[#6B7280] cursor-help" />
+                  <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-lg shadow-lg text-xs text-text-secondary dark:text-[#9CA3AF] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    1 Scudo = 1/1000 XAUT (approx. 31.1 mg gold)
+                    <div className="absolute top-full right-2 w-2 h-2 bg-white dark:bg-[#1A1A1A] border-r border-b border-border-subtle dark:border-[#2D2D2D] transform rotate-45 -mt-1"></div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Label + Unit Selector */}
             <div className="flex items-center justify-between">
               <p className="text-text-secondary dark:text-[#9CA3AF] text-sm font-medium">my holdings</p>
-              <div className="flex items-center gap-2">
-                <div className="segmented-control !p-0.5">
-                  {goldHoldingUnits.map(({ key, label }) => (
-                    <button
-                      key={key}
-                      onClick={() => setViewMode(key)}
-                      className={`segmented-control-item !px-3 !py-1.5 !text-xs ${viewMode === key ? 'segmented-control-item-active' : ''}`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-                {/* Scudo Info Tooltip */}
-                <div className="group relative">
-                  <Info className="size-4 text-text-muted dark:text-[#6B7280] cursor-help" />
-                  <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-lg shadow-lg text-xs text-text-secondary dark:text-[#9CA3AF] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-                    1 Scudo = 1/1000 XAUT (approx. 31.1 mg gold)
-                    <div className="absolute top-full right-2 w-2 h-2 bg-white dark:bg-[#1A1A1A] border-r border-b border-border-subtle dark:border-[#2D2D2D] transform rotate-45 -mt-1"></div>
-                  </div>
-                </div>
+              <div className="segmented-control !p-0.5">
+                {goldHoldingUnits.map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => setViewMode(key)}
+                    className={`segmented-control-item !px-3 !py-1.5 !text-xs ${viewMode === key ? 'segmented-control-item-active' : ''}`}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -244,26 +245,25 @@ export default function DashboardPage() {
         </Link>
 
         <Link
-          href="/yield"
+          href="/redeem"
           className="w-full bg-white dark:bg-[#1A1A1A] border border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
         >
-          {/* <TrendingUp className="size-5" /> */}
-          <span>earn up to 15% on gold</span>
+          <span>redeem</span>
         </Link>
 
         <Link
-          href="/sell"
-          className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/30 transition-all"
+          href="/yield"
+          className="w-full bg-white dark:bg-[#1A1A1A] border-2 border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
         >
-          {/* <BadgePercent className="size-5" /> */}
-          <span>redeem your gold</span>
+          <span>earn up to 15% on gold</span>
         </Link>
+
       </div>
 
-      {/* Auto Savings Plan Button */}
+      {/* Auto Savings Plan Button - Floating at bottom */}
       <button
         onClick={() => setShowAutoSavingsModal(true)}
-        className="w-full card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all"
+        className="fixed bottom-24 left-6 right-6 max-w-lg mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40"
       >
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">

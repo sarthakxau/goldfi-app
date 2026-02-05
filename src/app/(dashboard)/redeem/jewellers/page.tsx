@@ -41,7 +41,7 @@ export default function JewellersPage() {
     <div className="p-6 max-w-lg mx-auto min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <Link href="/yield" className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors">
+        <Link href="/redeem" className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors">
           <ArrowLeft className="size-6" />
         </Link>
         <h1 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">nearby jewellers</h1>
