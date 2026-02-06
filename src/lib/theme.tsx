@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { APP } from '@/lib/constants';
 
 type Theme = 'light' | 'dark' | 'system';
 type ResolvedTheme = 'light' | 'dark';
@@ -13,8 +14,6 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
-
-const STORAGE_KEY = 'tola-theme';
 
 function getSystemTheme(): ResolvedTheme {
   if (typeof window === 'undefined') return 'light';
@@ -33,7 +32,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize theme from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    const stored = localStorage.getItem(APP.THEME.STORAGE_KEY) as Theme | null;
     const initial = stored || 'system';
     setThemeState(initial);
     setResolvedTheme(resolveTheme(initial));
@@ -50,7 +49,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Update meta theme-color
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
-      meta.setAttribute('content', resolvedTheme === 'dark' ? '#0F0F0F' : '#B8860B');
+      meta.setAttribute('content', resolvedTheme === 'dark' ? APP.THEME.DARK : APP.THEME.LIGHT);
     }
   }, [resolvedTheme, mounted]);
 
@@ -66,7 +65,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
     setResolvedTheme(resolveTheme(newTheme));
-    localStorage.setItem(STORAGE_KEY, newTheme);
+    localStorage.setItem(APP.THEME.STORAGE_KEY, newTheme);
   }, []);
 
   const toggleTheme = useCallback(() => {

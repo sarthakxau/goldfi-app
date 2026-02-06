@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Providers } from './providers';
+import { APP } from '@/lib/constants';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tola-one.vercel.app'),
+  metadataBase: new URL(APP.DOMAIN),
   title: {
-    template: '%s | tola',
-    default: 'tola - Digital Gold Savings',
+    template: `%s | ${APP.NAME}`,
+    default: APP.TITLE,
   },
-  description: 'Save in digital gold with zero fees. Buy and sell gold in grams with instant settlements on tola.',
+  description: APP.DESCRIPTION,
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
@@ -17,28 +18,28 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'tola',
+    title: APP.NAME,
   },
   openGraph: {
     type: 'website',
-    locale: 'en_IN',
+    locale: APP.LOCALE,
     url: '/',
-    siteName: 'tola',
-    title: 'tola - Digital Gold Savings',
-    description: 'Save in digital gold with zero fees. Buy and sell gold in grams with instant settlements.',
+    siteName: APP.NAME,
+    title: APP.TITLE,
+    description: APP.DESCRIPTION,
     images: [
       {
         url: '/icon-512x512.png',
         width: 512,
         height: 512,
-        alt: 'tola - Gold Savings',
+        alt: APP.TITLE,
       },
     ],
   },
   twitter: {
     card: 'summary',
-    title: 'tola - Digital Gold Savings',
-    description: 'Save in digital gold with zero fees. Buy and sell gold in grams with instant settlements.',
+    title: APP.TITLE,
+    description: APP.DESCRIPTION,
     images: ['/icon-512x512.png'],
   },
   other: {
@@ -52,8 +53,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#B8860B' },
-    { media: '(prefers-color-scheme: dark)', color: '#0F0F0F' },
+    { media: '(prefers-color-scheme: light)', color: APP.THEME.LIGHT },
+    { media: '(prefers-color-scheme: dark)', color: APP.THEME.DARK },
   ],
 };
 
@@ -63,14 +64,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en-IN" suppressHydrationWarning>
+    <html lang={APP.LOCALE} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 try {
-                  var stored = localStorage.getItem('tola-theme');
+                  var stored = localStorage.getItem('${APP.THEME.STORAGE_KEY}');
                   var theme = stored || 'system';
                   var resolved = theme;
                   if (theme === 'system') {
@@ -83,6 +84,7 @@ export default function RootLayout({
           }}
         />
       </head>
+      {/* Note: dark:bg-[#0F0F0F] must match APP.THEME.DARK - Tailwind requires static class names */}
       <body className="min-h-screen bg-surface dark:bg-[#0F0F0F] antialiased transition-colors">
         <Providers>{children}</Providers>
       </body>

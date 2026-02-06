@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Login',
-  description: 'Sign in to your tola account to manage your digital gold savings.',
+  description: 'Sign in to your gold.fi account to manage your gold holdings.',
   robots: {
     index: false,
     follow: false,

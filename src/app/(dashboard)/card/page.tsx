@@ -30,7 +30,7 @@ export default function CardPage() {
     <div className="min-h-screen pb-24">
       {/* Header */}
       <div className="p-6 pb-2">
-        <h1 className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0] tracking-tight">Your tola card</h1>
+        <h1 className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0] tracking-tight">Your gold.fi card</h1>
       </div>
 
       <div className="p-6 pt-2 space-y-8 max-w-md mx-auto">

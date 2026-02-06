@@ -1,14 +1,15 @@
 import { MetadataRoute } from 'next';
+import { APP } from '@/lib/constants';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'tola - Gold Savings',
-    short_name: 'tola',
-    description: 'Invest in gold with zero fees',
+    name: APP.TITLE,
+    short_name: APP.NAME,
+    description: APP.DESCRIPTION,
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
-    theme_color: '#B8860B',
+    theme_color: APP.THEME.LIGHT,
     orientation: 'portrait',
     icons: [
       {

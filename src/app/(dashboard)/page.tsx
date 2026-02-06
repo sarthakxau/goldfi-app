@@ -191,7 +191,7 @@ export default function DashboardPage() {
 
             {/* Label + Unit Selector */}
             <div className="flex items-center justify-between">
-              <p className="text-gold-500 dark:text-gold-400 text-sm font-medium">my savings</p>
+              <p className="text-gold-500 dark:text-gold-400 text-sm font-medium">my holdings</p>
               <div className="segmented-control !p-0.5">
                 {goldHoldingUnits.map(({ key, label }) => (
                   <button
@@ -227,9 +227,9 @@ export default function DashboardPage() {
         <div className="mb-10 flex justify-center">
           <Link
             href="/buy"
-            className="bg-gold-gradient text-white font-bold py-3.5 px-10 rounded-full text-sm"
+            className="bg-gold-gradient text-white font-bold py-3.5 px-10 rounded-lg text-sm"
           >
-            make your first investment
+            buy your first gold
           </Link>
         </div>
       )}
@@ -257,7 +257,7 @@ export default function DashboardPage() {
           href="/yield"
           className="w-full bg-white dark:bg-[#1A1A1A] border-2 border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
         >
-          <span>earn up to 15% on gold</span>
+          <span>gold yield (variable rates, risks apply)</span>
         </Link>
 
       </div>
@@ -276,7 +276,7 @@ export default function DashboardPage() {
             <p className="text-xs text-text-muted dark:text-[#6B7280]">set up recurring investments</p>
           </div>
         </div>
-        <span className="badge badge-gold text-[10px]">coming soon</span>
+        <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-gold-100 dark:bg-gold-500/10 text-gold-500 dark:text-gold-400 border border-gold-500/20 dark:border-gold-500/30">soon</span>
       </button>
 
       {/* Auto Savings Modal */}

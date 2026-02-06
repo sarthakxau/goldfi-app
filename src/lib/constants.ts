@@ -1,3 +1,17 @@
+// App Metadata
+export const APP = {
+  NAME: 'gold.fi',
+  TITLE: 'gold.fi - Own Real Gold',
+  DESCRIPTION: 'Own real gold. Backed 1:1. Secured in Swiss vaults.',
+  DOMAIN: 'https://goldfi.vercel.app/',
+  LOCALE: 'en_IN',
+  THEME: {
+    LIGHT: '#B8860B',
+    DARK: '#0F0F0F',
+    STORAGE_KEY: 'goldfi-theme',
+  },
+} as const;
+
 // Arbitrum Contract Addresses
 export const CONTRACTS = {
   XAUT0: '0x40461291347e1eCbb09499F3371D3f17f10d7159' as const,

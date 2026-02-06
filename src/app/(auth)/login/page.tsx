@@ -12,9 +12,9 @@ import { TERMS_AND_CONDITIONS } from '@/lib/copy';
 function ChartIllustration() {
   return (
     <div className="bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-2xl p-5 w-full">
-      <p className="text-xs text-text-muted dark:text-[#6B7280] mb-1">1 year annualised performance</p>
-      <p className="text-2xl font-bold text-success mb-0.5">+96.28%</p>
-      <p className="text-sm text-gold-500">+ 15% extra returns</p>
+      <p className="text-xs text-text-muted dark:text-[#6B7280] mb-1">1 year gold price performance</p>
+      <p className="text-2xl font-bold text-success mb-0.5">gold yield</p>
+      <p className="text-sm text-gold-500">variable rates, risks apply</p>
       <svg viewBox="0 0 300 120" className="w-full mt-4" fill="none">
         {/* Grid lines */}
         <line x1="0" y1="30" x2="300" y2="30" stroke="rgba(209,213,219,0.4)" strokeWidth="0.5" />
@@ -64,7 +64,7 @@ function ChatIllustration() {
       {/* Notification bubble - left aligned */}
       <div className="flex justify-start">
         <div className="bg-success-light dark:bg-success/10 border border-success/20 dark:border-success/30 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[80%]">
-          <p className="text-success text-sm font-medium">sent you 0.3g gold<br />(INR 4878.6) on tola</p>
+          <p className="text-success text-sm font-medium">sent you 0.3g gold<br />(INR 4878.6) on gold.fi</p>
         </div>
       </div>
       {/* Reply bubble - right aligned */}
@@ -200,7 +200,7 @@ export default function LoginPage() {
 
   const features = [
     'pure 24K gold',
-    'earn up to 15% on your gold',
+    'gold yield (variable rates, risks apply)',
     'backed by Swiss reserves',
     'withdraw anytime, with zero limits',
   ];
@@ -238,14 +238,10 @@ export default function LoginPage() {
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
             <div className="flex flex-col items-center pt-4 pb-4">
               <div className="flex items-center gap-3 mb-4">
-                <div className="gold-coin">
-                  <Sparkles className="size-5" />
-                </div>
-                <h1 className="text-4xl font-bold text-gold-500 tracking-tight">tola</h1>
+                <img src="/icon-192x192.png" alt="gold.fi" className="size-12 rounded-xl shadow-lg" />
+                <h1 className="text-4xl font-bold text-gold-500 tracking-tight">gold.fi</h1>
               </div>
-              <p className="text-text-secondary dark:text-[#9CA3AF] text-sm tracking-wide">
-                invest in gold with <span className="text-success font-semibold">ZERO</span> fees
-              </p>
+              <p className="text-center text-text-secondary dark:text-[#9CA3AF] text-sm tracking-wide">Own real gold. Backed 1:1.<br />Secured in Swiss vaults.</p>
             </div>
             <div className="py-4">
               <TolaPriceDisplay className="w-full" />
@@ -265,9 +261,12 @@ export default function LoginPage() {
           {/* Slide 2: Earn Returns */}
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
             <div className="flex flex-col items-center pt-4 pb-6">
-              <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">tola</h1>
+              <div className='flex items-center gap-3 mb-4'>
+                <img src="/icon-192x192.png" alt="gold.fi" className="size-10 rounded-xl shadow-md mb-3" />
+                <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">gold.fi</h1>
+              </div>
               <p className="text-text-primary dark:text-[#F0F0F0] text-lg font-bold text-center leading-snug">
-                earn up to 15% returns<br />on your gold holdings
+                gold yield<br />(variable rates, risks apply)
               </p>
             </div>
             <div className="flex-grow flex items-start justify-center pt-2">
@@ -278,7 +277,10 @@ export default function LoginPage() {
           {/* Slide 3: Send & Receive */}
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
             <div className="flex flex-col items-center pt-4 pb-6">
-              <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">tola</h1>
+              <div className='flex items-center gap-3 mb-4'>
+                <img src="/icon-192x192.png" alt="gold.fi" className="size-10 rounded-xl shadow-md mb-3" />
+                <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">gold.fi</h1>
+              </div>
               <p className="text-text-primary dark:text-[#F0F0F0] text-lg font-bold text-center leading-snug">
                 send and receive gold<br />from anyone
               </p>
@@ -291,7 +293,10 @@ export default function LoginPage() {
           {/* Slide 4: Redeem at Jewellers */}
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
             <div className="flex flex-col items-center pt-4 pb-6">
-              <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">tola</h1>
+              <div className='flex items-center gap-3 mb-4'>
+                <img src="/icon-192x192.png" alt="gold.fi" className="size-10 rounded-xl shadow-md mb-3" />
+                <h1 className="text-4xl font-bold text-gold-500 tracking-tight mb-4">gold.fi</h1>
+              </div>
               <p className="text-text-primary dark:text-[#F0F0F0] text-lg font-bold text-center leading-snug">
                 redeem your gold<br />at 1000+ jewellers across india
               </p>
@@ -317,7 +322,7 @@ export default function LoginPage() {
         </button>
         <button
           onClick={login}
-          className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-medium py-4 px-6 rounded-full hover:border-gold-500/30 hover:text-text-primary dark:hover:text-[#F0F0F0] transition-all active:scale-[0.98]"
+          className="w-full text-text-secondary dark:text-[#9CA3AF] font-medium py-4 px-6 rounded-full hover:border-gold-500/30 hover:text-text-primary dark:hover:text-[#F0F0F0] transition-all active:scale-[0.98]"
         >
           already have an account? log in
         </button>
