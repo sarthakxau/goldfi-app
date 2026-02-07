@@ -4,9 +4,10 @@ import { usePrivy, getAccessToken } from '@privy-io/react-auth';
 import { useEffect, useCallback, useState } from 'react';
 import { useAppStore } from '@/store';
 import { formatINR, formatGrams } from '@/lib/utils';
-import { RefreshCw, Calendar, Info } from 'lucide-react';
+import { RefreshCw, Calendar, Info, Sprout } from 'lucide-react';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
+import { TransactionList } from '@/components/TransactionList';
 
 export default function DashboardPage() {
   const { user } = usePrivy();
@@ -20,6 +21,11 @@ export default function DashboardPage() {
     setHoldingLoading,
     setPriceError,
     setHoldingError,
+    transactions,
+    transactionsLoading,
+    setTransactions,
+    setTransactionsLoading,
+    setTransactionsError,
     refreshing,
     setRefreshing,
   } = useAppStore();
@@ -71,19 +77,40 @@ export default function DashboardPage() {
     }
   }, [user?.wallet?.address, setHolding, setHoldingLoading, setHoldingError]);
 
+  const fetchTransactions = useCallback(async () => {
+    try {
+      setTransactionsLoading(true);
+      const token = await getAccessToken();
+      const res = await fetch('/api/transactions/history', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTransactions(data.data);
+      } else {
+        setTransactionsError(data.error);
+      }
+    } catch {
+      setTransactionsError('Failed to fetch transactions');
+    } finally {
+      setTransactionsLoading(false);
+    }
+  }, [setTransactions, setTransactionsLoading, setTransactionsError]);
+
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchPrice(), fetchHoldings()]);
+    await Promise.all([fetchPrice(), fetchHoldings(), fetchTransactions()]);
     setRefreshing(false);
-  }, [fetchPrice, fetchHoldings, setRefreshing]);
+  }, [fetchPrice, fetchHoldings, fetchTransactions, setRefreshing]);
 
   useEffect(() => {
     fetchPrice();
     fetchHoldings();
+    fetchTransactions();
 
     const priceInterval = setInterval(fetchPrice, 60000);
     return () => clearInterval(priceInterval);
-  }, [fetchPrice, fetchHoldings]);
+  }, [fetchPrice, fetchHoldings, fetchTransactions]);
 
   // Derived State
   const xautAmount = holding ? new Decimal(holding.xautAmount) : new Decimal(0);
@@ -122,6 +149,7 @@ export default function DashboardPage() {
     { key: 'grams', label: 'grams' },
     { key: 'scudo', label: 'scudo' },
   ] as const;
+  const recentTransactions = transactions.slice(0, 2);
 
 
   return (
@@ -191,7 +219,7 @@ export default function DashboardPage() {
 
             {/* Label + Unit Selector */}
             <div className="flex items-center justify-between">
-              <p className="text-gold-500 dark:text-gold-400 text-sm font-medium">my savings</p>
+              <p className="text-gold-500 dark:text-gold-400 text-sm font-medium">my holdings</p>
               <div className="segmented-control !p-0.5">
                 {goldHoldingUnits.map(({ key, label }) => (
                   <button
@@ -227,9 +255,9 @@ export default function DashboardPage() {
         <div className="mb-10 flex justify-center">
           <Link
             href="/buy"
-            className="bg-gold-gradient text-white font-bold py-3.5 px-10 rounded-full text-sm"
+            className="bg-gold-gradient text-white font-bold py-3.5 px-10 rounded-lg text-sm"
           >
-            make your first investment
+            buy your first gold
           </Link>
         </div>
       )}
@@ -252,37 +280,86 @@ export default function DashboardPage() {
             <span>sell</span>
           </Link>
         </div>
-
-        <Link
-          href="/yield"
-          className="w-full bg-white dark:bg-[#1A1A1A] border-2 border-gold-500/30 text-gold-500 font-semibold py-4 rounded-2xl text-center flex items-center justify-center gap-2 hover:border-gold-500/50 transition-all"
-        >
-          <span>earn up to 15% on gold</span>
-        </Link>
-
       </div>
 
-      {/* Auto Savings Plan Button - Floating at bottom */}
-      <button
-        onClick={() => setShowAutoSavingsModal(true)}
-        className="fixed bottom-24 left-6 right-6 max-w-lg mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40"
-      >
-        <div className="flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
-            <Calendar className="size-5" />
+      <div className="flex flex-col gap-3 mb-6">
+        <Link href="/yield" className='w-full'>
+          <button className="w-full mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40">
+            <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
+              <Sprout className="size-5" />
+            </div>
+            <div className="text-left">
+              <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">gold yield</p>
+              <p className="text-xs text-text-muted dark:text-[#6B7280]">variable rates, risks apply</p>
+            </div>
           </div>
-          <div className="text-left">
-            <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">auto savings plan</p>
-            <p className="text-xs text-text-muted dark:text-[#6B7280]">set up recurring investments</p>
+          </button>
+        </Link>
+        <button
+          onClick={() => setShowAutoSavingsModal(true)}
+          className="w-full mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40"
+        >
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
+              <Calendar className="size-5" />
+            </div>
+            <div className="text-left">
+              <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">auto savings plan</p>
+              <p className="text-xs text-text-muted dark:text-[#6B7280]">set up recurring investments</p>
+            </div>
           </div>
+          <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-gold-100 dark:bg-gold-500/10 text-gold-500 dark:text-gold-400 border border-gold-500/20 dark:border-gold-500/30">soon</span>
+        </button>
+      </div>
+
+      {/* Recent Transactions */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-text-primary dark:text-[#F0F0F0]">Recent</h2>
+          <Link
+            href="/transactions"
+            className="text-gold-500 hover:text-gold-400 font-medium transition-colors text-xs"
+          >
+            See more
+          </Link>
         </div>
-        <span className="badge badge-gold text-[10px]">coming soon</span>
-      </button>
+
+        {transactionsLoading && recentTransactions.length === 0 ? (
+          <div className="space-y-3">
+            {[1, 2].map((i) => (
+              <div key={i} className="card p-4">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2">
+                    <div className="h-4 w-20 skeleton rounded" />
+                    <div className="h-3 w-16 skeleton rounded" />
+                  </div>
+                  <div className="space-y-2 text-right">
+                    <div className="h-4 w-20 skeleton rounded ml-auto" />
+                    <div className="h-3 w-14 skeleton rounded ml-auto" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : recentTransactions.length === 0 ? (
+          <p className="text-sm text-text-muted dark:text-[#6B7280]">No recent transactions</p>
+        ) : (
+          <TransactionList
+            transactions={recentTransactions}
+            variant="separated"
+            showDateHeaders={false}
+            showInlineDate={true}
+          />
+        )}
+      </section>
+
+      {/* Auto Savings Plan Button - Floating at bottom */}
 
       {/* Auto Savings Modal */}
       {showAutoSavingsModal && (
         <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-8 max-w-sm w-full text-center animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-4 max-w-sm w-full text-center animate-in zoom-in-95 duration-200">
             <div className="mx-auto size-16 bg-gold-100 dark:bg-gold-500/10 rounded-full flex items-center justify-center mb-5">
               <Calendar className="size-8 text-gold-500" />
             </div>

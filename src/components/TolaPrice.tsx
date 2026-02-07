@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { formatINR } from '@/lib/utils';
+import { APP } from '@/lib/constants';
 import type { TolaPrice as TolaPriceType } from '@/types';
 
 // Competitor markup percentages (approximate)
@@ -60,10 +61,10 @@ export function TolaPriceDisplay({ className }: TolaPriceDisplayProps) {
 
   return (
     <div className={className}>
-      {/* Tola price - highlighted in green */}
+      {/* gold.fi price - highlighted in green */}
       <div className="bg-success-light dark:bg-success/10 border border-success/20 dark:border-success/30 rounded-xl p-4 mb-3 relative overflow-hidden">
         <span className="relative text-success font-bold text-xl">
-          tola: {formatINR(tolaPrice)}
+          {APP.NAME}: {formatINR(tolaPrice)}
         </span>
       </div>
 

@@ -79,8 +79,23 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] pb-24">
+    <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] pb-36">
       {children}
+
+      {/* Disclaimer */}
+      <div className="fixed bottom-[72px] left-0 right-0 bg-white dark:bg-[#1A1A1A] border-t border-border-subtle dark:border-[#2D2D2D] z-10">
+        <div className="max-w-lg mx-auto py-3 px-4 text-center">
+          <p className="text-xs text-text-muted dark:text-[#6B7280]">
+            Crypto products are unregulated and risky.{" "}
+            <a
+              href="#"
+              className="text-gold-500 hover:text-gold-600 dark:text-gold-400 dark:hover:text-gold-300 underline transition-colors"
+            >
+              Learn more
+            </a>
+          </p>
+        </div>
+      </div>
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1A1A1A] shadow-nav dark:shadow-none dark:border-t dark:border-[#2D2D2D] safe-area-bottom">

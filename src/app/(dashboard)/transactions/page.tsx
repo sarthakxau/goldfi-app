@@ -48,7 +48,7 @@ export default function TransactionsPage() {
     <div className="p-6 min-h-screen">
       {/* Header with brand */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gold-500">tola</h1>
+        <h1 className="text-xl font-bold text-gold-500">gold.fi</h1>
         <div className="size-9 rounded-full overflow-hidden bg-gold-gradient">
           <div className="w-full h-full" />
         </div>
@@ -123,6 +123,7 @@ export default function TransactionsPage() {
             <TransactionList
               transactions={transactions}
               highlightId={highlightId || undefined}
+              variant="separated"
             />
           )}
         </>

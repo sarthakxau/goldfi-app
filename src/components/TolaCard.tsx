@@ -29,7 +29,7 @@ export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) 
       <div className="relative z-10 flex flex-col justify-between h-full text-white cursor-default">
         {/* Top Row */}
         <div className="flex justify-between items-start">
-          <span className="text-2xl font-bold tracking-tight drop-shadow-sm">tola</span>
+          <span className="text-2xl font-bold tracking-tight drop-shadow-sm">gold.fi</span>
           {/* Gold Coins Illustration (SVG) */}
           <div className="absolute right-4 top-4 opacity-90">
             <GoldCoinsIcon className="w-20 h-20 drop-shadow-lg" />

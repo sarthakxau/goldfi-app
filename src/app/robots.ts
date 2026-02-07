@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { APP } from '@/lib/constants';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/login', '/buy', '/sell', '/account', '/transactions', '/card'],
     },
-    sitemap: 'https://tola-one.vercel.app/sitemap.xml',
+    sitemap: `${APP.DOMAIN}sitemap.xml`,
   };
 }
