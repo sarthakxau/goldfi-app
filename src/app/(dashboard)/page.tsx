@@ -7,6 +7,7 @@ import { formatINR, formatGrams } from '@/lib/utils';
 import { RefreshCw, Calendar, Info, Sprout } from 'lucide-react';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
+import { TransactionList } from '@/components/TransactionList';
 
 export default function DashboardPage() {
   const { user } = usePrivy();
@@ -20,6 +21,11 @@ export default function DashboardPage() {
     setHoldingLoading,
     setPriceError,
     setHoldingError,
+    transactions,
+    transactionsLoading,
+    setTransactions,
+    setTransactionsLoading,
+    setTransactionsError,
     refreshing,
     setRefreshing,
   } = useAppStore();
@@ -71,19 +77,40 @@ export default function DashboardPage() {
     }
   }, [user?.wallet?.address, setHolding, setHoldingLoading, setHoldingError]);
 
+  const fetchTransactions = useCallback(async () => {
+    try {
+      setTransactionsLoading(true);
+      const token = await getAccessToken();
+      const res = await fetch('/api/transactions/history', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTransactions(data.data);
+      } else {
+        setTransactionsError(data.error);
+      }
+    } catch {
+      setTransactionsError('Failed to fetch transactions');
+    } finally {
+      setTransactionsLoading(false);
+    }
+  }, [setTransactions, setTransactionsLoading, setTransactionsError]);
+
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchPrice(), fetchHoldings()]);
+    await Promise.all([fetchPrice(), fetchHoldings(), fetchTransactions()]);
     setRefreshing(false);
-  }, [fetchPrice, fetchHoldings, setRefreshing]);
+  }, [fetchPrice, fetchHoldings, fetchTransactions, setRefreshing]);
 
   useEffect(() => {
     fetchPrice();
     fetchHoldings();
+    fetchTransactions();
 
     const priceInterval = setInterval(fetchPrice, 60000);
     return () => clearInterval(priceInterval);
-  }, [fetchPrice, fetchHoldings]);
+  }, [fetchPrice, fetchHoldings, fetchTransactions]);
 
   // Derived State
   const xautAmount = holding ? new Decimal(holding.xautAmount) : new Decimal(0);
@@ -122,6 +149,7 @@ export default function DashboardPage() {
     { key: 'grams', label: 'grams' },
     { key: 'scudo', label: 'scudo' },
   ] as const;
+  const recentTransactions = transactions.slice(0, 2);
 
 
   return (
@@ -284,6 +312,47 @@ export default function DashboardPage() {
           <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-gold-100 dark:bg-gold-500/10 text-gold-500 dark:text-gold-400 border border-gold-500/20 dark:border-gold-500/30">soon</span>
         </button>
       </div>
+
+      {/* Recent Transactions */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-text-primary dark:text-[#F0F0F0]">Recent</h2>
+          <Link
+            href="/transactions"
+            className="text-gold-500 hover:text-gold-400 font-medium transition-colors text-xs"
+          >
+            See more
+          </Link>
+        </div>
+
+        {transactionsLoading && recentTransactions.length === 0 ? (
+          <div className="space-y-3">
+            {[1, 2].map((i) => (
+              <div key={i} className="card p-4">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2">
+                    <div className="h-4 w-20 skeleton rounded" />
+                    <div className="h-3 w-16 skeleton rounded" />
+                  </div>
+                  <div className="space-y-2 text-right">
+                    <div className="h-4 w-20 skeleton rounded ml-auto" />
+                    <div className="h-3 w-14 skeleton rounded ml-auto" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : recentTransactions.length === 0 ? (
+          <p className="text-sm text-text-muted dark:text-[#6B7280]">No recent transactions</p>
+        ) : (
+          <TransactionList
+            transactions={recentTransactions}
+            variant="separated"
+            showDateHeaders={false}
+            showInlineDate={true}
+          />
+        )}
+      </section>
 
       {/* Auto Savings Plan Button - Floating at bottom */}
 

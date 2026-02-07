@@ -123,6 +123,7 @@ export default function TransactionsPage() {
             <TransactionList
               transactions={transactions}
               highlightId={highlightId || undefined}
+              variant="separated"
             />
           )}
         </>
