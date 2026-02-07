@@ -63,3 +63,12 @@ export const SWAP_DEADLINE_MINUTES = 5; // Transaction deadline
 // Sell Constants (XAUT to USDT)
 export const MIN_GRAMS_SELL = 0.01; // Minimum grams to sell
 export const MAX_GRAMS_SELL = 1000; // Maximum grams per sell
+
+// UPI Buy Constants (Onmeta)
+export const UPI_FEE_PERCENT = 0; // 0%
+export const UPI_TDS_PERCENT = 0.01; // 1%
+export const MIN_INR_BUY = 100; // ₹100 minimum
+export const MAX_INR_BUY = 100000; // ₹1,00,000 maximum
+export const UPI_PAYMENT_TIMEOUT = 300; // 5 minutes timeout (seconds)
+export const MOCK_PAYMENT_DELAY = 5000; // 5 seconds auto-complete for demo
+export const INR_QUICK_AMOUNTS = [500, 1000, 5000, 10000];

@@ -134,3 +134,22 @@ export interface UsdtBalance {
   balance: string;
   balanceRaw: string;
 }
+
+// UPI Flow types
+export type UpiStep = 'amount' | 'payment' | 'processing' | 'success' | 'error';
+
+export interface UpiQuote {
+  inrAmount: number;
+  goldGrams: number;
+  fee: number;
+  tds: number;
+  totalPayable: number;
+  ratePerGram: number;
+}
+
+export interface UpiOrderResponse {
+  success: boolean;
+  orderId: string;
+  paymentUrl?: string;
+  error?: string;
+}
