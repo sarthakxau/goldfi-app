@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { TransactionList } from '@/components/TransactionList';
 import { motion, AnimatePresence } from 'motion/react';
 import { FadeUp, AnimatedNumber } from '@/components/animations';
-import { SPRING, EASE_OUT_EXPO, DURATION, fadeUp, scaleIn, backdropFade, modalScale } from '@/lib/animations';
+import { SPRING, EASE_OUT_EXPO, DURATION, scaleIn } from '@/lib/animations';
 
 export default function DashboardPage() {
   const { user } = usePrivy();
@@ -34,7 +34,7 @@ export default function DashboardPage() {
   } = useAppStore();
 
   const [viewMode, setViewMode] = useState<'grams' | 'inr' | 'usd' | 'scudo'>('inr');
-  const [showAutoSavingsModal, setShowAutoSavingsModal] = useState(false);
+  // Auto savings modal removed — now links to /autopay page
 
   const fetchPrice = useCallback(async () => {
     try {
@@ -336,20 +336,16 @@ export default function DashboardPage() {
             <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">earn</span>
           </Link>
 
-          <button
-            onClick={() => setShowAutoSavingsModal(true)}
-            className="flex flex-col items-center gap-2 group"
-          >
+          <Link href="/autopay" className="flex flex-col items-center gap-2 group">
             <motion.div
               className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all relative"
               whileTap={{ scale: 0.95 }}
               transition={SPRING.snappy}
             >
               <Calendar className="size-6" />
-              {/* <span className="absolute -top-1 -right-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-gold-500/20 text-gold-500 border border-gold-500/30">soon</span> */}
             </motion.div>
             <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">save</span>
-          </button>
+          </Link>
 
           <Link href="/gift" className="flex flex-col items-center gap-2 group">
             <motion.div
@@ -407,58 +403,7 @@ export default function DashboardPage() {
         </section>
       </FadeUp>
 
-      {/* Auto Savings Modal */}
-      <AnimatePresence>
-        {showAutoSavingsModal && (
-          <motion.div
-            className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            variants={backdropFade}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={() => setShowAutoSavingsModal(false)}
-          >
-            <motion.div
-              className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-4 max-w-sm w-full text-center"
-              variants={modalScale}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <motion.div
-                className="mx-auto size-16 bg-gold-100 dark:bg-gold-500/10 rounded-full flex items-center justify-center mb-5"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ ...SPRING.bouncy, delay: 0.1 }}
-              >
-                <Calendar className="size-8 text-gold-500" />
-              </motion.div>
-              <h3 className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2">Auto Savings Plan</h3>
-              <p className="text-text-secondary dark:text-[#9CA3AF] mb-6 text-sm">
-                Set up automatic recurring investments in gold. Choose your amount, frequency, and let your savings grow effortlessly.
-              </p>
-              <div className="space-y-3">
-                <div className="bg-surface-elevated dark:bg-[#242424] border border-border-subtle dark:border-[#2D2D2D] rounded-xl p-4 text-left">
-                  <p className="text-text-muted dark:text-[#6B7280] text-xs mb-1">Features coming soon</p>
-                  <ul className="text-text-secondary dark:text-[#9CA3AF] text-sm space-y-1">
-                    <li>- Daily, weekly, or monthly savings</li>
-                    <li>- Flexible amount from INR 100</li>
-                    <li>- Pause or cancel anytime</li>
-                  </ul>
-                </div>
-                <motion.button
-                  onClick={() => setShowAutoSavingsModal(false)}
-                  className="w-full bg-surface-elevated dark:bg-[#242424] text-text-primary dark:text-[#F0F0F0] font-medium py-3.5 px-8 rounded-xl border border-border-subtle dark:border-[#2D2D2D] hover:border-gold-500/30 transition-all"
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Got it
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Auto Savings — now accessible via /autopay */}
     </div>
   );
 }

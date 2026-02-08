@@ -219,3 +219,45 @@ export interface GiftPresetAmount {
   inrAmount: number;
   gramsAmount: number;
 }
+
+// AutoPay types
+export type AutoPayFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly';
+export type AutoPayStatus = 'active' | 'paused';
+
+export interface AutoPay {
+  id: string;
+  name: string;
+  amount: number;
+  frequency: AutoPayFrequency;
+  status: AutoPayStatus;
+  startDate: string;
+  nextExecution: string;
+  totalInvested: number;
+  goldAccumulated: number;
+  avgPricePerGram: number;
+}
+
+export interface AutoPayTransaction {
+  id: string;
+  autoPayId: string;
+  amount: number;
+  gramsPurchased: number;
+  pricePerGram: number;
+  status: 'completed' | 'failed' | 'pending';
+  executedAt: string;
+}
+
+export interface AutoPayStats {
+  monthlySavings: number;
+  totalSaved: number;
+  totalGoldAccumulated: number;
+  activePlansCount: number;
+  nextExecution: string;
+}
+
+export interface CreateAutoPayInput {
+  name: string;
+  amount: number;
+  frequency: AutoPayFrequency;
+  startDate: 'immediate' | string;
+}
