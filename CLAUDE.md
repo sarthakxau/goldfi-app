@@ -15,6 +15,7 @@ Bullion is a Progressive Web App (PWA) for digital gold savings targeting Indian
 - **Blockchain**: Viem v2 on Arbitrum
 - **State Management**: Zustand
 - **Charts**: Recharts
+- **Animations**: Motion (Framer Motion v12+) via `motion/react` + `tailwindcss-animate` Tailwind plugin
 - **PWA**: next-pwa
 - **Numbers**: decimal.js for precise financial calculations
 
@@ -46,6 +47,12 @@ src/
 │   ├── providers.tsx         # Privy provider setup
 │   └── manifest.ts           # PWA manifest
 ├── components/               # Reusable React components
+│   ├── animations/           # Animation system components
+│   │   ├── FadeUp.tsx        # Fade-up entrance wrapper
+│   │   ├── StaggerContainer.tsx # Staggered list reveal
+│   │   ├── PageTransition.tsx   # Page-level entrance animation
+│   │   ├── AnimatedNumber.tsx   # Smooth number morphing
+│   │   └── index.ts          # Barrel exports
 │   ├── Buy/                  # Buy flow components
 │   │   ├── SwapModal.tsx     # Main swap modal
 │   │   ├── SwapProgress.tsx  # Step progress indicator
@@ -65,6 +72,7 @@ src/
 │   ├── useSwap.ts            # Buy swap logic (USDT → XAUT)
 │   └── useSellSwap.ts        # Sell swap logic (XAUT → USDT)
 ├── lib/                      # Core utilities
+│   ├── animations.ts         # Shared animation constants & variants
 │   ├── prisma.ts             # Prisma client singleton
 │   ├── redis.ts              # Redis client
 │   ├── viem.ts               # Server-side Viem clients
@@ -110,6 +118,8 @@ Note: Using `db:push` for schema sync. Migrations not configured.
 | File | Purpose |
 |------|---------|
 | `src/lib/constants.ts` | Smart contract addresses, chain ID, decimals, swap limits |
+| `src/lib/animations.ts` | Shared easings, durations, springs, motion variants |
+| `src/components/animations/` | Reusable animation wrapper components (FadeUp, Stagger, etc.) |
 | `src/lib/viem.ts` | Server-side Viem public client |
 | `src/lib/clientViem.ts` | Client-side Viem + ERC20/Router ABIs for browser |
 | `src/lib/auth.ts` | Server-side Privy token verification |
@@ -124,31 +134,290 @@ Note: Using `db:push` for schema sync. Migrations not configured.
 ## Coding Conventions
 
 ### TypeScript
+
 - Strict mode enabled
 - Path alias: `@/*` maps to `./src/*`
 - All API responses use `ApiResponse<T>` wrapper type
 
 ### Components
+
 - PascalCase for component names
 - Located in `src/components/`
 - Use `cn()` helper from `utils.ts` for Tailwind class merging
 
 ### API Routes
+
 - Located in `src/app/api/`
 - Return JSON with `ApiResponse<T>` structure
 - Protected routes use `verifyAuth()` from `src/lib/auth.ts`
 - Client calls use `authFetch()` from `src/lib/apiClient.ts` to attach Bearer token
 
 ### Financial Calculations
+
 - Always use `decimal.js` for money/token amounts
 - Never use JavaScript floats for financial math
 - XAUT has 6 decimals, USDT has 6 decimals
 
 ### Formatting Functions (from utils.ts)
+
 - `formatINR()` - Currency formatting for Indian rupees
 - `formatGrams()` - Gold amount display
 - `formatPercent()` - Percentage display
 - `ouncesToGrams()` / `gramsToOunces()` - Unit conversion
+
+### Animation Requirements
+
+All new client components **MUST** include entrance animations — see "Animation System" section for mandatory patterns. This is non-negotiable to maintain the premium feel of the app.
+
+## Animation System
+
+Bullion uses a comprehensive animation system built on **Motion** (Framer Motion v12+) to create a refined, premium feel appropriate for a financial app. All animations are subtle, purposeful, and consistent.
+
+### Import Rule
+
+```typescript
+import { motion, AnimatePresence } from 'motion/react';
+// NOT: 'motion/react-client' — that variant is not used in this codebase
+```
+
+### Design Philosophy
+
+- **Refined & subtle** — 200-400ms duration, smooth deceleration (`EASE_OUT_EXPO`)
+- **No jarring movement** — Maximum 12-16px travel distance
+- **Staggered reveals** — 50-80ms between sequential items
+- **Spring physics** — Use spring presets for bouncy interactions (buttons, badges)
+- **Financial app appropriate** — Professional, not playful
+
+### Shared Constants (`src/lib/animations.ts`)
+
+#### Easing Curves
+
+```typescript
+EASE_OUT = [0.25, 0.1, 0.25, 1.0]
+EASE_OUT_EXPO = [0.16, 1, 0.3, 1]  // Smooth deceleration, most common
+EASE_IN_OUT = [0.42, 0, 0.58, 1]
+```
+
+#### Durations (seconds)
+
+```typescript
+DURATION.fast = 0.2    // Quick interactions, exits
+DURATION.normal = 0.3  // Default for most elements
+DURATION.slow = 0.4    // Hero elements, modals
+DURATION.slower = 0.5  // Special emphasis
+```
+
+#### Spring Presets
+
+```typescript
+SPRING.gentle  // { damping: 30, stiffness: 300 } — card reveals
+SPRING.bouncy  // { damping: 20, stiffness: 300 } — success states, badges
+SPRING.snappy  // { damping: 35, stiffness: 400 } — button presses
+```
+
+#### Stagger Delays
+
+```typescript
+STAGGER.fast = 0.04    // Quick lists
+STAGGER.normal = 0.06  // Default stagger
+STAGGER.slow = 0.08    // Dramatic reveals
+```
+
+### Motion Variants (export from `src/lib/animations.ts`)
+
+| Variant | Use Case | Properties |
+|---------|----------|------------|
+| `fadeUp` | Standard entrance | `opacity: 0→1, y: 12→0` |
+| `fadeIn` | No movement fade | `opacity: 0→1` |
+| `scaleIn` | Badges, icons, success | `opacity: 0→1, scale: 0.85→1` |
+| `slideUp` | Modals, bottom sheets | `y: 100%→0` with exit animation |
+| `backdropFade` | Modal backdrops | `opacity: 0→1` with exit |
+| `modalScale` | Centered modals | `scale: 0.95→1, opacity: 0→1` |
+| `pageTransition` | Page containers | Fade-up with stagger children |
+| `highlightPulse` | Attention drawing | Box-shadow pulse |
+| `staggerContainer()` | List wrappers | Configurable stagger timing |
+
+### Reusable Animation Components
+
+All located in `src/components/animations/`:
+
+#### `FadeUp` — The workhorse
+```typescript
+import { FadeUp } from '@/components/animations';
+
+<FadeUp delay={0.1} distance={12} duration={0.3}>
+  <YourComponent />
+</FadeUp>
+
+// Scroll-triggered version
+<FadeUp inView once delay={0.2}>
+  <YourComponent />
+</FadeUp>
+```
+
+#### `StaggerContainer` + `StaggerItem` — For lists
+```typescript
+import { StaggerContainer, StaggerItem } from '@/components/animations';
+
+<StaggerContainer staggerDelay={0.06} delayChildren={0.2}>
+  {items.map(item => (
+    <StaggerItem key={item.id}>
+      <ListItem {...item} />
+    </StaggerItem>
+  ))}
+</StaggerContainer>
+```
+
+#### `PageTransition` — Page wrapper
+
+```typescript
+import { PageTransition } from '@/components/animations';
+
+<PageTransition>
+  <YourPageContent />
+</PageTransition>
+```
+
+#### `AnimatedNumber` — Financial values
+
+```typescript
+import { AnimatedNumber } from '@/components/animations';
+
+<AnimatedNumber 
+  value={price} 
+  format={formatINR} 
+  duration={0.5}
+/>
+```
+
+### CSS Animation Classes (`src/app/globals.css`)
+
+#### `.live-dot`
+Breathing glow animation for live price indicators.
+```html
+<span className="live-dot w-2 h-2 rounded-full bg-success" />
+```
+
+#### `.gold-shimmer`
+Subtle shimmer overlay for premium cards (holdings card, TolaCard).
+```html
+<div className="card-gold relative overflow-hidden">
+  <div className="absolute inset-0 gold-shimmer pointer-events-none" />
+  {/* card content */}
+</div>
+```
+
+### Mandatory Patterns for New Components
+
+#### 1. **Pages** — Fade-up entrance on mount
+```typescript
+<motion.div
+  initial={{ opacity: 0, y: 8 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+>
+  {/* page content */}
+</motion.div>
+```
+
+#### 2. **Page Sections** — Staggered reveal
+Wrap sections in `StaggerContainer`, use `FadeUp` or `StaggerItem` for children.
+
+#### 3. **Modals** — Scale + fade with backdrop
+```typescript
+<AnimatePresence>
+  {isOpen && (
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      variants={backdropFade}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      onClick={onClose}
+    >
+      <motion.div
+        className="bg-white rounded-2xl p-6"
+        variants={modalScale}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* modal content */}
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+```
+
+#### 4. **Lists/Grids** — Staggered children
+```typescript
+<motion.div
+  initial="hidden"
+  animate="visible"
+  variants={staggerContainer(STAGGER.normal)}
+>
+  {items.map((item, i) => (
+    <motion.div key={i} variants={fadeUp}>
+      {item}
+    </motion.div>
+  ))}
+</motion.div>
+```
+
+#### 5. **Buttons** — Press feedback
+```typescript
+<motion.button
+  whileTap={{ scale: 0.97 }}
+  transition={SPRING.snappy}
+>
+  Click me
+</motion.button>
+```
+
+#### 6. **Loading Spinners** — Controlled rotation (not CSS)
+```typescript
+<motion.div
+  animate={{ rotate: 360 }}
+  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+>
+  <RefreshCw className="size-4" />
+</motion.div>
+```
+
+#### 7. **Financial Values** — `AnimatedNumber`
+Any price, balance, or holdings value that changes should use `AnimatedNumber` for smooth morphing.
+
+#### 8. **Tab/Filter Pills** — Animated indicator
+Use `layoutId` for sliding active indicator:
+```typescript
+{tabs.map(tab => (
+  <button key={tab} onClick={() => setActive(tab)}>
+    {active === tab && (
+      <motion.div
+        className="absolute inset-0 bg-white rounded-full"
+        layoutId="tabIndicator"
+        transition={{ duration: DURATION.fast, ease: EASE_OUT_EXPO }}
+      />
+    )}
+    <span className="relative z-10">{tab}</span>
+  </button>
+))}
+```
+
+### Accessibility
+
+- **Reduced motion**: All components respect `prefers-reduced-motion` via `useReducedMotion()` hook
+- **No auto-play**: No distracting infinite animations except subtle shimmer
+- **Focus states**: Maintain visibility during animations
+
+### Examples in Existing Code
+
+- **Dashboard layout** (`src/app/(dashboard)/layout.tsx`): Page transitions + bottom nav sliding indicator
+- **Home page** (`src/app/(dashboard)/page.tsx`): Staggered sections, holdings card with shimmer, returns badge spring-in
+- **Login page** (`src/app/(auth)/login/page.tsx`): Orchestrated carousel entrance with staggered features
+- **Sell page** (`src/app/(dashboard)/sell/page.tsx`): Error/success state animations, quote expand/collapse
+- **TolaCard** (`src/components/TolaCard.tsx`): 3D tilt entrance on mount
 
 ## Smart Contract Addresses (Arbitrum Mainnet)
 
@@ -300,6 +569,7 @@ Located in `src/hooks/useSwap.ts`. Manages the USDT → XAUT buy flow.
 Located in `src/hooks/useSellSwap.ts`. Manages the XAUT → USDT sell flow.
 
 **Returns:**
+
 - `walletAddress`, `xautBalance`, `xautBalanceGrams`, `balanceLoading`
 - `quote`, `quoteLoading`
 - `step` (SwapStep), `error`
@@ -309,6 +579,7 @@ Located in `src/hooks/useSellSwap.ts`. Manages the XAUT → USDT sell flow.
 ## Authentication Pattern
 
 ### Server-Side (`src/lib/auth.ts`)
+
 ```typescript
 import { verifyAuth } from '@/lib/auth';
 
@@ -318,6 +589,7 @@ if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 ```
 
 ### Client-Side (`src/lib/apiClient.ts`)
+
 ```typescript
 import { authFetch, authFetchJson } from '@/lib/apiClient';
 
@@ -329,6 +601,7 @@ const { success, data, error } = await authFetchJson<HoldingData>('/api/holdings
 ## Testing & Verification
 
 After making changes:
+
 1. Run `pnpm build` to check for TypeScript errors
 2. Run `pnpm lint` to check code style
 3. Start dev server with `pnpm dev` and test manually
