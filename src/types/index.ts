@@ -153,3 +153,41 @@ export interface UpiOrderResponse {
   paymentUrl?: string;
   error?: string;
 }
+
+// Yield / Earn types
+export type RiskLevel = 'Low' | 'Medium' | 'High';
+
+export interface YieldToken {
+  symbol: string;
+  name: string;
+  iconType: 'gold' | 'dollar';
+}
+
+export interface YieldStrategy {
+  id: string;
+  protocol: string;
+  chain: string;
+  name: string;
+  apy: number;
+  tvl: string;
+  description: string;
+  risk: RiskLevel;
+  tokens: YieldToken[];
+  iconType: 'landmark' | 'droplets' | 'layers';
+  minDeposit: string;
+  lockPeriod: string;
+  liquidationRisk: string;
+  steps: string[];
+  externalUrl: string;
+  quickAmounts: string[];
+}
+
+export interface YieldPosition {
+  strategyId: string;
+  deposited: number;
+  depositToken: string;
+  earned: number;
+  apy: number;
+  days: number;
+  status: 'Active' | 'Paused' | 'Closed';
+}

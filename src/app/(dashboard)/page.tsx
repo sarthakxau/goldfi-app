@@ -370,12 +370,12 @@ export default function DashboardPage() {
       <FadeUp delay={0.28} inView once>
         <section className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-text-primary dark:text-[#F0F0F0]">Recent</h2>
+            <h2 className="text-lg font-bold text-text-primary dark:text-[#F0F0F0]">recent activity</h2>
             <Link
               href="/transactions"
               className="text-gold-500 hover:text-gold-400 font-medium transition-colors text-xs"
             >
-              See more
+              see more
             </Link>
           </div>
 

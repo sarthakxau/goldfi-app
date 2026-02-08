@@ -6,7 +6,7 @@ import { usePrivy, getAccessToken } from '@privy-io/react-auth';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Home, CreditCard, ArrowLeftRight, Settings } from 'lucide-react';
+import { Home, CreditCard, Sprout, Settings } from 'lucide-react';
 import { motion } from 'motion/react';
 import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
 
@@ -80,11 +80,13 @@ export default function DashboardLayout({
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/card', label: 'Card', icon: CreditCard },
-    { href: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
+    { href: '/yield', label: 'Earn', icon: Sprout },
     { href: '/account', label: 'Settings', icon: Settings },
   ];
 
-  const activeIndex = navItems.findIndex((item) => item.href === pathname);
+  const activeIndex = navItems.findIndex((item) =>
+    item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+  );
 
   return (
     <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] pb-36">
@@ -128,7 +130,7 @@ export default function DashboardLayout({
 
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
 
             return (
               <Link
