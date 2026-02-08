@@ -4,13 +4,12 @@ import { usePrivy, getAccessToken } from '@privy-io/react-auth';
 import { useEffect, useCallback, useState } from 'react';
 import { useAppStore } from '@/store';
 import { formatINR, formatGrams } from '@/lib/utils';
-import { RefreshCw, Calendar, Info, Sprout } from 'lucide-react';
+import { RefreshCw, Calendar, Info, Sprout, Gift } from 'lucide-react';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
 import { TransactionList } from '@/components/TransactionList';
 import { motion, AnimatePresence } from 'motion/react';
 import { FadeUp, AnimatedNumber } from '@/components/animations';
-import { StaggerContainer, StaggerItem } from '@/components/animations';
 import { SPRING, EASE_OUT_EXPO, DURATION, fadeUp, scaleIn, backdropFade, modalScale } from '@/lib/animations';
 
 export default function DashboardPage() {
@@ -324,47 +323,46 @@ export default function DashboardPage() {
         </div>
       </FadeUp>
 
-      <StaggerContainer staggerDelay={0.06} delayChildren={0.2} className="flex flex-col gap-3 mb-6">
-        <StaggerItem>
-          <Link href="/yield" className='w-full'>
-            <motion.button
-              className="w-full mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40"
-              whileTap={{ scale: 0.98 }}
+      <FadeUp delay={0.18}>
+        <div className="flex justify-center gap-8 mb-6">
+          <Link href="/yield" className="flex flex-col items-center gap-2 group">
+            <motion.div
+              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
+              whileTap={{ scale: 0.95 }}
               transition={SPRING.snappy}
             >
-              <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
-                  <Sprout className="size-5" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">gold yield</p>
-                  <p className="text-xs text-text-muted dark:text-[#6B7280]">variable rates, risks apply</p>
-                </div>
-              </div>
-            </motion.button>
+              <Sprout className="size-6" />
+            </motion.div>
+            <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">earn</span>
           </Link>
-        </StaggerItem>
 
-        <StaggerItem>
-          <motion.button
+          <button
             onClick={() => setShowAutoSavingsModal(true)}
-            className="w-full mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40"
-            whileTap={{ scale: 0.98 }}
-            transition={SPRING.snappy}
+            className="flex flex-col items-center gap-2 group"
           >
-            <div className="flex items-center gap-3">
-              <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
-                <Calendar className="size-5" />
-              </div>
-              <div className="text-left">
-                <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">auto savings plan</p>
-                <p className="text-xs text-text-muted dark:text-[#6B7280]">set up recurring investments</p>
-              </div>
-            </div>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-gold-100 dark:bg-gold-500/10 text-gold-500 dark:text-gold-400 border border-gold-500/20 dark:border-gold-500/30">soon</span>
-          </motion.button>
-        </StaggerItem>
-      </StaggerContainer>
+            <motion.div
+              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all relative"
+              whileTap={{ scale: 0.95 }}
+              transition={SPRING.snappy}
+            >
+              <Calendar className="size-6" />
+              {/* <span className="absolute -top-1 -right-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-gold-500/20 text-gold-500 border border-gold-500/30">soon</span> */}
+            </motion.div>
+            <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">save</span>
+          </button>
+
+          <Link href="/gift" className="flex flex-col items-center gap-2 group">
+            <motion.div
+              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
+              whileTap={{ scale: 0.95 }}
+              transition={SPRING.snappy}
+            >
+              <Gift className="size-6" />
+            </motion.div>
+            <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">gift</span>
+          </Link>
+        </div>
+      </FadeUp>
 
       {/* Recent Transactions */}
       <FadeUp delay={0.28} inView once>

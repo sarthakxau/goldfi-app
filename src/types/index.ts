@@ -191,3 +191,31 @@ export interface YieldPosition {
   days: number;
   status: 'Active' | 'Paused' | 'Closed';
 }
+
+// Gift types
+export type GiftStatus = 'pending' | 'claimed' | 'expired' | 'delivered' | 'opened' | 'added_to_vault';
+
+export type GiftOccasion = 'Birthday' | 'Wedding' | 'Festival' | 'Thank You' | 'Just Because' | 'Anniversary' | 'Custom';
+
+export interface GiftTransaction {
+  id: string;
+  type: 'sent' | 'received';
+  senderName?: string | null;
+  recipientName?: string | null;
+  recipientPhone?: string | null;
+  recipientEmail?: string | null;
+  gramsAmount: number;
+  inrAmount: number;
+  message?: string | null;
+  occasion: GiftOccasion;
+  status: GiftStatus;
+  createdAt: Date;
+  deliveredAt?: Date | null;
+  claimedAt?: Date | null;
+}
+
+// Gift preset amounts
+export interface GiftPresetAmount {
+  inrAmount: number;
+  gramsAmount: number;
+}
