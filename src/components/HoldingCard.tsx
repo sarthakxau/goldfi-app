@@ -4,6 +4,8 @@ import { formatINR, formatGrams, formatPercent } from '@/lib/utils';
 import type { HoldingWithValue, GoldPrice } from '@/types';
 import Decimal from 'decimal.js';
 import { Coins } from 'lucide-react';
+import { motion } from 'motion/react';
+import { SPRING, EASE_OUT_EXPO, DURATION } from '@/lib/animations';
 
 interface HoldingCardProps {
   holding: HoldingWithValue | null;
@@ -44,7 +46,12 @@ export function HoldingCard({ holding, goldPrice, loading }: HoldingCardProps) {
   const hasHoldings = holding && new Decimal(holding.xautAmount).greaterThan(0);
 
   return (
-    <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl p-6 border border-gold-500/20 dark:border-gold-500/30 shadow-card">
+    <motion.div
+      className="bg-white dark:bg-[#1A1A1A] rounded-2xl p-6 border border-gold-500/20 dark:border-gold-500/30 shadow-card"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+    >
       <div className="flex items-start justify-between mb-4">
         <div>
           <p className="text-text-muted dark:text-[#6B7280] text-sm">Your Gold Holdings</p>
@@ -52,19 +59,34 @@ export function HoldingCard({ holding, goldPrice, loading }: HoldingCardProps) {
             {hasHoldings ? formatGrams(xautAmountGrams) : '0 g'}
           </h2>
         </div>
-        <div className="size-12 bg-gold-100 dark:bg-gold-500/10 rounded-full flex items-center justify-center">
+        <motion.div
+          className="size-12 bg-gold-100 dark:bg-gold-500/10 rounded-full flex items-center justify-center"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ ...SPRING.gentle, delay: 0.1 }}
+        >
           <Coins className="size-6 text-gold-500" />
-        </div>
+        </motion.div>
       </div>
 
       {hasHoldings ? (
         <>
-          <div className="bg-surface-elevated dark:bg-[#242424] rounded-xl p-4 mb-4">
+          <motion.div
+            className="bg-surface-elevated dark:bg-[#242424] rounded-xl p-4 mb-4"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO, delay: 0.1 }}
+          >
             <p className="text-text-muted dark:text-[#6B7280] text-sm">Current Value</p>
             <p className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0]">{formatINR(currentValueInr)}</p>
-          </div>
+          </motion.div>
 
-          <div className="flex justify-between items-center">
+          <motion.div
+            className="flex justify-between items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: DURATION.normal, delay: 0.2 }}
+          >
             <div>
               <p className="text-text-muted dark:text-[#6B7280] text-sm">Total Invested</p>
               <p className="font-semibold text-text-primary dark:text-[#F0F0F0]">
@@ -84,19 +106,21 @@ export function HoldingCard({ holding, goldPrice, loading }: HoldingCardProps) {
                 </span>
               </p>
             </div>
-          </div>
+          </motion.div>
         </>
       ) : (
         <div className="text-center py-4">
           <p className="text-text-muted dark:text-[#6B7280]">Start your gold savings journey</p>
-          <a
+          <motion.a
             href="/buy"
             className="inline-block mt-3 bg-gold-gradient text-white font-semibold py-2 px-6 rounded-lg hover:opacity-90 transition-opacity"
+            whileTap={{ scale: 0.97 }}
+            transition={SPRING.snappy}
           >
             Buy Gold
-          </a>
+          </motion.a>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

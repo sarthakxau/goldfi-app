@@ -1,5 +1,9 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import React from 'react';
+import { motion } from 'motion/react';
+import { SPRING, EASE_OUT_EXPO, DURATION } from '@/lib/animations';
 
 interface TolaCardProps {
   className?: string;
@@ -8,7 +12,7 @@ interface TolaCardProps {
 
 export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) {
   return (
-    <div
+    <motion.div
       className={cn(
         'relative w-full aspect-[1.586] rounded-3xl p-6 overflow-hidden',
         'shadow-card-hover',
@@ -17,9 +21,16 @@ export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) 
       style={{
         background: 'linear-gradient(135deg, #D4A012 0%, #F5B832 30%, #D4A012 60%, #B8860B 100%)',
       }}
+      initial={{ opacity: 0, rotateX: 8, y: 20 }}
+      animate={{ opacity: 1, rotateX: 0, y: 0 }}
+      transition={{ duration: DURATION.slow, ease: EASE_OUT_EXPO }}
+      whileHover={{ y: -2, transition: { duration: DURATION.fast } }}
     >
       {/* Luxury texture overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/20 pointer-events-none" />
+
+      {/* Shimmer overlay */}
+      <div className="absolute inset-0 gold-shimmer pointer-events-none" />
 
       {/* Subtle grain texture */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{
@@ -29,15 +40,32 @@ export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) 
       <div className="relative z-10 flex flex-col justify-between h-full text-white cursor-default">
         {/* Top Row */}
         <div className="flex justify-between items-start">
-          <span className="text-2xl font-bold tracking-tight drop-shadow-sm">gold.fi</span>
+          <motion.span
+            className="text-2xl font-bold tracking-tight drop-shadow-sm"
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO, delay: 0.15 }}
+          >
+            gold.fi
+          </motion.span>
           {/* Gold Coins Illustration (SVG) */}
-          <div className="absolute right-4 top-4 opacity-90">
+          <motion.div
+            className="absolute right-4 top-4 opacity-90"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.9, scale: 1 }}
+            transition={{ ...SPRING.gentle, delay: 0.2 }}
+          >
             <GoldCoinsIcon className="w-20 h-20 drop-shadow-lg" />
-          </div>
+          </motion.div>
         </div>
 
         {/* Middle/Bottom Card Info */}
-        <div className="mt-auto space-y-4">
+        <motion.div
+          className="mt-auto space-y-4"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO, delay: 0.25 }}
+        >
           <div className="text-lg font-medium flex items-center gap-2 text-white/90 drop-shadow-md font-mono">
             <span>****</span>
             <span>****</span>
@@ -52,9 +80,9 @@ export function TolaCard({ className, cardHolderName = 'User' }: TolaCardProps) 
             </div>
             <VisaLogo className="w-14 h-auto text-white drop-shadow-md" />
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

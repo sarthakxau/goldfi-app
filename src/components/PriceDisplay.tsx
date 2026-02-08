@@ -2,6 +2,8 @@
 
 import { formatINR } from '@/lib/utils';
 import type { GoldPrice } from '@/types';
+import { motion } from 'motion/react';
+import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
 
 interface PriceDisplayProps {
   price: GoldPrice | null;
@@ -32,7 +34,12 @@ export function PriceDisplay({ price, loading }: PriceDisplayProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-[#1A1A1A] rounded-xl p-4 border border-border-subtle dark:border-[#2D2D2D] mb-4">
+    <motion.div
+      className="bg-white dark:bg-[#1A1A1A] rounded-xl p-4 border border-border-subtle dark:border-[#2D2D2D] mb-4"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+    >
       <div className="flex items-center justify-between">
         <div>
           <p className="text-text-secondary dark:text-[#9CA3AF] text-sm font-medium">Live Gold Price</p>
@@ -43,7 +50,7 @@ export function PriceDisplay({ price, loading }: PriceDisplayProps) {
         </div>
         <div className="text-right">
           <div className="flex items-center gap-1 text-sm text-text-muted dark:text-[#6B7280]">
-            <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+            <span className="w-2 h-2 bg-success rounded-full live-dot" />
             Live
           </div>
           <p className="text-xs text-text-muted dark:text-[#6B7280] mt-1">
@@ -51,6 +58,6 @@ export function PriceDisplay({ price, loading }: PriceDisplayProps) {
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

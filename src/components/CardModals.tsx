@@ -1,6 +1,10 @@
+'use client';
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { X, Copy, CreditCard, Shield, Ban, ChevronRight, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { slideUp, backdropFade, SPRING } from '@/lib/animations';
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,31 +14,43 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, children, title }: ModalProps) {
-  if (!isOpen) return null;
-
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-modalBackdrop transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Content */}
-      <div className="fixed bottom-0 left-0 right-0 z-modal bg-white dark:bg-[#1A1A1A] rounded-t-3xl p-6 shadow-card animate-in slide-in-from-bottom duration-300 md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl border-t border-border-subtle dark:border-[#2D2D2D] md:border">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">{title}</h3>
-          <button
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-modalBackdrop"
+            variants={backdropFade}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             onClick={onClose}
-            className="p-2 -mr-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] hover:bg-surface-elevated dark:hover:bg-[#242424] rounded-full transition-colors"
-            aria-label="Close modal"
+          />
+
+          {/* Content */}
+          <motion.div
+            className="fixed bottom-0 left-0 right-0 z-modal bg-white dark:bg-[#1A1A1A] rounded-t-3xl p-6 shadow-card md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl border-t border-border-subtle dark:border-[#2D2D2D] md:border"
+            variants={slideUp}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
           >
-            <X className="size-6" />
-          </button>
-        </div>
-        {children}
-      </div>
-    </>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">{title}</h3>
+              <button
+                onClick={onClose}
+                className="p-2 -mr-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] hover:bg-surface-elevated dark:hover:bg-[#242424] rounded-full transition-colors"
+                aria-label="Close modal"
+              >
+                <X className="size-6" />
+              </button>
+            </div>
+            {children}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -63,11 +79,29 @@ export function CardDetailsModal({ isOpen, onClose }: CardDetailsModalProps) {
           onClick={() => copyToClipboard(value, label)}
           className="p-2 text-gold-500 hover:bg-gold-100 dark:hover:bg-gold-500/10 rounded-lg transition-colors"
         >
-          {copiedField === label ? (
-            <Check className="size-5 text-success" />
-          ) : (
-            <Copy className="size-5" />
-          )}
+          <AnimatePresence mode="wait">
+            {copiedField === label ? (
+              <motion.div
+                key="check"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                <Check className="size-5 text-success" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="copy"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                <Copy className="size-5" />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </button>
       )}
     </div>
@@ -92,13 +126,16 @@ interface CardMoreModalProps {
 
 export function CardMoreModal({ isOpen, onClose }: CardMoreModalProps) {
   const ActionButton = ({ icon: Icon, label, destructive = false }: { icon: React.ElementType, label: string, destructive?: boolean }) => (
-    <button 
+    <motion.button
       aria-label={label}
       className={cn(
-        "w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle dark:border-[#2D2D2D] mb-3 transition-all duration-300 active:scale-[0.98]",
+        "w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle dark:border-[#2D2D2D] mb-3 transition-colors",
         "hover:border-gold-500/30 hover:bg-surface-elevated dark:hover:bg-[#242424]",
         destructive && "hover:border-error/30 hover:bg-error-light dark:hover:bg-error/10"
-      )}>
+      )}
+      whileTap={{ scale: 0.98 }}
+      transition={SPRING.snappy}
+    >
       <div className="flex items-center gap-3">
         <div className={cn(
           "p-2 rounded-lg",
@@ -115,7 +152,7 @@ export function CardMoreModal({ isOpen, onClose }: CardMoreModalProps) {
         "size-5",
         destructive ? "text-error/50" : "text-text-muted dark:text-[#6B7280]"
       )} />
-    </button>
+    </motion.button>
   );
 
   return (

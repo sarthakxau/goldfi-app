@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Home, CreditCard, ArrowLeftRight, Settings } from 'lucide-react';
+import { motion } from 'motion/react';
+import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
 
 export default function DashboardLayout({
   children,
@@ -66,7 +68,11 @@ export default function DashboardLayout({
   if (!ready || !authenticated) {
     return (
       <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] flex items-center justify-center">
-        <div className="size-8 border-2 border-gold-500/30 border-t-gold-500 rounded-full animate-spin" />
+        <motion.div
+          className="size-8 border-2 border-gold-500/30 border-t-gold-500 rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        />
       </div>
     );
   }
@@ -78,9 +84,19 @@ export default function DashboardLayout({
     { href: '/account', label: 'Settings', icon: Settings },
   ];
 
+  const activeIndex = navItems.findIndex((item) => item.href === pathname);
+
   return (
     <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] pb-36">
-      {children}
+      {/* Page content with fade-up entrance */}
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+      >
+        {children}
+      </motion.div>
 
       {/* Disclaimer */}
       <div className="fixed bottom-[72px] left-0 right-0 bg-white dark:bg-[#1A1A1A] border-t border-border-subtle dark:border-[#2D2D2D] z-10">
@@ -99,7 +115,17 @@ export default function DashboardLayout({
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1A1A1A] shadow-nav dark:shadow-none dark:border-t dark:border-[#2D2D2D] safe-area-bottom">
-        <div className="max-w-lg mx-auto flex justify-around">
+        <div className="max-w-lg mx-auto flex justify-around relative">
+          {/* Sliding active indicator */}
+          {activeIndex >= 0 && (
+            <motion.div
+              className="absolute top-0 h-0.5 bg-gold-500 rounded-full"
+              style={{ width: `${100 / navItems.length}%` }}
+              animate={{ left: `${(activeIndex / navItems.length) * 100}%` }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            />
+          )}
+
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -109,18 +135,22 @@ export default function DashboardLayout({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex flex-col items-center py-3 px-4 text-xs transition-all duration-300',
+                  'flex flex-col items-center py-3 px-4 text-xs transition-colors duration-200',
                   isActive
                     ? 'text-gold-500'
                     : 'text-text-muted hover:text-text-secondary dark:text-[#6B7280] dark:hover:text-[#9CA3AF]'
                 )}
               >
-                <div className={cn(
-                  "p-2 rounded-xl mb-1 transition-all duration-300",
-                  isActive && "bg-gold-100 dark:bg-gold-500/10"
-                )}>
+                <motion.div
+                  className={cn(
+                    "p-2 rounded-xl mb-1",
+                    isActive && "bg-gold-100 dark:bg-gold-500/10"
+                  )}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 400 }}
+                >
                   <Icon className={cn("w-5 h-5", isActive ? "stroke-[2.5px]" : "stroke-[1.5px]")} />
-                </div>
+                </motion.div>
                 <span className="font-medium">{item.label}</span>
               </Link>
             );
