@@ -4,14 +4,13 @@ import { usePrivy, getAccessToken } from '@privy-io/react-auth';
 import { useEffect, useCallback, useState } from 'react';
 import { useAppStore } from '@/store';
 import { formatINR, formatGrams } from '@/lib/utils';
-import { RefreshCw, Calendar, Info, Sprout } from 'lucide-react';
+import { RefreshCw, Calendar, Info, Sprout, Gift } from 'lucide-react';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
 import { TransactionList } from '@/components/TransactionList';
 import { motion, AnimatePresence } from 'motion/react';
 import { FadeUp, AnimatedNumber } from '@/components/animations';
-import { StaggerContainer, StaggerItem } from '@/components/animations';
-import { SPRING, EASE_OUT_EXPO, DURATION, fadeUp, scaleIn, backdropFade, modalScale } from '@/lib/animations';
+import { SPRING, EASE_OUT_EXPO, DURATION, scaleIn } from '@/lib/animations';
 
 export default function DashboardPage() {
   const { user } = usePrivy();
@@ -35,7 +34,7 @@ export default function DashboardPage() {
   } = useAppStore();
 
   const [viewMode, setViewMode] = useState<'grams' | 'inr' | 'usd' | 'scudo'>('inr');
-  const [showAutoSavingsModal, setShowAutoSavingsModal] = useState(false);
+  // Auto savings modal removed — now links to /autopay page
 
   const fetchPrice = useCallback(async () => {
     try {
@@ -324,47 +323,42 @@ export default function DashboardPage() {
         </div>
       </FadeUp>
 
-      <StaggerContainer staggerDelay={0.06} delayChildren={0.2} className="flex flex-col gap-3 mb-6">
-        <StaggerItem>
-          <Link href="/yield" className='w-full'>
-            <motion.button
-              className="w-full mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40"
-              whileTap={{ scale: 0.98 }}
+      <FadeUp delay={0.18}>
+        <div className="flex justify-center gap-8 mb-6">
+          <Link href="/yield" className="flex flex-col items-center gap-2 group">
+            <motion.div
+              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
+              whileTap={{ scale: 0.95 }}
               transition={SPRING.snappy}
             >
-              <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
-                  <Sprout className="size-5" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">gold yield</p>
-                  <p className="text-xs text-text-muted dark:text-[#6B7280]">variable rates, risks apply</p>
-                </div>
-              </div>
-            </motion.button>
+              <Sprout className="size-6" />
+            </motion.div>
+            <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">earn</span>
           </Link>
-        </StaggerItem>
 
-        <StaggerItem>
-          <motion.button
-            onClick={() => setShowAutoSavingsModal(true)}
-            className="w-full mx-auto card p-4 flex items-center justify-between group hover:border-gold-500/30 transition-all shadow-lg z-40"
-            whileTap={{ scale: 0.98 }}
-            transition={SPRING.snappy}
-          >
-            <div className="flex items-center gap-3">
-              <div className="size-10 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center text-gold-500">
-                <Calendar className="size-5" />
-              </div>
-              <div className="text-left">
-                <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-sm">auto savings plan</p>
-                <p className="text-xs text-text-muted dark:text-[#6B7280]">set up recurring investments</p>
-              </div>
-            </div>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-gold-100 dark:bg-gold-500/10 text-gold-500 dark:text-gold-400 border border-gold-500/20 dark:border-gold-500/30">soon</span>
-          </motion.button>
-        </StaggerItem>
-      </StaggerContainer>
+          <Link href="/autopay" className="flex flex-col items-center gap-2 group">
+            <motion.div
+              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all relative"
+              whileTap={{ scale: 0.95 }}
+              transition={SPRING.snappy}
+            >
+              <Calendar className="size-6" />
+            </motion.div>
+            <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">save</span>
+          </Link>
+
+          <Link href="/gift" className="flex flex-col items-center gap-2 group">
+            <motion.div
+              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
+              whileTap={{ scale: 0.95 }}
+              transition={SPRING.snappy}
+            >
+              <Gift className="size-6" />
+            </motion.div>
+            <span className="text-sm text-text-secondary dark:text-[#9CA3AF] font-medium">gift</span>
+          </Link>
+        </div>
+      </FadeUp>
 
       {/* Recent Transactions */}
       <FadeUp delay={0.28} inView once>
@@ -409,58 +403,7 @@ export default function DashboardPage() {
         </section>
       </FadeUp>
 
-      {/* Auto Savings Modal */}
-      <AnimatePresence>
-        {showAutoSavingsModal && (
-          <motion.div
-            className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            variants={backdropFade}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={() => setShowAutoSavingsModal(false)}
-          >
-            <motion.div
-              className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-4 max-w-sm w-full text-center"
-              variants={modalScale}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <motion.div
-                className="mx-auto size-16 bg-gold-100 dark:bg-gold-500/10 rounded-full flex items-center justify-center mb-5"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ ...SPRING.bouncy, delay: 0.1 }}
-              >
-                <Calendar className="size-8 text-gold-500" />
-              </motion.div>
-              <h3 className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2">Auto Savings Plan</h3>
-              <p className="text-text-secondary dark:text-[#9CA3AF] mb-6 text-sm">
-                Set up automatic recurring investments in gold. Choose your amount, frequency, and let your savings grow effortlessly.
-              </p>
-              <div className="space-y-3">
-                <div className="bg-surface-elevated dark:bg-[#242424] border border-border-subtle dark:border-[#2D2D2D] rounded-xl p-4 text-left">
-                  <p className="text-text-muted dark:text-[#6B7280] text-xs mb-1">Features coming soon</p>
-                  <ul className="text-text-secondary dark:text-[#9CA3AF] text-sm space-y-1">
-                    <li>- Daily, weekly, or monthly savings</li>
-                    <li>- Flexible amount from INR 100</li>
-                    <li>- Pause or cancel anytime</li>
-                  </ul>
-                </div>
-                <motion.button
-                  onClick={() => setShowAutoSavingsModal(false)}
-                  className="w-full bg-surface-elevated dark:bg-[#242424] text-text-primary dark:text-[#F0F0F0] font-medium py-3.5 px-8 rounded-xl border border-border-subtle dark:border-[#2D2D2D] hover:border-gold-500/30 transition-all"
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Got it
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Auto Savings — now accessible via /autopay */}
     </div>
   );
 }

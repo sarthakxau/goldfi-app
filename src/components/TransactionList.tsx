@@ -6,6 +6,8 @@ import Decimal from 'decimal.js';
 import { ArrowDownLeft, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
 import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
+import { useState } from 'react';
+import { TransactionDetailModal } from './TransactionDetailModal';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -60,7 +62,19 @@ export function TransactionList({
   showDateHeaders = true,
   showInlineDate = false,
 }: TransactionListProps) {
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const groupedTransactions = groupByDate(transactions);
+
+  const handleTransactionClick = (tx: Transaction) => {
+    setSelectedTransaction(tx);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedTransaction(null), 300);
+  };
 
   const renderTxItem = (tx: Transaction, index: number) => {
     const xautGrams = tx.xautAmount
@@ -88,8 +102,8 @@ export function TransactionList({
         key={tx.id}
         className={cn(
           variant === 'card'
-            ? 'card p-4 transition-all duration-300'
-            : 'py-4',
+            ? 'card p-4 transition-all duration-300 cursor-pointer'
+            : 'py-4 cursor-pointer',
           isHighlighted
             ? 'border-gold-500 ring-1 ring-gold-500/30'
             : ''
@@ -97,6 +111,7 @@ export function TransactionList({
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.normal, delay: index * 0.05, ease: EASE_OUT_EXPO }}
+        onClick={() => handleTransactionClick(tx)}
         {...(isHighlighted ? {
           // Gold pulse animation for highlighted transactions
           style: { boxShadow: '0 0 0 0 rgba(184, 134, 11, 0)' },
@@ -142,7 +157,7 @@ export function TransactionList({
               'font-bold tabular-nums text-lg',
               tx.type === 'buy' ? 'text-text-primary dark:text-[#F0F0F0]' : 'text-success'
             )}>
-              {tx.type === 'buy' ? '+' : '-'}{formatINR(tx.inrAmount || 0)}
+              {tx.type === 'buy' ? '-' : '+'}{formatINR(tx.inrAmount || 0)}
             </p>
             <p className="text-sm text-text-muted dark:text-[#6B7280] tabular-nums">
               {formatGrams(xautGrams)}
@@ -174,27 +189,41 @@ export function TransactionList({
 
   if (!showDateHeaders) {
     return (
-      <div className={cn(variant === 'card' ? 'space-y-3' : 'divide-y divide-border-subtle dark:divide-[#2D2D2D]')}>
-        {transactions.map((tx, i) => renderTxItem(tx, i))}
-      </div>
+      <>
+        <div className={cn(variant === 'card' ? 'space-y-3' : 'divide-y divide-border-subtle dark:divide-[#2D2D2D]')}>
+          {transactions.map((tx, i) => renderTxItem(tx, i))}
+        </div>
+        <TransactionDetailModal
+          transaction={selectedTransaction}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      </>
     );
   }
 
   let globalIndex = 0;
   return (
-    <div className="space-y-6">
-      {Object.entries(groupedTransactions).map(([dateLabel, txs]) => (
-        <div key={dateLabel}>
-          <h2 className="text-sm font-medium text-text-muted dark:text-[#6B7280] mb-3">{dateLabel}</h2>
-          <div className={cn(variant === 'card' ? 'space-y-3' : 'divide-y divide-border-subtle dark:divide-[#2D2D2D]')}>
-            {txs.map((tx) => {
-              const item = renderTxItem(tx, globalIndex);
-              globalIndex++;
-              return item;
-            })}
+    <>
+      <div className="space-y-6">
+        {Object.entries(groupedTransactions).map(([dateLabel, txs]) => (
+          <div key={dateLabel}>
+            <h2 className="text-sm font-medium text-text-muted dark:text-[#6B7280] mb-3">{dateLabel}</h2>
+            <div className={cn(variant === 'card' ? 'space-y-3' : 'divide-y divide-border-subtle dark:divide-[#2D2D2D]')}>
+              {txs.map((tx) => {
+                const item = renderTxItem(tx, globalIndex);
+                globalIndex++;
+                return item;
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <TransactionDetailModal
+        transaction={selectedTransaction}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+    </>
   );
 }

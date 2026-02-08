@@ -5,7 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { slideUp, backdropFade, SPRING } from '@/lib/animations';
+import { slideUpSpring, backdropFade, SPRING } from '@/lib/animations';
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -46,7 +46,7 @@ export function DepositModal({ isOpen, onClose, walletAddress }: DepositModalPro
           {/* Modal Content */}
           <motion.div
             className="bg-white dark:bg-[#1A1A1A] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 relative"
-            variants={slideUp}
+            variants={slideUpSpring}
             initial="hidden"
             animate="visible"
             exit="exit"

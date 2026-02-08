@@ -10,7 +10,7 @@ import { SwapProgress } from './SwapProgress';
 import { MIN_USDT_SWAP, MAX_USDT_SWAP, QUOTE_REFRESH_INTERVAL } from '@/lib/constants';
 import { debounce, truncateAddress } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
-import { slideUp, backdropFade, SPRING } from '@/lib/animations';
+import { slideUpSpring, backdropFade, SPRING } from '@/lib/animations';
 
 interface SwapModalProps {
   isOpen: boolean;
@@ -129,7 +129,7 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
           {/* Modal */}
           <motion.div
             className="bg-white dark:bg-[#1A1A1A] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 relative"
-            variants={slideUp}
+            variants={slideUpSpring}
             initial="hidden"
             animate="visible"
             exit="exit"

@@ -191,3 +191,73 @@ export interface YieldPosition {
   days: number;
   status: 'Active' | 'Paused' | 'Closed';
 }
+
+// Gift types
+export type GiftStatus = 'pending' | 'claimed' | 'expired' | 'delivered' | 'opened' | 'added_to_vault';
+
+export type GiftOccasion = 'Birthday' | 'Wedding' | 'Festival' | 'Thank You' | 'Just Because' | 'Anniversary' | 'Custom';
+
+export interface GiftTransaction {
+  id: string;
+  type: 'sent' | 'received';
+  senderName?: string | null;
+  recipientName?: string | null;
+  recipientPhone?: string | null;
+  recipientEmail?: string | null;
+  gramsAmount: number;
+  inrAmount: number;
+  message?: string | null;
+  occasion: GiftOccasion;
+  status: GiftStatus;
+  createdAt: Date;
+  deliveredAt?: Date | null;
+  claimedAt?: Date | null;
+}
+
+// Gift preset amounts
+export interface GiftPresetAmount {
+  inrAmount: number;
+  gramsAmount: number;
+}
+
+// AutoPay types
+export type AutoPayFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly';
+export type AutoPayStatus = 'active' | 'paused';
+
+export interface AutoPay {
+  id: string;
+  name: string;
+  amount: number;
+  frequency: AutoPayFrequency;
+  status: AutoPayStatus;
+  startDate: string;
+  nextExecution: string;
+  totalInvested: number;
+  goldAccumulated: number;
+  avgPricePerGram: number;
+}
+
+export interface AutoPayTransaction {
+  id: string;
+  autoPayId: string;
+  amount: number;
+  gramsPurchased: number;
+  pricePerGram: number;
+  status: 'completed' | 'failed' | 'pending';
+  executedAt: string;
+}
+
+export interface AutoPayStats {
+  monthlySavings: number;
+  totalSaved: number;
+  totalGoldAccumulated: number;
+  activePlansCount: number;
+  nextExecution: string;
+}
+
+export interface CreateAutoPayInput {
+  name: string;
+  amount: number;
+  frequency: AutoPayFrequency;
+  startDate: 'immediate' | string;
+}

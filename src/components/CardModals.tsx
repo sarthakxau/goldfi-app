@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { X, Copy, CreditCard, Shield, Ban, ChevronRight, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { slideUp, backdropFade, SPRING } from '@/lib/animations';
+import { slideUpSpring, backdropFade, SPRING } from '@/lib/animations';
 
 interface ModalProps {
   isOpen: boolean;
@@ -31,7 +31,7 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
           {/* Content */}
           <motion.div
             className="fixed bottom-0 left-0 right-0 z-modal bg-white dark:bg-[#1A1A1A] rounded-t-3xl p-6 shadow-card md:bottom-auto md:top-1/2 md:left-1/2 md:w-[400px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl border-t border-border-subtle dark:border-[#2D2D2D] md:border"
-            variants={slideUp}
+            variants={slideUpSpring}
             initial="hidden"
             animate="visible"
             exit="exit"
