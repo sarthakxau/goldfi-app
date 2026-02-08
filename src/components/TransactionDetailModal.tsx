@@ -5,7 +5,7 @@ import type { Transaction } from '@/types';
 import Decimal from 'decimal.js';
 import { ArrowDownLeft, ArrowUpRight, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { slideUp, backdropFade, SPRING } from '@/lib/animations';
+import { slideUpSpring, backdropFade, SPRING } from '@/lib/animations';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -64,7 +64,7 @@ export function TransactionDetailModal({ transaction, isOpen, onClose }: Transac
           {/* Modal Panel */}
           <motion.div
             className="bg-white dark:bg-[#1A1A1A] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 relative"
-            variants={slideUp}
+            variants={slideUpSpring}
             initial="hidden"
             animate="visible"
             exit="exit"

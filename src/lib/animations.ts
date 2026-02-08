@@ -132,6 +132,29 @@ export const pageTransition = {
   },
 } as const;
 
+// ── Slide up from bottom with spring physics ───────────
+export const slideUpSpring = {
+  hidden: { opacity: 0, y: '100%' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      damping: 24,
+      stiffness: 280,
+      mass: 0.8,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: '100%',
+    transition: {
+      duration: DURATION.normal,
+      ease: EASE_IN_OUT,
+    },
+  },
+} as const;
+
 // ── Modal scale + fade (for centered modals) ──────────
 export const modalScale = {
   hidden: { opacity: 0, scale: 0.95 },
