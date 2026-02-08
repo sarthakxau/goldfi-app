@@ -6,6 +6,8 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { TolaPriceDisplay } from '@/components/TolaPrice';
 import { CheckCircle, Sparkles } from 'lucide-react';
 import { TERMS_AND_CONDITIONS } from '@/lib/copy';
+import { motion, AnimatePresence } from 'motion/react';
+import { SPRING, EASE_OUT_EXPO, DURATION, backdropFade, modalScale } from '@/lib/animations';
 
 // --- SVG Illustrations ---
 
@@ -208,20 +210,30 @@ export default function LoginPage() {
   return (
     <div className="w-full min-h-screen bg-surface dark:bg-[#0F0F0F] flex flex-col overflow-hidden">
       {/* Slide Indicators */}
-      <div className="flex items-center justify-center gap-2 pt-6 pb-4 relative z-10">
+      <motion.div
+        className="flex items-center justify-center gap-2 pt-6 pb-4 relative z-10"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO, delay: 0.1 }}
+      >
         {Array.from({ length: slideCount }).map((_, i) => (
           <button
             key={i}
             onClick={() => goToSlide(i)}
-            className={`h-1 rounded-full transition-all duration-500 ${
-              i === activeSlide
-                ? 'w-8 bg-gold-500'
-                : 'w-4 bg-border'
-            }`}
+            className="h-1 rounded-full bg-border relative overflow-hidden"
+            style={{ width: i === activeSlide ? 32 : 16 }}
             aria-label={`Go to slide ${i + 1}`}
-          />
+          >
+            <motion.div
+              className="absolute inset-0 bg-gold-500 rounded-full"
+              initial={false}
+              animate={{ scaleX: i === activeSlide ? 1 : 0 }}
+              transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+              style={{ originX: 0 }}
+            />
+          </button>
         ))}
-      </div>
+      </motion.div>
 
       {/* Slides Container */}
       <div
@@ -230,30 +242,59 @@ export default function LoginPage() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div
-          className="flex h-full transition-transform duration-500 ease-out"
-          style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+        <motion.div
+          className="flex h-full"
+          animate={{ x: `-${activeSlide * 100}%` }}
+          transition={{ duration: DURATION.slow, ease: EASE_OUT_EXPO }}
         >
           {/* Slide 1: Invest in Gold */}
           <div className="w-full flex-shrink-0 px-6 flex flex-col">
-            <div className="flex flex-col items-center pt-4 pb-4">
-              <div className="flex items-center gap-3 mb-4">
+            <motion.div
+              className="flex flex-col items-center pt-4 pb-4"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: DURATION.slow, ease: EASE_OUT_EXPO, delay: 0.2 }}
+            >
+              <motion.div
+                className="flex items-center gap-3 mb-4"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ ...SPRING.gentle, delay: 0.3 }}
+              >
                 <img src="/icon-192x192.png" alt="gold.fi" className="size-12 rounded-xl shadow-lg" />
                 <h1 className="text-4xl font-bold text-gold-500 tracking-tight">gold.fi</h1>
-              </div>
-              <p className="text-center text-text-secondary dark:text-[#9CA3AF] text-sm tracking-wide">Own real gold. Backed 1:1.<br />Secured in Swiss vaults.</p>
-            </div>
-            <div className="py-4">
+              </motion.div>
+              <motion.p
+                className="text-center text-text-secondary dark:text-[#9CA3AF] text-sm tracking-wide"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: DURATION.normal, delay: 0.5 }}
+              >
+                Own real gold. Backed 1:1.<br />Secured in Swiss vaults.
+              </motion.p>
+            </motion.div>
+            <motion.div
+              className="py-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO, delay: 0.55 }}
+            >
               <TolaPriceDisplay className="w-full" />
-            </div>
+            </motion.div>
             <div className="py-4 space-y-3">
-              {features.map((feature) => (
-                <div key={feature} className="flex items-center gap-3">
+              {features.map((feature, i) => (
+                <motion.div
+                  key={feature}
+                  className="flex items-center gap-3"
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO, delay: 0.65 + i * 0.08 }}
+                >
                   <div className="size-6 rounded-full bg-success-light dark:bg-success/10 flex items-center justify-center flex-shrink-0">
                     <CheckCircle className="size-4 text-success" />
                   </div>
                   <span className="text-text-secondary dark:text-[#9CA3AF] text-sm">{feature}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -305,84 +346,113 @@ export default function LoginPage() {
               <MapIllustration />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Fixed CTA Section */}
-      <div className="px-6 pt-4 pb-8 mb-6 safe-area-bottom relative z-10">
+      <motion.div
+        className="px-6 pt-4 pb-8 mb-6 safe-area-bottom relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION.slow, ease: EASE_OUT_EXPO, delay: 0.9 }}
+      >
         <p className="text-center text-text-muted dark:text-[#6B7280] text-xs mb-4 tracking-wide">
           signing up takes just a minute
         </p>
 
-        <button
+        <motion.button
           onClick={() => setShowTermsModal(true)}
-          className="w-full bg-gold-gradient text-white font-bold py-4 px-6 rounded-full transition-all active:scale-[0.98] mb-4 text-lg tracking-wide"
+          className="w-full bg-gold-gradient text-white font-bold py-4 px-6 rounded-full transition-all mb-4 text-lg tracking-wide"
+          whileTap={{ scale: 0.97 }}
+          transition={SPRING.snappy}
         >
           get started
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={login}
-          className="w-full text-text-secondary dark:text-[#9CA3AF] font-medium py-4 px-6 rounded-full hover:border-gold-500/30 hover:text-text-primary dark:hover:text-[#F0F0F0] transition-all active:scale-[0.98]"
+          className="w-full text-text-secondary dark:text-[#9CA3AF] font-medium py-4 px-6 rounded-full hover:border-gold-500/30 hover:text-text-primary dark:hover:text-[#F0F0F0] transition-all"
+          whileTap={{ scale: 0.97 }}
+          transition={SPRING.snappy}
         >
           already have an account? log in
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* T&C Modal */}
-      {showTermsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] mb-4 text-center">
-              Terms & Conditions
-            </h3>
-            
-            <div className="space-y-4 mb-6">
-              <p className="text-sm text-text-secondary dark:text-[#9CA3AF]">
-                {TERMS_AND_CONDITIONS}
-              </p>
-            </div>
+      <AnimatePresence>
+        {showTermsModal && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            variants={backdropFade}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            onClick={() => { setShowTermsModal(false); setAgreedToTerms(false); }}
+          >
+            <motion.div
+              className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-border-subtle dark:border-[#2D2D2D] p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+              variants={modalScale}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] mb-4 text-center">
+                Terms & Conditions
+              </h3>
+              
+              <div className="space-y-4 mb-6">
+                <p className="text-sm text-text-secondary dark:text-[#9CA3AF]">
+                  {TERMS_AND_CONDITIONS}
+                </p>
+              </div>
 
-            {/* T&C Checkbox */}
-            <label className="flex items-start gap-3 mb-6 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={agreedToTerms}
-                onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded border-border-subtle dark:border-[#2D2D2D] text-gold-500 focus:ring-gold-500"
-              />
-              <span className="text-sm text-text-secondary dark:text-[#9CA3AF] leading-relaxed">
-                I agree to the{' '}
-                <a href="#" className="text-gold-500 hover:underline">Terms & Conditions</a>,{' '}
-                Marketing Communications, and{' '}
-                <a href="#" className="text-gold-500 hover:underline">Privacy Policy</a>.
-              </span>
-            </label>
+              {/* T&C Checkbox */}
+              <label className="flex items-start gap-3 mb-6 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-border-subtle dark:border-[#2D2D2D] text-gold-500 focus:ring-gold-500"
+                />
+                <span className="text-sm text-text-secondary dark:text-[#9CA3AF] leading-relaxed">
+                  I agree to the{' '}
+                  <a href="#" className="text-gold-500 hover:underline">Terms & Conditions</a>,{' '}
+                  Marketing Communications, and{' '}
+                  <a href="#" className="text-gold-500 hover:underline">Privacy Policy</a>.
+                </span>
+              </label>
 
-            <button
-              onClick={() => {
-                if (agreedToTerms) {
+              <motion.button
+                onClick={() => {
+                  if (agreedToTerms) {
+                    setShowTermsModal(false);
+                    login();
+                  }
+                }}
+                disabled={!agreedToTerms}
+                className="w-full bg-gold-gradient text-white font-bold py-4 px-6 rounded-full transition-all mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                whileTap={{ scale: 0.97 }}
+                transition={SPRING.snappy}
+              >
+                create account
+              </motion.button>
+              
+              <motion.button
+                onClick={() => {
                   setShowTermsModal(false);
-                  login();
-                }
-              }}
-              disabled={!agreedToTerms}
-              className="w-full bg-gold-gradient text-white font-bold py-4 px-6 rounded-full transition-all active:scale-[0.98] mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              create account
-            </button>
-            
-            <button
-              onClick={() => {
-                setShowTermsModal(false);
-                setAgreedToTerms(false);
-              }}
-              className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-medium py-3 px-6 rounded-full hover:border-gold-500/30 transition-all"
-            >
-              cancel
-            </button>
-          </div>
-        </div>
-      )}
+                  setAgreedToTerms(false);
+                }}
+                className="w-full bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-medium py-3 px-6 rounded-full hover:border-gold-500/30 transition-all"
+                whileTap={{ scale: 0.97 }}
+                transition={SPRING.snappy}
+              >
+                cancel
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

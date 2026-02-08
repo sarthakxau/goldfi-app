@@ -83,6 +83,33 @@ body {
   100% { background-position: -200% 0; }
 }
 
+/* Live indicator breathing glow */
+@keyframes live-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+}
+
+.live-dot {
+  animation: live-glow 2s ease-in-out infinite;
+}
+
+/* Gold shimmer for premium elements */
+@keyframes gold-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 160, 18, 0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: gold-shimmer 3s ease-in-out infinite;
+}
+
 /* Safe area padding for mobile */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 16px);

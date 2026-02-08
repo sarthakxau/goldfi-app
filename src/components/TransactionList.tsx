@@ -4,6 +4,8 @@ import { formatINR, formatGrams, cn } from '@/lib/utils';
 import type { Transaction } from '@/types';
 import Decimal from 'decimal.js';
 import { ArrowDownLeft, ArrowUpRight, ExternalLink } from 'lucide-react';
+import { motion } from 'motion/react';
+import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -59,7 +61,8 @@ export function TransactionList({
   showInlineDate = false,
 }: TransactionListProps) {
   const groupedTransactions = groupByDate(transactions);
-  const renderTxItem = (tx: Transaction) => {
+
+  const renderTxItem = (tx: Transaction, index: number) => {
     const xautGrams = tx.xautAmount
       ? new Decimal(tx.xautAmount).times(31.1035).toNumber()
       : 0;
@@ -78,17 +81,26 @@ export function TransactionList({
         year: 'numeric',
       });
 
+    const isHighlighted = tx.id === highlightId;
+
     return (
-      <div
+      <motion.div
         key={tx.id}
         className={cn(
           variant === 'card'
             ? 'card p-4 transition-all duration-300'
             : 'py-4',
-          tx.id === highlightId
+          isHighlighted
             ? 'border-gold-500 ring-1 ring-gold-500/30'
             : ''
         )}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION.normal, delay: index * 0.05, ease: EASE_OUT_EXPO }}
+        {...(isHighlighted ? {
+          // Gold pulse animation for highlighted transactions
+          style: { boxShadow: '0 0 0 0 rgba(184, 134, 11, 0)' },
+        } : {})}
       >
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
@@ -156,25 +168,30 @@ export function TransactionList({
             <p className="text-xs text-error">{tx.errorMessage}</p>
           </div>
         )}
-      </div>
+      </motion.div>
     );
   };
 
   if (!showDateHeaders) {
     return (
       <div className={cn(variant === 'card' ? 'space-y-3' : 'divide-y divide-border-subtle dark:divide-[#2D2D2D]')}>
-        {transactions.map(renderTxItem)}
+        {transactions.map((tx, i) => renderTxItem(tx, i))}
       </div>
     );
   }
 
+  let globalIndex = 0;
   return (
     <div className="space-y-6">
       {Object.entries(groupedTransactions).map(([dateLabel, txs]) => (
         <div key={dateLabel}>
           <h2 className="text-sm font-medium text-text-muted dark:text-[#6B7280] mb-3">{dateLabel}</h2>
           <div className={cn(variant === 'card' ? 'space-y-3' : 'divide-y divide-border-subtle dark:divide-[#2D2D2D]')}>
-            {txs.map(renderTxItem)}
+            {txs.map((tx) => {
+              const item = renderTxItem(tx, globalIndex);
+              globalIndex++;
+              return item;
+            })}
           </div>
         </div>
       ))}

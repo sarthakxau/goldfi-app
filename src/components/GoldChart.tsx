@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/utils';
+import { motion } from 'motion/react';
+import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
 
 interface ChartData {
   date: string;
@@ -68,7 +70,12 @@ export function GoldChart() {
   }
 
   return (
-    <div className="card p-6">
+    <motion.div
+      className="card p-6"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+    >
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
@@ -136,22 +143,29 @@ export function GoldChart() {
       </div>
 
       {/* Time Range Selector */}
-      <div className="flex justify-center gap-1 mt-4">
+      <div className="flex justify-center gap-1 mt-4 relative">
         {timeRanges.map((range) => (
           <button
             key={range}
             onClick={() => setTimeRange(range)}
             className={cn(
-              'px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300',
+              'px-3 py-1.5 text-xs font-medium rounded-full transition-colors duration-200 relative z-10',
               timeRange === range
-                ? 'bg-white dark:bg-[#1A1A1A] text-text-primary dark:text-[#F0F0F0] border border-border-subtle dark:border-[#2D2D2D] shadow-card'
+                ? 'text-text-primary dark:text-[#F0F0F0]'
                 : 'text-text-muted dark:text-[#6B7280] hover:text-text-secondary dark:hover:text-[#9CA3AF]'
             )}
           >
-            {range}
+            {timeRange === range && (
+              <motion.div
+                className="absolute inset-0 bg-white dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] shadow-card rounded-full"
+                layoutId="goldChartTimeRange"
+                transition={{ duration: DURATION.fast, ease: EASE_OUT_EXPO }}
+              />
+            )}
+            <span className="relative z-10">{range}</span>
           </button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
