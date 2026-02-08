@@ -327,7 +327,7 @@ export default function DashboardPage() {
         <div className="flex justify-center gap-8 mb-6">
           <Link href="/yield" className="flex flex-col items-center gap-2 group">
             <motion.div
-              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
+              className="size-16 rounded-2xl bg-surface-elevated dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
               whileTap={{ scale: 0.95 }}
               transition={SPRING.snappy}
             >
@@ -338,7 +338,7 @@ export default function DashboardPage() {
 
           <Link href="/autopay" className="flex flex-col items-center gap-2 group">
             <motion.div
-              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all relative"
+              className="size-16 rounded-2xl bg-surface-elevated dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all relative"
               whileTap={{ scale: 0.95 }}
               transition={SPRING.snappy}
             >
@@ -349,7 +349,7 @@ export default function DashboardPage() {
 
           <Link href="/gift" className="flex flex-col items-center gap-2 group">
             <motion.div
-              className="size-16 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
+              className="size-16 rounded-2xl bg-surface-elevated dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] flex items-center justify-center text-gold-500 group-hover:border-gold-500/30 transition-all"
               whileTap={{ scale: 0.95 }}
               transition={SPRING.snappy}
             >
