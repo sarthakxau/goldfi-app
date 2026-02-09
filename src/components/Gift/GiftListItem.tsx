@@ -76,27 +76,29 @@ export function GiftListItem({ gift, onClick, onResend, resending }: GiftListIte
           <div className="size-11 rounded-xl bg-gold-100 dark:bg-gold-500/10 flex items-center justify-center">
             <Icon className="size-5 text-gold-500 dark:text-gold-400" />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between w-full">
+              <p className="font-bold text-lg text-text-primary dark:text-[#F0F0F0]">
+                {formatINR(gift.inrAmount)}
+              </p>
+              <div className="text-right ml-3">
+                <div
+                  className={cn(
+                    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mt-0 border',
+                    statusConfig.className
+                  )}
+                >
+                  <StatusIcon className="size-3" />
+                  {statusConfig.label}
+                </div>
+            </div>
+            </div>
             <p className="font-semibold text-text-primary dark:text-[#F0F0F0] text-[15px]">
               {isSent ? displayName : `From ${displayName}`}
             </p>
             <p className="text-xs text-text-muted dark:text-[#6B7280] mt-0.5">
               {formatGrams(gift.gramsAmount)} gold · {formatDate(gift.createdAt)}
             </p>
-          </div>
-        </div>
-        <div className="text-right">
-          <p className="font-bold text-lg text-text-primary dark:text-[#F0F0F0]">
-            {formatINR(gift.inrAmount)}
-          </p>
-          <div
-            className={cn(
-              'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mt-1 border',
-              statusConfig.className
-            )}
-          >
-            <StatusIcon className="size-3" />
-            {statusConfig.label}
           </div>
         </div>
       </div>

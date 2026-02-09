@@ -3,11 +3,12 @@
 import { motion } from 'motion/react';
 import { IndianRupee } from 'lucide-react';
 import { cn, formatINR } from '@/lib/utils';
-import type { GiftPresetAmount } from '@/types';
 import { SPRING } from '@/lib/animations';
+import { calculateGramsFromInr } from '@/lib/giftData';
 
 interface AmountSelectorProps {
-  presets: GiftPresetAmount[];
+  presetInrAmounts: number[];
+  pricePerGramInr: number;
   selectedAmount: number;
   onSelect: (amount: number, grams: number) => void;
   customAmount?: string;
@@ -15,23 +16,25 @@ interface AmountSelectorProps {
 }
 
 export function AmountSelector({
-  presets,
+  presetInrAmounts,
+  pricePerGramInr,
   selectedAmount,
   onSelect,
   customAmount,
   onCustomAmountChange,
 }: AmountSelectorProps) {
-  const isCustomSelected = !presets.some((p) => p.inrAmount === selectedAmount);
+  const isCustomSelected = !presetInrAmounts.some((inr) => inr === selectedAmount);
 
   return (
     <div className="space-y-3">
       {/* Preset amounts grid */}
       <div className="grid grid-cols-2 gap-3">
-        {presets.map((preset) => {
-          const isSelected = selectedAmount === preset.inrAmount && !isCustomSelected;
+        {presetInrAmounts.map((inr) => {
+          const grams = calculateGramsFromInr(inr, pricePerGramInr);
+          const isSelected = selectedAmount === inr && !isCustomSelected;
           return (
             <motion.button
-              key={preset.inrAmount}
+              key={inr}
               type="button"
               className={cn(
                 'p-4 rounded-2xl border-2 text-left transition-all',
@@ -41,7 +44,7 @@ export function AmountSelector({
               )}
               whileTap={{ scale: 0.98 }}
               transition={SPRING.snappy}
-              onClick={() => onSelect(preset.inrAmount, preset.gramsAmount)}
+              onClick={() => onSelect(inr, grams)}
             >
               <p
                 className={cn(
@@ -51,10 +54,10 @@ export function AmountSelector({
                     : 'text-text-primary dark:text-[#F0F0F0]'
                 )}
               >
-                {formatINR(preset.inrAmount)}
+                {formatINR(inr)}
               </p>
               <p className="text-sm text-text-muted dark:text-[#6B7280]">
-                {preset.gramsAmount}g gold
+                {grams}g gold
               </p>
             </motion.button>
           );
@@ -89,8 +92,8 @@ export function AmountSelector({
           onChange={(e) => onCustomAmountChange?.(e.target.value)}
           onFocus={() => {
             if (customAmount) {
-              const grams = Number(customAmount) / 7142;
-              onSelect(Number(customAmount), grams);
+              const inr = Number(customAmount);
+              onSelect(inr, calculateGramsFromInr(inr, pricePerGramInr));
             }
           }}
           className={cn(

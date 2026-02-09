@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Send, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Send } from 'lucide-react';
 import { FadeUp } from '@/components/animations';
 import {
   AmountSelector,
@@ -15,7 +15,7 @@ import {
   PaymentStep,
   GiftConfirmation,
 } from '@/components/Gift';
-import { GIFT_PRESET_AMOUNTS, calculateGramsFromInr } from '@/lib/giftData';
+import { GIFT_PRESET_INR, calculateGramsFromInr } from '@/lib/giftData';
 import { SPRING, DURATION, EASE_OUT_EXPO } from '@/lib/animations';
 import { z, useForm, zodResolver, type FormData } from '@/lib/form';
 import { useGiftSend } from '@/hooks/useGiftSend';
@@ -90,7 +90,7 @@ export default function SendGiftPage() {
     if (value) {
       const inr = Number(value);
       setValue('selectedAmount', inr, { shouldValidate: true });
-      setValue('gramsAmount', calculateGramsFromInr(inr));
+      setValue('gramsAmount', calculateGramsFromInr(inr, selectedAmount / gramsAmount));
     }
   };
 
@@ -189,7 +189,8 @@ export default function SendGiftPage() {
                   Amount
                 </label>
                 <AmountSelector
-                  presets={GIFT_PRESET_AMOUNTS}
+                  presetInrAmounts={GIFT_PRESET_INR}
+                  pricePerGramInr={selectedAmount / gramsAmount}
                   selectedAmount={selectedAmount}
                   onSelect={handleAmountSelect}
                   customAmount={customAmount}

@@ -3,7 +3,8 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://goldfi.vercel.app';
-const FROM_EMAIL = 'gold.fi <noreply@goldfi.app>';
+// Use RESEND_FROM_EMAIL env var, or fall back to Resend's test sender for dev
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'gold.fi <onboarding@resend.dev>';
 
 interface GiftEmailParams {
   recipientEmail: string;
@@ -49,8 +50,10 @@ export async function sendGiftNotification(params: GiftEmailParams) {
   });
 
   if (error) {
-    console.error('[emailService] Failed to send gift email:', error);
-    throw new Error('Failed to send gift notification email');
+    console.error('[emailService] Failed to send gift email:', JSON.stringify(error, null, 2));
+    console.error('[emailService] From:', FROM_EMAIL, '| To:', recipientEmail);
+    console.error('[emailService] API key set:', !!process.env.RESEND_API_KEY);
+    throw new Error(`Failed to send gift notification email: ${error.message}`);
   }
 
   return data;
