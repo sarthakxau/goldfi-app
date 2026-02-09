@@ -73,6 +73,7 @@ src/
 │   └── useSellSwap.ts        # Sell swap logic (XAUT → USDT)
 ├── lib/                      # Core utilities
 │   ├── animations.ts         # Shared animation constants & variants
+│   ├── form.ts               # React Hook Form + Zod utilities
 │   ├── prisma.ts             # Prisma client singleton
 │   ├── redis.ts              # Redis client
 │   ├── viem.ts               # Server-side Viem clients
@@ -119,6 +120,7 @@ Note: Using `db:push` for schema sync. Migrations not configured.
 |------|---------|
 | `src/lib/constants.ts` | Smart contract addresses, chain ID, decimals, swap limits |
 | `src/lib/animations.ts` | Shared easings, durations, springs, motion variants |
+| `src/lib/form.ts` | React Hook Form + Zod utilities, validation patterns |
 | `src/components/animations/` | Reusable animation wrapper components (FadeUp, Stagger, etc.) |
 | `src/lib/viem.ts` | Server-side Viem public client |
 | `src/lib/clientViem.ts` | Client-side Viem + ERC20/Router ABIs for browser |
@@ -418,6 +420,71 @@ Use `layoutId` for sliding active indicator:
 - **Login page** (`src/app/(auth)/login/page.tsx`): Orchestrated carousel entrance with staggered features
 - **Sell page** (`src/app/(dashboard)/sell/page.tsx`): Error/success state animations, quote expand/collapse
 - **TolaCard** (`src/components/TolaCard.tsx`): 3D tilt entrance on mount
+
+## Form Management
+
+Bullion uses **React Hook Form** with **Zod** for type-safe form validation. This is the standard approach for all forms, especially important for upcoming KYC flows.
+
+### Imports from `src/lib/form.ts`
+
+```typescript
+import { z, useForm, zodResolver, type FormData } from '@/lib/form';
+```
+
+The `form.ts` utility file re-exports commonly used items for convenience:
+
+- `z` — Zod schema builder
+- `useForm`, `useFormContext`, `FormProvider`, `Controller` — React Hook Form hooks
+- `zodResolver` — Connects Zod schemas to React Hook Form
+- `FormData<T>` — Type helper to infer form types from Zod schemas
+
+### Available Validation Patterns
+
+Pre-built validators for Indian KYC requirements:
+
+```typescript
+import { validationPatterns } from '@/lib/form';
+
+validationPatterns.email     // Email validation
+validationPatterns.phone     // Indian 10-digit mobile (starts with 6-9)
+validationPatterns.pan       // PAN card format (ABCDE1234F)
+validationPatterns.aadhaar   // 12-digit Aadhaar number
+validationPatterns.pincode   // 6-digit Indian pincode
+validationPatterns.ifsc      // Bank IFSC code
+validationPatterns.accountNumber  // 9-18 digit bank account
+validationPatterns.upiId     // UPI ID format
+```
+
+### Reusable Schema Builders
+
+```typescript
+import { commonSchemas } from '@/lib/form';
+
+// Amount in INR with min/max
+commonSchemas.inrAmount(100, 100000)  // ₹100 - ₹1,00,000
+
+// Amount in grams
+commonSchemas.gramsAmount(0.01, 1000)  // 0.01g - 1000g
+
+// Optional text with max length
+commonSchemas.optionalText(100)  // Optional, max 100 chars
+
+// Required string with custom field name in error
+commonSchemas.requiredString('Full Name')  // "Full Name is required"
+```
+
+### Key Patterns
+
+| Pattern | Usage |
+|---------|-------|
+| `register('fieldName')` | Spread on native inputs |
+| `watch('fieldName')` | Get reactive field value |
+| `setValue('fieldName', value, { shouldValidate: true })` | Programmatic update |
+| `errors.fieldName?.message` | Display validation error |
+| `isValid` | Form passes all validation |
+| `isSubmitting` | Async submit in progress |
+| `mode: 'onChange'` | Validate on every change (real-time) |
+| `mode: 'onBlur'` | Validate when field loses focus |
 
 ## Smart Contract Addresses (Arbitrum Mainnet)
 
