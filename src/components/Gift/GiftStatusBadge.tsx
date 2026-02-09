@@ -10,31 +10,21 @@ interface GiftStatusBadgeProps {
 }
 
 export function GiftStatusBadge({ status, className }: GiftStatusBadgeProps) {
-  const configs = {
-    delivered: {
-      icon: CheckCircle,
-      label: 'Delivered',
-      className: 'bg-success/10 text-success',
-    },
-    opened: {
-      icon: Sparkles,
-      label: 'Opened',
-      className: 'bg-gold-500/10 text-gold-500',
-    },
-    added_to_vault: {
-      icon: CheckCircle,
-      label: 'Added to vault',
-      className: 'bg-success/10 text-success',
-    },
+  const configs: Record<string, { icon: typeof CheckCircle; label: string; className: string }> = {
     pending: {
       icon: Clock,
-      label: 'Pending claim',
+      label: 'Pending',
+      className: 'bg-gold-500/10 text-gold-500',
+    },
+    delivered: {
+      icon: Clock,
+      label: 'Unclaimed',
       className: 'bg-gold-500/10 text-gold-500',
     },
     claimed: {
-      icon: Gift,
+      icon: CheckCircle,
       label: 'Claimed',
-      className: 'bg-gold-500/10 text-gold-500',
+      className: 'bg-success/10 text-success',
     },
     expired: {
       icon: Clock,

@@ -8,7 +8,7 @@ Bullion is a Progressive Web App (PWA) for digital gold savings targeting Indian
 
 - **Framework**: Next.js 14 (App Router) with TypeScript
 - **Styling**: TailwindCSS with custom gold color palette
-- **Database**: PostgreSQL via Supabase (Prisma schema for reference)
+- **Database**: PostgreSQL via Supabase
 - **Cache**: Redis (in-memory mock in dev, Upstash in production)
 - **Icons**: Lucide React
 - **Auth/Wallet**: Privy SDK (phone/email login with embedded wallets)
@@ -74,7 +74,6 @@ src/
 ├── lib/                      # Core utilities
 │   ├── animations.ts         # Shared animation constants & variants
 │   ├── form.ts               # React Hook Form + Zod utilities
-│   ├── prisma.ts             # Prisma client singleton
 │   ├── redis.ts              # Redis client
 │   ├── viem.ts               # Server-side Viem clients
 │   ├── clientViem.ts         # Client-side Viem (browser)
@@ -104,14 +103,6 @@ pnpm start        # Start production server
 pnpm lint         # Run ESLint
 ```
 
-### Database Commands
-
-```bash
-pnpm db:push      # Push schema changes to database (primary method)
-pnpm db:generate  # Generate Prisma client
-pnpm db:studio    # Open Prisma Studio GUI
-```
-
 Note: Using `db:push` for schema sync. Migrations not configured.
 
 ## Key Files Reference
@@ -130,7 +121,6 @@ Note: Using `db:push` for schema sync. Migrations not configured.
 | `src/hooks/useSellSwap.ts` | Sell flow: XAUT → USDT swap hook |
 | `src/services/dexService.ts` | Camelot V3 swap quotes and execution |
 | `src/services/priceOracle.ts` | CoinGecko price fetching with Redis cache |
-| `prisma/schema.prisma` | Database schema (User, Holding, Transaction, PriceHistory) |
 | `src/types/index.ts` | All TypeScript interfaces and types |
 
 ## Coding Conventions

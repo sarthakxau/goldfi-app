@@ -42,8 +42,6 @@ The application will be available at `http://localhost:3000`.
     pnpm build        # Build for production
     pnpm start        # Start production server
     pnpm lint         # Run ESLint
-    pnpm db:generate  # Generate Prisma client after schema changes
-    pnpm db:studio    # Open Prisma Studio GUI
 
 ## Environment Variables
 

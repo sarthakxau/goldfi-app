@@ -4,3 +4,7 @@ export { GiftPreviewCard } from './GiftPreviewCard';
 export { GiftDetailModal } from './GiftDetailModal';
 export { AmountSelector } from './AmountSelector';
 export { OccasionPills } from './OccasionPills';
+export { RecipientLookup } from './RecipientLookup';
+export { UserNotFoundDialog } from './UserNotFoundDialog';
+export { PaymentStep } from './PaymentStep';
+export { GiftConfirmation } from './GiftConfirmation';

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Send, Download, Sparkles, CheckCircle, Clock } from 'lucide-react';
+import { Send, Download, Sparkles, CheckCircle, Clock, RefreshCw, Loader2 } from 'lucide-react';
 import { cn, formatINR, formatGrams } from '@/lib/utils';
 import type { GiftTransaction, GiftStatus } from '@/types';
 import { SPRING } from '@/lib/animations';
@@ -9,33 +9,28 @@ import { SPRING } from '@/lib/animations';
 interface GiftListItemProps {
   gift: GiftTransaction;
   onClick?: () => void;
+  onResend?: () => void;
+  resending?: boolean;
 }
 
 function getStatusConfig(status: GiftStatus) {
   switch (status) {
     case 'delivered':
       return {
-        icon: CheckCircle,
-        label: 'Delivered',
-        className: 'bg-success/10 text-success border-success/20',
-      };
-    case 'opened':
-      return {
-        icon: Sparkles,
-        label: 'Opened',
+        icon: Clock,
+        label: 'Unclaimed',
         className: 'bg-gold-500/10 text-gold-500 border-gold-500/20',
       };
-    case 'added_to_vault':
+    case 'claimed':
       return {
         icon: CheckCircle,
-        label: 'Added to vault',
+        label: 'Claimed',
         className: 'bg-success/10 text-success border-success/20',
       };
     case 'pending':
-    case 'claimed':
       return {
         icon: Clock,
-        label: 'Pending claim',
+        label: 'Pending',
         className: 'bg-gold-500/10 text-gold-500 border-gold-500/20',
       };
     case 'expired':
@@ -60,9 +55,11 @@ function formatDate(date: Date): string {
   return `${day} ${month}`;
 }
 
-export function GiftListItem({ gift, onClick }: GiftListItemProps) {
+export function GiftListItem({ gift, onClick, onResend, resending }: GiftListItemProps) {
   const isSent = gift.type === 'sent';
-  const displayName = isSent ? gift.recipientName : gift.senderName;
+  const displayName = isSent
+    ? (gift.recipientName || gift.recipientEmail || 'Unknown')
+    : (gift.senderName || 'Someone');
   const Icon = isSent ? Send : Download;
   const statusConfig = getStatusConfig(gift.status);
   const StatusIcon = statusConfig.icon;
@@ -103,6 +100,34 @@ export function GiftListItem({ gift, onClick }: GiftListItemProps) {
           </div>
         </div>
       </div>
+
+      {/* Resend button for unclaimed sent gifts */}
+      {onResend && (
+        <div className="mt-3 pt-3 border-t border-border-subtle dark:border-[#2D2D2D]">
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              onResend();
+            }}
+            disabled={resending}
+            className="w-full flex items-center justify-center gap-2 text-xs font-medium text-gold-500 py-2 rounded-xl hover:bg-gold-500/5 transition-colors disabled:opacity-50"
+            whileTap={{ scale: 0.97 }}
+            transition={SPRING.snappy}
+          >
+            {resending ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              >
+                <Loader2 className="size-3.5" />
+              </motion.div>
+            ) : (
+              <RefreshCw className="size-3.5" />
+            )}
+            {resending ? 'Resending...' : 'Resend claim link'}
+          </motion.button>
+        </div>
+      )}
     </motion.div>
   );
 }

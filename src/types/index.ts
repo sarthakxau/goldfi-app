@@ -193,25 +193,67 @@ export interface YieldPosition {
 }
 
 // Gift types
-export type GiftStatus = 'pending' | 'claimed' | 'expired' | 'delivered' | 'opened' | 'added_to_vault';
+export type GiftStatus = 'pending' | 'delivered' | 'claimed' | 'expired';
 
 export type GiftOccasion = 'Birthday' | 'Wedding' | 'Festival' | 'Thank You' | 'Just Because' | 'Anniversary' | 'Custom';
+
+export type GiftPaymentMethod = 'wallet' | 'upi';
+
+export type GiftStep =
+  | 'input'
+  | 'lookup'
+  | 'not-found'
+  | 'confirm'
+  | 'payment'
+  | 'approve'
+  | 'transfer'
+  | 'confirming'
+  | 'success'
+  | 'error';
 
 export interface GiftTransaction {
   id: string;
   type: 'sent' | 'received';
   senderName?: string | null;
   recipientName?: string | null;
-  recipientPhone?: string | null;
   recipientEmail?: string | null;
   gramsAmount: number;
   inrAmount: number;
   message?: string | null;
   occasion: GiftOccasion;
   status: GiftStatus;
+  paymentMethod?: GiftPaymentMethod | null;
+  claimToken?: string | null;
+  escrowTxHash?: string | null;
+  claimTxHash?: string | null;
+  expiresAt?: Date | null;
   createdAt: Date;
   deliveredAt?: Date | null;
   claimedAt?: Date | null;
+}
+
+export interface GiftLookupResult {
+  found: boolean;
+  user?: {
+    id: string;
+    email: string;
+  };
+}
+
+export interface GiftSendRequest {
+  recipientEmail: string;
+  recipientFound: boolean;
+  recipientUserId?: string;
+  inrAmount: number;
+  gramsAmount: number;
+  occasion: GiftOccasion;
+  message?: string;
+  paymentMethod: GiftPaymentMethod;
+  txHash: string;
+}
+
+export interface GiftClaimPayload {
+  claimToken: string;
 }
 
 // Gift preset amounts

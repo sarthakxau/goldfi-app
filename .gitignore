@@ -40,10 +40,6 @@ public/workbox-*.js
 public/sw.js.map
 public/workbox-*.js.map
 
-# Prisma
-prisma/*.db
-prisma/*.db-journal
-
 # misc
 todos.md
 errors.md
