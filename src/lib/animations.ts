@@ -1,194 +1,142 @@
 /**
- * Shared animation constants for the Bullion PWA.
- * All motion variants, durations, and easings live here
- * to ensure consistency across the entire app.
+ * Shared animation constants for the Bullion app (React Native).
+ *
+ * Uses Reanimated 3 withTiming / withSpring under the hood.
+ * Moti's `from` / `animate` / `exit` props map directly to these presets.
+ *
+ * Usage with Moti:
+ *   import { MotiView } from 'moti';
+ *   import { FADE_UP } from '@/lib/animations';
+ *   <MotiView {...FADE_UP} />
  */
 
+import { Easing } from 'react-native-reanimated';
+
 // ── Easing curves ────────────────────────────────────────
-export const EASE_OUT = [0.25, 0.1, 0.25, 1.0] as const;
-export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
-export const EASE_IN_OUT = [0.42, 0, 0.58, 1] as const;
+export const EASE_OUT = Easing.out(Easing.quad);
+export const EASE_OUT_EXPO = Easing.out(Easing.exp);
+export const EASE_IN_OUT = Easing.inOut(Easing.quad);
 
-// ── Durations (seconds) ─────────────────────────────────
+// ── Durations (milliseconds — Reanimated uses ms) ───────
 export const DURATION = {
-  fast: 0.2,
-  normal: 0.3,
-  slow: 0.4,
-  slower: 0.5,
+  fast: 200,
+  normal: 300,
+  slow: 400,
+  slower: 500,
 } as const;
 
-// ── Stagger delays (seconds) ────────────────────────────
+// ── Stagger delays (milliseconds) ────────────────────────
 export const STAGGER = {
-  fast: 0.04,
-  normal: 0.06,
-  slow: 0.08,
+  fast: 40,
+  normal: 60,
+  slow: 80,
 } as const;
 
-// ── Spring presets ──────────────────────────────────────
+// ── Spring configs (for Reanimated withSpring) ───────────
 export const SPRING = {
   /** Gentle, premium feel — good for card reveals */
-  gentle: { type: 'spring' as const, damping: 30, stiffness: 300 },
+  gentle: { damping: 30, stiffness: 300 },
   /** Slightly bouncy — good for success states, badges */
-  bouncy: { type: 'spring' as const, damping: 20, stiffness: 300 },
+  bouncy: { damping: 20, stiffness: 300 },
   /** Snappy — good for button presses, quick interactions */
-  snappy: { type: 'spring' as const, damping: 35, stiffness: 400 },
+  snappy: { damping: 35, stiffness: 400 },
 } as const;
 
-// ── Fade-up variant (the workhorse) ────────────────────
-export const fadeUp = {
-  hidden: { opacity: 0, y: 12 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: DURATION.normal,
-      ease: EASE_OUT_EXPO,
-    },
-  },
-} as const;
+// ── Moti animation presets ───────────────────────────────
+// Spread these directly on <MotiView {...FADE_UP} />
 
-// ── Fade-in (no movement) ──────────────────────────────
-export const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: DURATION.normal,
-      ease: EASE_OUT,
-    },
+/** Standard entrance: fade + translate up 12px */
+export const FADE_UP = {
+  from: { opacity: 0, translateY: 12 },
+  animate: { opacity: 1, translateY: 0 },
+  transition: {
+    type: 'timing' as const,
+    duration: DURATION.normal,
+    easing: EASE_OUT_EXPO,
   },
-} as const;
+};
 
-// ── Scale-in (for badges, icons, success states) ───────
-export const scaleIn = {
-  hidden: { opacity: 0, scale: 0.85 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: SPRING.bouncy,
+/** Simple fade — no movement */
+export const FADE_IN = {
+  from: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: {
+    type: 'timing' as const,
+    duration: DURATION.normal,
+    easing: EASE_OUT,
   },
-} as const;
+};
 
-// ── Slide up from bottom (for modals, bottom sheets) ───
-export const slideUp = {
-  hidden: { opacity: 0, y: '100%' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: DURATION.slow,
-      ease: EASE_OUT_EXPO,
-    },
+/** Scale in — for badges, icons, success states */
+export const SCALE_IN = {
+  from: { opacity: 0, scale: 0.85 },
+  animate: { opacity: 1, scale: 1 },
+  transition: {
+    type: 'spring' as const,
+    ...SPRING.bouncy,
   },
-  exit: {
-    opacity: 0,
-    y: '100%',
-    transition: {
-      duration: DURATION.normal,
-      ease: EASE_IN_OUT,
-    },
-  },
-} as const;
+};
 
-// ── Backdrop fade ──────────────────────────────────────
-export const backdropFade = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: DURATION.fast },
+/** Page entrance: subtle fade + small translateY */
+export const PAGE_TRANSITION = {
+  from: { opacity: 0, translateY: 8 },
+  animate: { opacity: 1, translateY: 0 },
+  transition: {
+    type: 'timing' as const,
+    duration: DURATION.normal,
+    easing: EASE_OUT_EXPO,
   },
-  exit: {
-    opacity: 0,
-    transition: { duration: DURATION.fast },
-  },
-} as const;
+};
 
-// ── Stagger container ──────────────────────────────────
-export const staggerContainer = (
-  staggerDelay: number = STAGGER.normal,
-  delayChildren: number = 0
-) => ({
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: staggerDelay,
-      delayChildren,
-    },
+/** Modal scale + fade */
+export const MODAL_SCALE = {
+  from: { opacity: 0, scale: 0.95 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+  transition: {
+    type: 'timing' as const,
+    duration: DURATION.normal,
+    easing: EASE_OUT_EXPO,
   },
-});
+};
 
-// ── Page transition ────────────────────────────────────
-export const pageTransition = {
-  hidden: { opacity: 0, y: 8 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: DURATION.normal,
-      ease: EASE_OUT_EXPO,
-      staggerChildren: STAGGER.normal,
-      delayChildren: 0.05,
-    },
+/** Backdrop overlay fade */
+export const BACKDROP_FADE = {
+  from: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: {
+    type: 'timing' as const,
+    duration: DURATION.fast,
   },
-} as const;
+};
 
-// ── Slide up from bottom with spring physics ───────────
-export const slideUpSpring = {
-  hidden: { opacity: 0, y: '100%' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      damping: 24,
-      stiffness: 280,
-      mass: 0.8,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: '100%',
-    transition: {
-      duration: DURATION.normal,
-      ease: EASE_IN_OUT,
-    },
-  },
-} as const;
+// ── Helper: staggered delay for list items ───────────────
 
-// ── Modal scale + fade (for centered modals) ──────────
-export const modalScale = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: DURATION.normal,
-      ease: EASE_OUT_EXPO,
-    },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.95,
-    transition: {
-      duration: DURATION.fast,
-      ease: EASE_IN_OUT,
-    },
-  },
-} as const;
+/**
+ * Returns a Moti `delay` value for staggered list items.
+ *
+ * Usage:
+ *   {items.map((item, i) => (
+ *     <MotiView
+ *       key={item.id}
+ *       {...FADE_UP}
+ *       delay={staggerDelay(i)}
+ *     />
+ *   ))}
+ */
+export function staggerDelay(
+  index: number,
+  interval: number = STAGGER.normal,
+  baseDelay: number = 0
+): number {
+  return baseDelay + index * interval;
+}
 
-// ── Highlight pulse (for drawing attention) ────────────
-export const highlightPulse = {
-  initial: { boxShadow: '0 0 0 0 rgba(184, 134, 11, 0)' },
-  animate: {
-    boxShadow: [
-      '0 0 0 0 rgba(184, 134, 11, 0)',
-      '0 0 0 6px rgba(184, 134, 11, 0.2)',
-      '0 0 0 0 rgba(184, 134, 11, 0)',
-    ],
-    transition: {
-      duration: 1.5,
-      repeat: 2,
-      ease: EASE_IN_OUT,
-    },
-  },
-} as const;
+// ── Legacy name re-exports (for compat with existing references) ─
+export const fadeUp = FADE_UP;
+export const fadeIn = FADE_IN;
+export const scaleIn = SCALE_IN;
+export const pageTransition = PAGE_TRANSITION;
+export const modalScale = MODAL_SCALE;
+export const backdropFade = BACKDROP_FADE;

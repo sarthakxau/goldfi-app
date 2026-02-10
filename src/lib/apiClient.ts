@@ -1,27 +1,42 @@
-'use client';
+import Constants from 'expo-constants';
 
-import { getAccessToken } from '@privy-io/react-auth';
+const API_BASE_URL =
+  Constants.expoConfig?.extra?.apiUrl ??
+  process.env.EXPO_PUBLIC_API_URL ??
+  '';
 
 /**
- * Authenticated fetch wrapper that attaches Privy Bearer token.
+ * Token getter — will be set by the auth provider once Privy is initialised.
+ * This avoids a hard dependency on @privy-io/expo at import time.
+ */
+let _getAccessToken: (() => Promise<string | null>) | null = null;
+
+export function setAccessTokenGetter(fn: () => Promise<string | null>) {
+  _getAccessToken = fn;
+}
+
+/**
+ * Authenticated fetch wrapper that attaches Bearer token.
  * Use this for all API calls that require authentication.
  */
 export async function authFetch(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
-  const token = await getAccessToken();
+  const token = _getAccessToken ? await _getAccessToken() : null;
 
   const headers = new Headers(options.headers);
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
-  // Ensure content-type is set for JSON requests
   if (!headers.has('Content-Type') && options.body) {
     headers.set('Content-Type', 'application/json');
   }
 
-  return fetch(url, {
+  // Prepend base URL for relative paths
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+
+  return fetch(fullUrl, {
     ...options,
     headers,
   });
@@ -29,7 +44,6 @@ export async function authFetch(
 
 /**
  * Authenticated fetch that returns parsed JSON with typed response.
- * Automatically handles success/error structure used across the API.
  */
 export async function authFetchJson<T>(
   url: string,

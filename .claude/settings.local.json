@@ -12,7 +12,25 @@
       "mcp__shadcn__getComponent",
       "Bash(pnpm build:*)",
       "Bash(pnpm --dir /Users/sarthak/Public/bullion-app build)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(node -e:*)",
+      "Bash(npx expo export:*)",
+      "Bash(node:*)",
+      "Bash(source:*)",
+      "Bash(nvm ls:*)",
+      "Bash(nvm install:*)",
+      "Bash(nvm use:*)",
+      "Bash(NODE_OPTIONS=\"--no-experimental-strip-types\" npx expo export:*)",
+      "Bash(EXPO_ROUTER_APP_ROOT=./app npx expo export:*)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(python3:*)",
+      "Bash(find:*)",
+      "Bash(npx expo install:*)",
+      "Bash(grep:*)"
     ]
   }
 }

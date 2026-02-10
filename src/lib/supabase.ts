@@ -1,12 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
+import * as SecureStore from 'expo-secure-store';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
 
-// Server-side client with service role key (full access)
-export const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Client-side Supabase client with secure storage for RN
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: {
+      getItem: (key: string) => SecureStore.getItemAsync(key),
+      setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
+      removeItem: (key: string) => SecureStore.deleteItemAsync(key),
+    },
+  },
+});
 
-// Database types
+// ── Database types ──────────────────────────────────────
+
 export interface DbUser {
   id: string;
   privy_user_id: string;

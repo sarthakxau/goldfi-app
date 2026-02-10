@@ -1,3 +1,5 @@
+// Polyfill is imported in app/_layout.tsx (react-native-get-random-values)
+
 import { createPublicClient, http } from 'viem';
 import { arbitrum } from 'viem/chains';
 
@@ -32,6 +34,16 @@ export const CLIENT_ERC20_ABI = [
     stateMutability: 'nonpayable',
     inputs: [
       { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    name: 'transfer',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'to', type: 'address' },
       { name: 'amount', type: 'uint256' },
     ],
     outputs: [{ name: '', type: 'bool' }],

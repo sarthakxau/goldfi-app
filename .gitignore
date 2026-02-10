@@ -7,9 +7,16 @@
 # testing
 /coverage
 
-# next.js
+# next.js (legacy, keeping for reference)
 /.next/
 /out/
+
+# expo
+.expo/
+dist/
+ios/
+android/
+expo-env.d.ts
 
 # production
 /build
@@ -44,3 +51,6 @@ public/workbox-*.js.map
 todos.md
 errors.md
 /plans
+
+# Legacy web app (kept for reference during migration)
+src/_app_web/
