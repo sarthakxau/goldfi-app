@@ -11,6 +11,7 @@ import {
 
 import { useTheme } from '@/lib/theme';
 import { DURATION, FADE_UP, staggerDelay } from '@/lib/animations';
+import { SwapModal } from '@/components/Buy/SwapModal';
 
 const GOLD_500 = '#B8860B';
 const SUCCESS_COLOR = '#10B981';
@@ -335,6 +336,11 @@ export default function BuyScreen() {
           </View>
         </MotiView>
       </View>
+
+      <SwapModal
+        visible={showSwapModal}
+        onClose={() => setShowSwapModal(false)}
+      />
     </SafeAreaView>
   );
 }

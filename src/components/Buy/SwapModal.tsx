@@ -1,26 +1,34 @@
-'use client';
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { X, ArrowDown, AlertCircle, Copy, Check } from 'lucide-react';
-import { createPortal } from 'react-dom';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  Modal,
+  ScrollView,
+} from 'react-native';
+import { MotiView } from 'moti';
+import * as Clipboard from 'expo-clipboard';
+import { X, ArrowDown, AlertCircle, Copy, Check } from 'lucide-react-native';
 import { useSwap } from '@/hooks/useSwap';
 import { BalanceDisplay } from './BalanceDisplay';
 import { SwapQuoteDisplay } from './SwapQuote';
 import { SwapProgress } from './SwapProgress';
 import { MIN_USDT_SWAP, MAX_USDT_SWAP, QUOTE_REFRESH_INTERVAL } from '@/lib/constants';
 import { debounce, truncateAddress } from '@/lib/utils';
-import { motion, AnimatePresence } from 'motion/react';
-import { slideUpSpring, backdropFade, SPRING } from '@/lib/animations';
+import { useTheme } from '@/lib/theme';
+import { FADE_UP, DURATION } from '@/lib/animations';
 
 interface SwapModalProps {
-  isOpen: boolean;
+  visible: boolean;
   onClose: () => void;
 }
 
-export function SwapModal({ isOpen, onClose }: SwapModalProps) {
-  const [mounted, setMounted] = useState(false);
+export function SwapModal({ visible, onClose }: SwapModalProps) {
+  const { colors, isDark } = useTheme();
   const [inputAmount, setInputAmount] = useState('');
   const [copied, setCopied] = useState(false);
+  const GOLD = '#D4A012';
 
   const {
     walletAddress,
@@ -38,17 +46,13 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
     reset,
   } = useSwap();
 
-  const handleCopyAddress = useCallback(() => {
+  const handleCopyAddress = useCallback(async () => {
     if (walletAddress) {
-      navigator.clipboard.writeText(walletAddress);
+      await Clipboard.setStringAsync(walletAddress);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
   }, [walletAddress]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Debounced quote fetch
   const debouncedFetchQuote = useMemo(
@@ -65,16 +69,14 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
 
   // Auto-refresh quote
   useEffect(() => {
-    if (!isOpen || step !== 'input' || !inputAmount) return;
-
+    if (!visible || step !== 'input' || !inputAmount) return;
     const interval = setInterval(() => {
       if (Number(inputAmount) >= MIN_USDT_SWAP) {
         fetchQuote(inputAmount);
       }
     }, QUOTE_REFRESH_INTERVAL);
-
     return () => clearInterval(interval);
-  }, [isOpen, step, inputAmount, fetchQuote]);
+  }, [visible, step, inputAmount, fetchQuote]);
 
   const handleClose = useCallback(() => {
     reset();
@@ -103,50 +105,76 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
     return null;
   }, [inputAmount, usdtBalance]);
 
-  const canSwap = inputAmount &&
-    !inputError &&
-    !quoteLoading &&
-    step === 'input';
-
-  if (!mounted) return null;
+  const canSwap = inputAmount && !inputError && !quoteLoading && step === 'input';
 
   const showProgress = ['approve', 'swap', 'confirming', 'success', 'error'].includes(step);
 
-  return createPortal(
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-modal flex items-end sm:items-center justify-center">
-          {/* Backdrop */}
-          <motion.div
-            className="absolute inset-0 bg-black/50"
-            variants={backdropFade}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={step === 'input' ? handleClose : undefined}
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={step === 'input' ? handleClose : undefined}
+    >
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          justifyContent: 'flex-end',
+        }}
+      >
+        {/* Backdrop tap to close (only when input step) */}
+        {step === 'input' && (
+          <Pressable
+            style={{ flex: 1 }}
+            onPress={handleClose}
           />
+        )}
 
-          {/* Modal */}
-          <motion.div
-            className="bg-white dark:bg-[#1A1A1A] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 relative"
-            variants={slideUpSpring}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
+        {/* Modal Content */}
+        <MotiView
+          from={{ translateY: 20, opacity: 0 }}
+          animate={{ translateY: 0, opacity: 1 }}
+          transition={{ type: 'timing' as const, duration: DURATION.normal }}
+        >
+          <View
+            style={{
+              backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              padding: 24,
+              paddingBottom: 40,
+              maxHeight: '90%',
+            }}
           >
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-              <button
-                onClick={handleClose}
-                className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0]"
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 20,
+              }}
+            >
+              <Pressable
+                onPress={handleClose}
                 disabled={showProgress && step !== 'success' && step !== 'error'}
-                aria-label="Close modal"
+                hitSlop={8}
+                style={{ padding: 4 }}
               >
-                <X className="size-6" />
-              </button>
-              <h2 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">swap USDT to gold</h2>
-              <div className="w-10" />
-            </div>
+                <X size={24} color={colors.textMuted} />
+              </Pressable>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  color: colors.textPrimary,
+                }}
+              >
+                Swap USDT to Gold
+              </Text>
+              <View style={{ width: 32 }} />
+            </View>
 
             {showProgress ? (
               <SwapProgress
@@ -161,128 +189,192 @@ export function SwapModal({ isOpen, onClose }: SwapModalProps) {
                 }}
               />
             ) : (
-              <>
-                {/* Wallet Address Display */}
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+              >
+                {/* Wallet Address */}
                 {walletAddress && (
-                  <div className="flex items-center justify-between bg-gold-50 dark:bg-gold-500/5 border border-gold-200 dark:border-gold-500/20 rounded-xl p-3 mb-4">
-                    <div>
-                      <p className="text-xs text-gold-500 mb-0.5">your wallet (Arbitrum)</p>
-                      <p className="text-sm font-mono text-text-primary dark:text-[#F0F0F0]">{truncateAddress(walletAddress)}</p>
-                    </div>
-                    <button
-                      onClick={handleCopyAddress}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#242424] border border-gold-200 dark:border-gold-500/20 hover:bg-gold-50 dark:hover:bg-gold-500/5 transition-colors"
+                  <MotiView {...FADE_UP}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        backgroundColor: isDark
+                          ? 'rgba(212,160,18,0.05)'
+                          : 'rgba(184,134,11,0.04)',
+                        borderWidth: 1,
+                        borderColor: isDark
+                          ? 'rgba(212,160,18,0.15)'
+                          : 'rgba(184,134,11,0.12)',
+                        borderRadius: 12,
+                        padding: 12,
+                        marginBottom: 16,
+                      }}
                     >
-                      <AnimatePresence mode="wait">
+                      <View>
+                        <Text style={{ fontSize: 11, color: GOLD, marginBottom: 2 }}>
+                          Your wallet (Arbitrum)
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 13,
+                            fontFamily: 'monospace',
+                            color: colors.textPrimary,
+                          }}
+                        >
+                          {truncateAddress(walletAddress)}
+                        </Text>
+                      </View>
+                      <Pressable
+                        onPress={handleCopyAddress}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 4,
+                          paddingHorizontal: 10,
+                          paddingVertical: 6,
+                          borderRadius: 8,
+                          backgroundColor: isDark ? '#242424' : '#FFFFFF',
+                          borderWidth: 1,
+                          borderColor: isDark
+                            ? 'rgba(212,160,18,0.15)'
+                            : 'rgba(184,134,11,0.12)',
+                        }}
+                      >
                         {copied ? (
-                          <motion.span
-                            key="copied"
-                            className="flex items-center gap-1.5"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ duration: 0.15 }}
-                          >
-                            <Check className="w-3.5 h-3.5 text-green-500" />
-                            <span className="text-xs font-medium text-green-600">copied!</span>
-                          </motion.span>
+                          <>
+                            <Check size={14} color="#10B981" />
+                            <Text style={{ fontSize: 11, fontWeight: '500', color: '#10B981' }}>
+                              Copied!
+                            </Text>
+                          </>
                         ) : (
-                          <motion.span
-                            key="copy"
-                            className="flex items-center gap-1.5"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ duration: 0.15 }}
-                          >
-                            <Copy className="w-3.5 h-3.5 text-gold-500" />
-                            <span className="text-xs font-medium text-gold-500">copy</span>
-                          </motion.span>
+                          <>
+                            <Copy size={14} color={GOLD} />
+                            <Text style={{ fontSize: 11, fontWeight: '500', color: GOLD }}>
+                              Copy
+                            </Text>
+                          </>
                         )}
-                      </AnimatePresence>
-                    </button>
-                  </div>
+                      </Pressable>
+                    </View>
+                  </MotiView>
                 )}
 
-                {/* Balance Display */}
+                {/* Balance */}
                 <BalanceDisplay
                   balance={usdtBalance}
                   loading={balanceLoading}
                   onRefresh={fetchBalance}
                 />
 
-                {/* Input Section */}
-                <div className="mb-4">
-                  <label htmlFor="usdt-amount" className="text-sm text-text-muted dark:text-[#6B7280] mb-2 block">you pay</label>
-                  <div className="relative">
-                    <input
-                      id="usdt-amount"
-                      type="number"
+                {/* Input */}
+                <View style={{ marginBottom: 16 }}>
+                  <Text style={{ fontSize: 13, color: colors.textMuted, marginBottom: 8 }}>
+                    You pay
+                  </Text>
+                  <View
+                    style={{
+                      backgroundColor: isDark ? '#242424' : '#F0F0F0',
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: isDark ? '#2D2D2D' : '#E5E7EB',
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <TextInput
+                      keyboardType="decimal-pad"
                       value={inputAmount}
-                      onChange={(e) => setInputAmount(e.target.value)}
+                      onChangeText={setInputAmount}
                       placeholder="0.00"
-                      className="w-full text-3xl font-bold bg-surface-elevated dark:bg-[#242424] text-text-primary dark:text-[#F0F0F0] rounded-xl p-4 pr-24 outline-none focus:ring-2 focus:ring-gold-500 border border-border-subtle dark:border-[#2D2D2D]"
-                      aria-invalid={!!inputError}
-                      aria-describedby={inputError ? "usdt-error" : undefined}
+                      placeholderTextColor={isDark ? '#3D3D3D' : '#9CA3AF'}
+                      style={{
+                        flex: 1,
+                        fontSize: 24,
+                        fontWeight: '700',
+                        color: colors.textPrimary,
+                        padding: 0,
+                      }}
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                      <button
-                        onClick={handleMaxClick}
-                        className="text-xs text-gold-500 font-medium hover:text-gold-600"
-                      >
-                        MAX
-                      </button>
-                      <span className="text-text-muted dark:text-[#6B7280] font-medium">USDT</span>
-                    </div>
-                  </div>
-                  <AnimatePresence>
-                    {inputError && (
-                      <motion.p
-                        id="usdt-error"
-                        className="text-red-500 text-xs mt-2 flex items-center gap-1"
-                        role="alert"
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <AlertCircle className="w-3 h-3" /> {inputError}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </div>
+                    <Pressable onPress={handleMaxClick} style={{ marginRight: 8 }}>
+                      <Text style={{ fontSize: 12, fontWeight: '600', color: GOLD }}>MAX</Text>
+                    </Pressable>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textMuted }}>
+                      USDT
+                    </Text>
+                  </View>
+                  {inputError && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        marginTop: 8,
+                      }}
+                    >
+                      <AlertCircle size={12} color="#EF4444" />
+                      <Text style={{ fontSize: 12, color: '#EF4444' }}>{inputError}</Text>
+                    </View>
+                  )}
+                </View>
 
                 {/* Arrow */}
-                <div className="flex justify-center my-4">
-                  <div className="w-10 h-10 bg-surface-elevated dark:bg-[#242424] rounded-full flex items-center justify-center">
-                    <ArrowDown className="w-5 h-5 text-text-muted dark:text-[#6B7280]" />
-                  </div>
-                </div>
+                <View style={{ alignItems: 'center', marginVertical: 12 }}>
+                  <View
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      backgroundColor: isDark ? '#242424' : '#F0F0F0',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <ArrowDown size={20} color={colors.textMuted} />
+                  </View>
+                </View>
 
-                {/* Quote Display */}
+                {/* Quote */}
                 <SwapQuoteDisplay quote={quote} loading={quoteLoading} />
 
                 {/* Swap Button */}
-                <motion.button
-                  onClick={handleSwap}
+                <Pressable
+                  onPress={handleSwap}
                   disabled={!canSwap}
-                  className="w-full bg-success text-white font-bold py-4 rounded-xl hover:bg-success-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  whileTap={canSwap ? { scale: 0.98 } : undefined}
-                  transition={SPRING.snappy}
+                  style={{
+                    backgroundColor: '#10B981',
+                    paddingVertical: 16,
+                    borderRadius: 12,
+                    alignItems: 'center',
+                    opacity: canSwap ? 1 : 0.5,
+                  }}
                 >
-                  {quoteLoading ? 'Getting quote...' : 'swap to gold'}
-                </motion.button>
+                  <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 16 }}>
+                    {quoteLoading ? 'Getting quote...' : 'Swap to Gold'}
+                  </Text>
+                </Pressable>
 
                 {/* Info */}
-                <p className="text-center text-xs text-text-muted dark:text-[#6B7280] mt-4">
+                <Text
+                  style={{
+                    fontSize: 11,
+                    color: colors.textMuted,
+                    textAlign: 'center',
+                    marginTop: 16,
+                  }}
+                >
                   Swap powered by Camelot DEX on Arbitrum
-                </p>
-              </>
+                </Text>
+              </ScrollView>
             )}
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>,
-    document.body
+          </View>
+        </MotiView>
+      </View>
+    </Modal>
   );
 }

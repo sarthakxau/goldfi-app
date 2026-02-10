@@ -3,7 +3,7 @@ import { setAccessTokenGetter } from '@/lib/apiClient';
 import { authFetchJson } from '@/lib/apiClient';
 
 // ── Dev bypass (flip to false to require real login) ─────
-const DEV_BYPASS_AUTH = __DEV__; // false, for real login
+const DEV_BYPASS_AUTH = false;
 const DEV_EMAIL = 'sarthak@bulliondigital.io';
 
 // ── Privy config ─────────────────────────────────────────

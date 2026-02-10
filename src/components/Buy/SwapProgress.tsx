@@ -1,9 +1,9 @@
-'use client';
-
-import { Check, Loader2, X, ExternalLink } from 'lucide-react';
+import { View, Text, Pressable, ActivityIndicator, Linking } from 'react-native';
+import { MotiView } from 'moti';
+import { Check, X, ExternalLink } from 'lucide-react-native';
 import type { SwapStep } from '@/types';
-import { motion } from 'motion/react';
-import { SPRING, EASE_OUT_EXPO, DURATION } from '@/lib/animations';
+import { useTheme } from '@/lib/theme';
+import { SPRING, FADE_UP, DURATION, staggerDelay } from '@/lib/animations';
 
 interface SwapProgressProps {
   step: SwapStep;
@@ -22,8 +22,13 @@ export function SwapProgress({
   swapTxHash,
   error,
   onClose,
-  onRetry
+  onRetry,
 }: SwapProgressProps) {
+  const { colors, isDark } = useTheme();
+  const GOLD = '#D4A012';
+  const SUCCESS = '#10B981';
+  const ERROR = '#EF4444';
+
   const steps = [
     { key: 'approve', label: 'Approving USDT' },
     { key: 'swap', label: 'Swapping to Gold' },
@@ -32,161 +37,267 @@ export function SwapProgress({
 
   if (step === 'success') {
     return (
-      <motion.div
-        className="text-center py-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: DURATION.normal }}
-      >
-        <motion.div
-          className="w-16 h-16 bg-success-light dark:bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4"
-          initial={{ scale: 0.5, opacity: 0 }}
+      <View style={{ alignItems: 'center', paddingVertical: 32 }}>
+        <MotiView
+          from={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={SPRING.bouncy}
+          transition={{ type: 'spring', ...SPRING.bouncy }}
+          style={{ marginBottom: 16 }}
         >
-          <Check className="w-8 h-8 text-success" />
-        </motion.div>
-        <motion.h3
-          className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: DURATION.normal, delay: 0.15, ease: EASE_OUT_EXPO }}
-        >
-          Swap Successful!
-        </motion.h3>
-        <motion.p
-          className="text-text-muted dark:text-[#6B7280] mb-4"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: DURATION.normal, delay: 0.2, ease: EASE_OUT_EXPO }}
-        >
-          Your gold has been added to your holdings
-        </motion.p>
-        {swapTxHash && (
-          <a
-            href={`${ARBISCAN_URL}${swapTxHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-gold-500 hover:underline mb-6"
+          <View
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              backgroundColor: isDark ? 'rgba(16,185,129,0.1)' : 'rgba(16,185,129,0.12)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            View on Arbiscan <ExternalLink className="w-3 h-3" />
-          </a>
+            <Check size={32} color={SUCCESS} />
+          </View>
+        </MotiView>
+
+        <MotiView {...FADE_UP}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: '700',
+              color: colors.textPrimary,
+              marginBottom: 8,
+              textAlign: 'center',
+            }}
+          >
+            Swap Successful!
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: colors.textMuted,
+              textAlign: 'center',
+              marginBottom: 16,
+            }}
+          >
+            Your gold has been added to your holdings
+          </Text>
+        </MotiView>
+
+        {swapTxHash && (
+          <Pressable
+            onPress={() => Linking.openURL(`${ARBISCAN_URL}${swapTxHash}`)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+              marginBottom: 24,
+            }}
+          >
+            <Text style={{ fontSize: 13, color: GOLD }}>View on Arbiscan</Text>
+            <ExternalLink size={12} color={GOLD} />
+          </Pressable>
         )}
-        <motion.button
-          onClick={onClose}
-          className="w-full bg-text-primary dark:bg-[#F0F0F0] text-white dark:text-[#0F0F0F] font-medium py-4 rounded-xl"
-          whileTap={{ scale: 0.98 }}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: DURATION.normal, delay: 0.25, ease: EASE_OUT_EXPO }}
+
+        <Pressable
+          onPress={onClose}
+          style={{
+            width: '100%',
+            backgroundColor: colors.textPrimary,
+            paddingVertical: 16,
+            borderRadius: 12,
+            alignItems: 'center',
+          }}
         >
-          Done
-        </motion.button>
-      </motion.div>
+          <Text
+            style={{
+              fontWeight: '600',
+              fontSize: 15,
+              color: isDark ? '#0F0F0F' : '#FFFFFF',
+            }}
+          >
+            Done
+          </Text>
+        </Pressable>
+      </View>
     );
   }
 
   if (step === 'error') {
     return (
-      <motion.div
-        className="text-center py-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: DURATION.normal }}
-      >
-        <motion.div
-          className="w-16 h-16 bg-error-light dark:bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4"
-          initial={{ scale: 0.5, opacity: 0 }}
+      <View style={{ alignItems: 'center', paddingVertical: 32 }}>
+        <MotiView
+          from={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={SPRING.bouncy}
+          transition={{ type: 'spring', ...SPRING.bouncy }}
+          style={{ marginBottom: 16 }}
         >
-          <X className="w-8 h-8 text-error" />
-        </motion.div>
-        <h3 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2">Swap Failed</h3>
-        <p className="text-error mb-6 text-sm">{error || 'Something went wrong'}</p>
-        <div className="space-y-3">
-          <motion.button
-            onClick={onRetry}
-            className="w-full bg-text-primary dark:bg-[#F0F0F0] text-white dark:text-[#0F0F0F] font-medium py-4 rounded-xl"
-            whileTap={{ scale: 0.98 }}
+          <View
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              backgroundColor: isDark ? 'rgba(239,68,68,0.1)' : 'rgba(239,68,68,0.08)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            Try Again
-          </motion.button>
-          <motion.button
-            onClick={onClose}
-            className="w-full border border-border-subtle dark:border-[#2D2D2D] text-text-secondary dark:text-[#9CA3AF] font-medium py-4 rounded-xl"
-            whileTap={{ scale: 0.98 }}
+            <X size={32} color={ERROR} />
+          </View>
+        </MotiView>
+
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '700',
+            color: colors.textPrimary,
+            marginBottom: 8,
+            textAlign: 'center',
+          }}
+        >
+          Swap Failed
+        </Text>
+        <Text
+          style={{
+            fontSize: 13,
+            color: ERROR,
+            textAlign: 'center',
+            marginBottom: 24,
+          }}
+        >
+          {error || 'Something went wrong'}
+        </Text>
+
+        <View style={{ width: '100%', gap: 12 }}>
+          <Pressable
+            onPress={onRetry}
+            style={{
+              backgroundColor: colors.textPrimary,
+              paddingVertical: 16,
+              borderRadius: 12,
+              alignItems: 'center',
+            }}
           >
-            Cancel
-          </motion.button>
-        </div>
-      </motion.div>
+            <Text
+              style={{
+                fontWeight: '600',
+                fontSize: 15,
+                color: isDark ? '#0F0F0F' : '#FFFFFF',
+              }}
+            >
+              Try Again
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={onClose}
+            style={{
+              borderWidth: 1,
+              borderColor: isDark ? '#2D2D2D' : '#E5E7EB',
+              paddingVertical: 16,
+              borderRadius: 12,
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '600',
+                fontSize: 15,
+                color: colors.textSecondary,
+              }}
+            >
+              Cancel
+            </Text>
+          </Pressable>
+        </View>
+      </View>
     );
   }
 
+  // In-progress steps
   return (
-    <div className="py-6">
-      <div className="flex justify-center mb-8">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-        >
-          <Loader2 className="w-12 h-12 text-gold-500" />
-        </motion.div>
-      </div>
-      <div className="space-y-4">
+    <View style={{ paddingVertical: 24 }}>
+      <View style={{ alignItems: 'center', marginBottom: 32 }}>
+        <ActivityIndicator size="large" color={GOLD} />
+      </View>
+
+      <View style={{ gap: 16 }}>
         {steps.map((s, index) => {
-          const stepIndex = steps.findIndex(x => x.key === step);
+          const stepIndex = steps.findIndex((x) => x.key === step);
           const isActive = s.key === step;
           const isPast = stepIndex > index;
 
           return (
-            <motion.div
+            <MotiView
               key={s.key}
-              className="flex items-center gap-3"
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: DURATION.normal, delay: index * 0.08, ease: EASE_OUT_EXPO }}
+              from={{ opacity: 0, translateX: -8 }}
+              animate={{ opacity: 1, translateX: 0 }}
+              transition={{
+                type: 'timing' as const,
+                duration: DURATION.normal,
+                delay: staggerDelay(index, 80),
+              }}
             >
-              <motion.div
-                className={`
-                  w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium
-                  ${isPast ? 'bg-success text-white' : ''}
-                  ${isActive ? 'bg-gold-500 text-white' : ''}
-                  ${!isPast && !isActive ? 'bg-surface-elevated dark:bg-[#242424] text-text-muted dark:text-[#6B7280]' : ''}
-                `}
-                animate={isPast ? { scale: [1, 1.2, 1] } : {}}
-                transition={{ duration: 0.3 }}
-              >
-                {isPast ? <Check className="w-4 h-4" /> : index + 1}
-              </motion.div>
-              <span className={`text-sm ${isActive ? 'font-medium text-text-primary dark:text-[#F0F0F0]' : 'text-text-muted dark:text-[#6B7280]'}`}>
-                {s.label}
-              </span>
-              {isActive && (
-                <motion.div
-                  className="ml-auto"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: 12,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: isPast
+                      ? SUCCESS
+                      : isActive
+                        ? GOLD
+                        : isDark
+                          ? '#242424'
+                          : '#F0F0F0',
+                  }}
                 >
-                  <Loader2 className="w-4 h-4 text-gold-500" />
-                </motion.div>
-              )}
-            </motion.div>
+                  {isPast ? (
+                    <Check size={14} color="#FFFFFF" />
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        fontWeight: '600',
+                        color: isActive ? '#FFFFFF' : colors.textMuted,
+                      }}
+                    >
+                      {index + 1}
+                    </Text>
+                  )}
+                </View>
+                <Text
+                  style={{
+                    flex: 1,
+                    fontSize: 14,
+                    fontWeight: isActive ? '600' : '400',
+                    color: isActive ? colors.textPrimary : colors.textMuted,
+                  }}
+                >
+                  {s.label}
+                </Text>
+                {isActive && <ActivityIndicator size="small" color={GOLD} />}
+              </View>
+            </MotiView>
           );
         })}
-      </div>
+      </View>
 
       {approvalTxHash && (
-        <a
-          href={`${ARBISCAN_URL}${approvalTxHash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-center text-xs text-gold-500 hover:underline mt-4"
+        <Pressable
+          onPress={() => Linking.openURL(`${ARBISCAN_URL}${approvalTxHash}`)}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4,
+            marginTop: 16,
+          }}
         >
-          View approval tx <ExternalLink className="w-3 h-3 inline" />
-        </a>
+          <Text style={{ fontSize: 12, color: GOLD }}>View approval tx</Text>
+          <ExternalLink size={12} color={GOLD} />
+        </Pressable>
       )}
-    </div>
+    </View>
   );
 }

@@ -1,10 +1,10 @@
-'use client';
-
-import type { SwapQuote } from '@/types';
+import { View, Text } from 'react-native';
+import { MotiView } from 'moti';
 import { formatGrams } from '@/lib/utils';
 import { GRAMS_PER_OUNCE } from '@/lib/constants';
-import { motion, AnimatePresence } from 'motion/react';
-import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
+import type { SwapQuote } from '@/types';
+import { useTheme } from '@/lib/theme';
+import { FADE_UP, DURATION } from '@/lib/animations';
 
 interface SwapQuoteDisplayProps {
   quote: SwapQuote | null;
@@ -12,17 +12,43 @@ interface SwapQuoteDisplayProps {
 }
 
 export function SwapQuoteDisplay({ quote, loading }: SwapQuoteDisplayProps) {
+  const { isDark } = useTheme();
+  const SUCCESS = '#10B981';
+
   if (loading) {
     return (
-      <motion.div
-        className="bg-success-light dark:bg-success/10 rounded-xl p-4 mb-6 animate-pulse"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: DURATION.fast, ease: EASE_OUT_EXPO }}
+      <MotiView
+        from={{ opacity: 0, translateY: 8 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: 'timing' as const, duration: DURATION.fast }}
       >
-        <div className="h-4 w-20 bg-success/20 rounded mb-2" />
-        <div className="h-6 w-32 bg-success/20 rounded" />
-      </motion.div>
+        <View
+          style={{
+            backgroundColor: isDark ? 'rgba(16,185,129,0.08)' : 'rgba(16,185,129,0.06)',
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 20,
+          }}
+        >
+          <View
+            style={{
+              width: 80,
+              height: 16,
+              borderRadius: 4,
+              backgroundColor: isDark ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.12)',
+              marginBottom: 8,
+            }}
+          />
+          <View
+            style={{
+              width: 128,
+              height: 24,
+              borderRadius: 4,
+              backgroundColor: isDark ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.12)',
+            }}
+          />
+        </View>
+      </MotiView>
     );
   }
 
@@ -31,36 +57,45 @@ export function SwapQuoteDisplay({ quote, loading }: SwapQuoteDisplayProps) {
   const minGrams = Number(quote.minAmountOut) * GRAMS_PER_OUNCE;
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key="quote"
-        className="bg-success-light dark:bg-success/10 border border-success/20 dark:border-success/30 rounded-xl p-4 mb-6"
-        initial={{ opacity: 0, y: 8, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -8, scale: 0.98 }}
-        transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+    <MotiView
+      from={{ opacity: 0, translateY: 8 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ type: 'timing' as const, duration: DURATION.normal }}
+    >
+      <View
+        style={{
+          backgroundColor: isDark ? 'rgba(16,185,129,0.08)' : 'rgba(16,185,129,0.06)',
+          borderWidth: 1,
+          borderColor: isDark ? 'rgba(16,185,129,0.2)' : 'rgba(16,185,129,0.15)',
+          borderRadius: 12,
+          padding: 16,
+          marginBottom: 20,
+        }}
       >
-        <p className="text-xs text-success mb-1">you will receive approximately</p>
-        <motion.p
-          className="text-2xl font-bold text-success-dark dark:text-success"
-          key={quote.expectedGrams}
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: DURATION.fast, ease: EASE_OUT_EXPO, delay: 0.05 }}
+        <Text style={{ fontSize: 11, color: SUCCESS, marginBottom: 4 }}>
+          You will receive approximately
+        </Text>
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: '700',
+            color: isDark ? SUCCESS : '#065F46',
+          }}
         >
           {formatGrams(quote.expectedGrams)}
-        </motion.p>
-        <motion.div
-          className="mt-2 space-y-1 text-xs text-success"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: DURATION.fast, delay: 0.1 }}
-        >
-          <p>Min. output: {formatGrams(minGrams)}</p>
-          <p>Slippage: {quote.slippage}%</p>
-          <p>Est. gas: ~{parseFloat(quote.gasEstimate).toFixed(6)} ETH</p>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+        </Text>
+        <View style={{ marginTop: 8, gap: 4 }}>
+          <Text style={{ fontSize: 11, color: SUCCESS }}>
+            Min. output: {formatGrams(minGrams)}
+          </Text>
+          <Text style={{ fontSize: 11, color: SUCCESS }}>
+            Slippage: {quote.slippage}%
+          </Text>
+          <Text style={{ fontSize: 11, color: SUCCESS }}>
+            Est. gas: ~{parseFloat(quote.gasEstimate).toFixed(6)} ETH
+          </Text>
+        </View>
+      </View>
+    </MotiView>
   );
 }

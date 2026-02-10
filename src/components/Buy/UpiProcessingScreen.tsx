@@ -1,9 +1,9 @@
-'use client';
-
+import { View, Text, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MotiView } from 'moti';
 import { formatINR } from '@/lib/utils';
-import { motion } from 'motion/react';
-import { FadeUp } from '@/components/animations';
-import { EASE_OUT_EXPO, DURATION } from '@/lib/animations';
+import { useTheme } from '@/lib/theme';
+import { FADE_UP, DURATION, staggerDelay } from '@/lib/animations';
 
 interface UpiProcessingScreenProps {
   totalPayable: number;
@@ -16,89 +16,127 @@ export function UpiProcessingScreen({
   goldGrams,
   countdownSeconds,
 }: UpiProcessingScreenProps) {
+  const { colors, isDark } = useTheme();
+  const GOLD = '#D4A012';
+
   const minutes = Math.floor(countdownSeconds / 60);
   const seconds = countdownSeconds % 60;
   const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] p-6 max-w-lg mx-auto flex flex-col items-center justify-center">
-      {/* Spinning Loader */}
-      <motion.div
-        className="mb-8"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: isDark ? '#0F0F0F' : '#F5F5F5' }}
+      edges={['top']}
+    >
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 24,
+        }}
       >
-        <div className="w-24 h-24 relative">
-          <motion.svg
-            className="w-full h-full"
-            viewBox="0 0 96 96"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+        {/* Loading Spinner */}
+        <MotiView
+          from={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'timing' as const, duration: DURATION.normal }}
+          style={{ marginBottom: 32 }}
+        >
+          <ActivityIndicator size="large" color={GOLD} />
+        </MotiView>
+
+        {/* Processing Text */}
+        <MotiView
+          {...FADE_UP}
+          transition={{ type: 'timing' as const, duration: DURATION.normal, delay: staggerDelay(0) }}
+        >
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: '700',
+              color: colors.textPrimary,
+              marginBottom: 8,
+              textAlign: 'center',
+            }}
           >
-            <circle
-              cx="48"
-              cy="48"
-              r="40"
-              stroke="currentColor"
-              strokeWidth="4"
-              fill="none"
-              className="text-border-subtle dark:text-[#2D2D2D]"
-            />
-            <path
-              d="M48 8a40 40 0 0130 13.4"
-              stroke="url(#gold-gradient-proc)"
-              strokeWidth="4"
-              fill="none"
-              strokeLinecap="round"
-            />
-            <defs>
-              <linearGradient id="gold-gradient-proc" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#D4A012" />
-                <stop offset="100%" stopColor="#F5B832" />
-              </linearGradient>
-            </defs>
-          </motion.svg>
-        </div>
-      </motion.div>
+            Processing Payment
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: colors.textMuted,
+              textAlign: 'center',
+              marginBottom: 40,
+            }}
+          >
+            Complete payment in your UPI app
+          </Text>
+        </MotiView>
 
-      {/* Processing Text */}
-      <FadeUp delay={0.1}>
-        <h2 className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2 text-center">
-          Processing Payment
-        </h2>
-        <p className="text-text-muted dark:text-[#6B7280] text-center mb-10">
-          Complete payment in your UPI app
-        </p>
-      </FadeUp>
+        {/* Amount Summary Card */}
+        <MotiView
+          {...FADE_UP}
+          transition={{ type: 'timing' as const, duration: DURATION.normal, delay: staggerDelay(1) }}
+          style={{ width: '100%' }}
+        >
+          <View
+            style={{
+              backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+              borderRadius: 16,
+              padding: 20,
+              borderWidth: 1,
+              borderColor: isDark ? 'rgba(184,134,11,0.15)' : 'rgba(184,134,11,0.1)',
+              marginBottom: 32,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <Text style={{ fontSize: 13, color: colors.textMuted }}>Amount</Text>
+              <Text style={{ fontSize: 17, fontWeight: '700', color: colors.textPrimary }}>
+                {formatINR(totalPayable)}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 13, color: colors.textMuted }}>You'll receive</Text>
+              <Text style={{ fontSize: 17, fontWeight: '700', color: GOLD }}>
+                {goldGrams.toFixed(3)} g gold
+              </Text>
+            </View>
+          </View>
+        </MotiView>
 
-      {/* Amount Summary */}
-      <FadeUp delay={0.18}>
-        <div className="w-full card-gold rounded-2xl p-5 mb-8">
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-sm text-text-muted dark:text-[#6B7280]">Amount</span>
-            <span className="text-lg font-bold text-text-primary dark:text-[#F0F0F0]">
-              {formatINR(totalPayable)}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-text-muted dark:text-[#6B7280]">You&apos;ll receive</span>
-            <span className="text-lg font-bold text-gold-500 dark:text-gold-400">
-              {goldGrams.toFixed(3)} g gold
-            </span>
-          </div>
-        </div>
-      </FadeUp>
-
-      {/* Countdown Timer */}
-      <FadeUp delay={0.24}>
-        <p className="text-sm text-text-muted dark:text-[#6B7280]">
-          Payment times out in{' '}
-          <span className="font-mono font-semibold text-text-primary dark:text-[#F0F0F0]">
-            {timeString}
-          </span>
-        </p>
-      </FadeUp>
-    </div>
+        {/* Countdown */}
+        <MotiView
+          {...FADE_UP}
+          transition={{ type: 'timing' as const, duration: DURATION.normal, delay: staggerDelay(2) }}
+        >
+          <Text style={{ fontSize: 13, color: colors.textMuted, textAlign: 'center' }}>
+            Payment times out in{' '}
+            <Text
+              style={{
+                fontWeight: '600',
+                fontFamily: 'monospace',
+                color: colors.textPrimary,
+              }}
+            >
+              {timeString}
+            </Text>
+          </Text>
+        </MotiView>
+      </View>
+    </SafeAreaView>
   );
 }

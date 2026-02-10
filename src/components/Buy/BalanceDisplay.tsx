@@ -1,8 +1,8 @@
-'use client';
-
-import { RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { SPRING, EASE_OUT_EXPO, DURATION } from '@/lib/animations';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { MotiView } from 'moti';
+import { RefreshCw } from 'lucide-react-native';
+import { useTheme } from '@/lib/theme';
+import { FADE_UP, DURATION } from '@/lib/animations';
 
 interface BalanceDisplayProps {
   balance: string | null;
@@ -11,52 +11,51 @@ interface BalanceDisplayProps {
 }
 
 export function BalanceDisplay({ balance, loading, onRefresh }: BalanceDisplayProps) {
+  const { colors, isDark } = useTheme();
+
   return (
-    <motion.div
-      className="flex items-center justify-between bg-surface-elevated dark:bg-[#242424] rounded-xl p-4 mb-6"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
+    <MotiView
+      {...FADE_UP}
+      transition={{ type: 'timing' as const, duration: DURATION.normal }}
     >
-      <div>
-        <p className="text-xs text-text-muted dark:text-[#6B7280] mb-1">your USDT balance</p>
-        <AnimatePresence mode="wait">
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: isDark ? '#242424' : '#F0F0F0',
+          borderRadius: 12,
+          padding: 16,
+          marginBottom: 20,
+        }}
+      >
+        <View>
+          <Text style={{ fontSize: 11, color: colors.textMuted, marginBottom: 4 }}>
+            Your USDT Balance
+          </Text>
           {loading ? (
-            <motion.div
-              key="skeleton"
-              className="h-6 w-24 bg-border-subtle dark:bg-[#2D2D2D] animate-pulse rounded"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: DURATION.fast }}
+            <View
+              style={{
+                width: 96,
+                height: 22,
+                borderRadius: 6,
+                backgroundColor: isDark ? '#2D2D2D' : '#D1D5DB',
+              }}
             />
           ) : (
-            <motion.p
-              key="balance"
-              className="text-lg font-semibold text-text-primary dark:text-[#F0F0F0]"
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: DURATION.fast, ease: EASE_OUT_EXPO }}
-            >
+            <Text style={{ fontSize: 17, fontWeight: '600', color: colors.textPrimary }}>
               {balance ? `${parseFloat(balance).toFixed(2)} USDT` : '0.00 USDT'}
-            </motion.p>
+            </Text>
           )}
-        </AnimatePresence>
-      </div>
-      <button
-        onClick={onRefresh}
-        disabled={loading}
-        className="p-2 text-text-muted dark:text-[#6B7280] hover:text-text-secondary dark:hover:text-[#9CA3AF] transition-colors"
-        aria-label="Refresh balance"
-      >
-        <motion.div
-          animate={loading ? { rotate: 360 } : { rotate: 0 }}
-          transition={loading ? { duration: 0.8, repeat: Infinity, ease: 'linear' } : { duration: 0.3 }}
-        >
-          <RefreshCw className="size-4" />
-        </motion.div>
-      </button>
-    </motion.div>
+        </View>
+        <Pressable onPress={onRefresh} disabled={loading} hitSlop={8}>
+          {loading ? (
+            <ActivityIndicator size="small" color={colors.textMuted} />
+          ) : (
+            <RefreshCw size={16} color={colors.textMuted} />
+          )}
+        </Pressable>
+      </View>
+    </MotiView>
   );
 }

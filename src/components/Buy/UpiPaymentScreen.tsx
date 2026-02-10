@@ -1,11 +1,11 @@
-'use client';
-
 import { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MotiView } from 'moti';
+import { ArrowLeft } from 'lucide-react-native';
 import { formatINR } from '@/lib/utils';
-import { motion, AnimatePresence } from 'motion/react';
-import { FadeUp, StaggerContainer, StaggerItem } from '@/components/animations';
-import { SPRING, EASE_OUT_EXPO, DURATION } from '@/lib/animations';
+import { useTheme } from '@/lib/theme';
+import { FADE_UP, DURATION, staggerDelay } from '@/lib/animations';
 
 interface UpiPaymentScreenProps {
   totalPayable: number;
@@ -30,7 +30,9 @@ export function UpiPaymentScreen({
   onPay,
   onBack,
 }: UpiPaymentScreenProps) {
+  const { colors, isDark } = useTheme();
   const [showManualInput, setShowManualInput] = useState(false);
+  const GOLD = '#B8860B';
 
   const handleGpayClick = () => {
     onSelectApp('gpay');
@@ -43,146 +45,211 @@ export function UpiPaymentScreen({
   };
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] p-6 max-w-lg mx-auto">
-      {/* Header */}
-      <FadeUp>
-        <div className="flex items-center gap-4 mb-8">
-          <button
-            onClick={onBack}
-            className="p-2 -ml-2 text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] transition-colors"
-            aria-label="Go back"
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: isDark ? '#0F0F0F' : '#F5F5F5' }}
+      edges={['top']}
+    >
+      <View style={{ flex: 1, paddingHorizontal: 24 }}>
+        {/* Header */}
+        <MotiView {...FADE_UP}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 16,
+              marginBottom: 32,
+              marginTop: 8,
+            }}
           >
-            <ArrowLeft className="size-6" />
-          </button>
-          <h1 className="text-xl font-bold text-text-primary dark:text-[#F0F0F0]">
-            Pay {formatINR(totalPayable)}
-          </h1>
-        </div>
-      </FadeUp>
+            <Pressable onPress={onBack} hitSlop={12} style={{ padding: 8, marginLeft: -8 }}>
+              <ArrowLeft size={24} color={colors.textMuted} />
+            </Pressable>
+            <Text style={{ fontSize: 18, fontWeight: '700', color: colors.textPrimary }}>
+              Pay {formatINR(totalPayable)}
+            </Text>
+          </View>
+        </MotiView>
 
-      {/* Powered by Onmeta */}
-      <FadeUp delay={0.06}>
-        <div className="text-center mb-8">
-          <p className="text-xs text-text-muted dark:text-[#6B7280] mb-1">Powered by</p>
-          <p className="text-2xl font-bold text-gold-500 dark:text-gold-400">onmeta</p>
-        </div>
-      </FadeUp>
-
-      <StaggerContainer staggerDelay={0.06} delayChildren={0.1}>
-        {/* Google Pay Option */}
-        <StaggerItem>
-          <motion.button
-            onClick={handleGpayClick}
-            className={`w-full flex items-center gap-4 p-4 rounded-2xl mb-3 transition-colors border ${
-              selectedApp === 'gpay'
-                ? 'border-gold-500 dark:border-gold-400 bg-gold-50 dark:bg-gold-900/20'
-                : 'border-border-subtle dark:border-[#2D2D2D] bg-surface-card dark:bg-[#1A1A1A] hover:border-gold-500/50 dark:hover:border-gold-400/50'
-            }`}
-            whileTap={{ scale: 0.98 }}
-            transition={SPRING.snappy}
-          >
-            <div className="w-12 h-12 rounded-xl bg-success flex items-center justify-center shrink-0">
-              <span className="text-white font-bold text-xs">G Pay</span>
-            </div>
-            <span className="text-base font-semibold text-text-primary dark:text-[#F0F0F0]">
-              Google Pay
-            </span>
-          </motion.button>
-        </StaggerItem>
-
-        {/* Other UPI App Option */}
-        <StaggerItem>
-          <motion.button
-            onClick={handleManualClick}
-            className={`w-full flex items-center gap-4 p-4 rounded-2xl mb-6 transition-colors border ${
-              selectedApp === 'manual'
-                ? 'border-gold-500 dark:border-gold-400 bg-gold-50 dark:bg-gold-900/20'
-                : 'border-border-subtle dark:border-[#2D2D2D] bg-surface-card dark:bg-[#1A1A1A] hover:border-gold-500/50 dark:hover:border-gold-400/50'
-            }`}
-            whileTap={{ scale: 0.98 }}
-            transition={SPRING.snappy}
-          >
-            <div className="w-12 h-12 rounded-xl bg-surface dark:bg-[#242424] border border-border-subtle dark:border-[#2D2D2D] flex items-center justify-center shrink-0">
-              <span className="text-lg">&#128179;</span>
-            </div>
-            <div className="text-left">
-              <span className="text-base font-semibold text-text-primary dark:text-[#F0F0F0] block">
-                Other UPI App
-              </span>
-              <span className="text-xs text-text-muted dark:text-[#6B7280]">
-                Enter UPI ID manually
-              </span>
-            </div>
-          </motion.button>
-        </StaggerItem>
-      </StaggerContainer>
-
-      {/* Manual UPI ID Input */}
-      <AnimatePresence>
-        {showManualInput && (
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
-          >
-            <label className="text-sm text-text-muted dark:text-[#6B7280] mb-2 block">
-              Or enter UPI ID
-            </label>
-            <input
-              type="text"
-              value={upiId}
-              onChange={(e) => onUpiIdChange(e.target.value)}
-              placeholder="yourname@upi"
-              className="w-full bg-surface-card dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2D2D2D] rounded-xl px-4 py-3.5 text-text-primary dark:text-[#F0F0F0] placeholder:text-text-muted dark:placeholder:text-[#3D3D3D] outline-none focus:border-gold-500 dark:focus:border-gold-400 transition-colors text-base"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Spacer */}
-      <div className="flex-1" />
-
-      {/* Pay Button */}
-      <FadeUp delay={0.2}>
-        <motion.button
-          onClick={onPay}
-          disabled={!canPay || confirmLoading}
-          className="w-full bg-gold-gradient text-white font-bold text-lg py-4 rounded-2xl transition-all disabled:opacity-40 disabled:cursor-not-allowed mt-auto"
-          whileTap={canPay && !confirmLoading ? { scale: 0.98 } : undefined}
-          transition={SPRING.snappy}
+        {/* Powered by */}
+        <MotiView
+          {...FADE_UP}
+          transition={{ type: 'timing' as const, duration: DURATION.normal, delay: staggerDelay(0) }}
         >
-          {confirmLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <motion.svg
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </motion.svg>
-              Processing...
-            </span>
-          ) : (
-            `Pay ${formatINR(totalPayable)}`
-          )}
-        </motion.button>
-      </FadeUp>
-    </div>
+          <View style={{ alignItems: 'center', marginBottom: 32 }}>
+            <Text style={{ fontSize: 11, color: colors.textMuted, marginBottom: 4 }}>
+              Powered by
+            </Text>
+            <Text style={{ fontSize: 22, fontWeight: '700', color: GOLD }}>onmeta</Text>
+          </View>
+        </MotiView>
+
+        {/* Google Pay */}
+        <MotiView
+          {...FADE_UP}
+          transition={{ type: 'timing' as const, duration: DURATION.normal, delay: staggerDelay(1) }}
+        >
+          <Pressable
+            onPress={handleGpayClick}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 16,
+              padding: 16,
+              borderRadius: 16,
+              marginBottom: 12,
+              borderWidth: 1,
+              borderColor:
+                selectedApp === 'gpay'
+                  ? GOLD
+                  : isDark
+                    ? '#2D2D2D'
+                    : '#E5E7EB',
+              backgroundColor:
+                selectedApp === 'gpay'
+                  ? isDark
+                    ? 'rgba(184,134,11,0.08)'
+                    : 'rgba(184,134,11,0.05)'
+                  : isDark
+                    ? '#1A1A1A'
+                    : '#FFFFFF',
+            }}
+          >
+            <View
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: '#10B981',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 11 }}>G Pay</Text>
+            </View>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
+              Google Pay
+            </Text>
+          </Pressable>
+        </MotiView>
+
+        {/* Other UPI App */}
+        <MotiView
+          {...FADE_UP}
+          transition={{ type: 'timing' as const, duration: DURATION.normal, delay: staggerDelay(2) }}
+        >
+          <Pressable
+            onPress={handleManualClick}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 16,
+              padding: 16,
+              borderRadius: 16,
+              marginBottom: 20,
+              borderWidth: 1,
+              borderColor:
+                selectedApp === 'manual'
+                  ? GOLD
+                  : isDark
+                    ? '#2D2D2D'
+                    : '#E5E7EB',
+              backgroundColor:
+                selectedApp === 'manual'
+                  ? isDark
+                    ? 'rgba(184,134,11,0.08)'
+                    : 'rgba(184,134,11,0.05)'
+                  : isDark
+                    ? '#1A1A1A'
+                    : '#FFFFFF',
+            }}
+          >
+            <View
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: isDark ? '#242424' : '#F0F0F0',
+                borderWidth: 1,
+                borderColor: isDark ? '#2D2D2D' : '#E5E7EB',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 18 }}>{'\uD83D\uDCB3'}</Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
+                Other UPI App
+              </Text>
+              <Text style={{ fontSize: 12, color: colors.textMuted }}>
+                Enter UPI ID manually
+              </Text>
+            </View>
+          </Pressable>
+        </MotiView>
+
+        {/* Manual UPI ID Input */}
+        {showManualInput && (
+          <MotiView
+            from={{ opacity: 0, translateY: -8 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'timing' as const, duration: DURATION.normal }}
+            style={{ marginBottom: 20 }}
+          >
+            <Text style={{ fontSize: 13, color: colors.textMuted, marginBottom: 8 }}>
+              Enter UPI ID
+            </Text>
+            <TextInput
+              value={upiId}
+              onChangeText={onUpiIdChange}
+              placeholder="yourname@upi"
+              placeholderTextColor={isDark ? '#3D3D3D' : '#9CA3AF'}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              style={{
+                backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+                borderWidth: 1,
+                borderColor: isDark ? '#2D2D2D' : '#E5E7EB',
+                borderRadius: 12,
+                paddingHorizontal: 16,
+                paddingVertical: 14,
+                fontSize: 15,
+                color: colors.textPrimary,
+              }}
+            />
+          </MotiView>
+        )}
+
+        {/* Spacer */}
+        <View style={{ flex: 1 }} />
+
+        {/* Pay Button */}
+        <MotiView
+          {...FADE_UP}
+          transition={{ type: 'timing' as const, duration: DURATION.normal, delay: 150 }}
+        >
+          <Pressable
+            onPress={onPay}
+            disabled={!canPay || confirmLoading}
+            style={{
+              backgroundColor: GOLD,
+              paddingVertical: 16,
+              borderRadius: 16,
+              alignItems: 'center',
+              opacity: canPay && !confirmLoading ? 1 : 0.4,
+              marginBottom: 16,
+            }}
+          >
+            {confirmLoading ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 17 }}>
+                Pay {formatINR(totalPayable)}
+              </Text>
+            )}
+          </Pressable>
+        </MotiView>
+      </View>
+    </SafeAreaView>
   );
 }

@@ -1,13 +1,12 @@
-'use client';
-
+import { View, Text, Pressable } from 'react-native';
+import { MotiView } from 'moti';
 import { useUpiFlow } from '@/hooks/useUpiFlow';
 import { UpiAmountScreen } from './UpiAmountScreen';
 import { UpiPaymentScreen } from './UpiPaymentScreen';
 import { UpiProcessingScreen } from './UpiProcessingScreen';
 import { UpiSuccessScreen } from './UpiSuccessScreen';
-import { motion } from 'motion/react';
-import { FadeUp } from '@/components/animations';
-import { SPRING, EASE_OUT_EXPO, DURATION } from '@/lib/animations';
+import { useTheme } from '@/lib/theme';
+import { SCALE_IN, SPRING, FADE_UP } from '@/lib/animations';
 
 interface UpiFlowProps {
   onExit: () => void;
@@ -15,6 +14,7 @@ interface UpiFlowProps {
 
 export function UpiFlow({ onExit }: UpiFlowProps) {
   const flow = useUpiFlow();
+  const { colors, isDark } = useTheme();
 
   switch (flow.step) {
     case 'amount':
@@ -63,65 +63,125 @@ export function UpiFlow({ onExit }: UpiFlowProps) {
       return (
         <UpiSuccessScreen
           goldGrams={flow.confirmData?.goldGrams ?? flow.quote?.goldGrams ?? 0}
-          totalPayable={flow.confirmData?.totalPayable ?? flow.quote?.totalPayable ?? 0}
-          ratePerGram={flow.confirmData?.ratePerGram ?? flow.quote?.ratePerGram ?? 0}
+          totalPayable={
+            flow.confirmData?.totalPayable ?? flow.quote?.totalPayable ?? 0
+          }
+          ratePerGram={
+            flow.confirmData?.ratePerGram ?? flow.quote?.ratePerGram ?? 0
+          }
           tds={flow.confirmData?.tds ?? flow.quote?.tds ?? 0}
-          inrAmount={flow.confirmData?.inrAmount ?? flow.quote?.inrAmount ?? 0}
+          inrAmount={
+            flow.confirmData?.inrAmount ?? flow.quote?.inrAmount ?? 0
+          }
           onBuyMore={flow.reset}
         />
       );
 
     case 'error':
       return (
-        <div className="min-h-screen bg-surface dark:bg-[#0F0F0F] p-6 max-w-lg mx-auto flex flex-col items-center justify-center">
-          <FadeUp delay={0}>
-            <motion.div
-              className="mb-6"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ ...SPRING.bouncy, delay: 0.1 }}
-            >
-              <div className="w-20 h-20 rounded-full bg-error/20 flex items-center justify-center">
-                <div className="w-14 h-14 rounded-full bg-error flex items-center justify-center">
-                  <span className="text-white font-bold text-2xl">!</span>
-                </div>
-              </div>
-            </motion.div>
-          </FadeUp>
-          <FadeUp delay={0.15}>
-            <h2 className="text-2xl font-bold text-text-primary dark:text-[#F0F0F0] mb-2">
-              Payment Failed
-            </h2>
-          </FadeUp>
-          <FadeUp delay={0.2}>
-            <p className="text-text-muted dark:text-[#6B7280] text-center mb-10">
-              {flow.error || 'Something went wrong with your payment'}
-            </p>
-          </FadeUp>
-          <motion.div
-            className="w-full"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO, delay: 0.3 }}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: isDark ? '#0F0F0F' : '#F5F5F5',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+          }}
+        >
+          <MotiView
+            from={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', ...SPRING.bouncy }}
+            style={{ marginBottom: 24 }}
           >
-            <motion.button
-              onClick={flow.reset}
-              className="w-full bg-gold-gradient text-white font-bold text-lg py-4 rounded-2xl transition-all mb-4"
-              whileTap={{ scale: 0.97 }}
-              transition={SPRING.snappy}
+            <View
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 40,
+                backgroundColor: 'rgba(239,68,68,0.15)',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              Try Again
-            </motion.button>
-            <motion.button
-              onClick={onExit}
-              className="w-full text-text-muted dark:text-[#6B7280] hover:text-text-primary dark:hover:text-[#F0F0F0] font-medium transition-colors"
-              whileTap={{ scale: 0.97 }}
-              transition={SPRING.snappy}
+              <View
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 28,
+                  backgroundColor: '#EF4444',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    color: '#FFFFFF',
+                    fontWeight: '700',
+                    fontSize: 24,
+                  }}
+                >
+                  !
+                </Text>
+              </View>
+            </View>
+          </MotiView>
+
+          <MotiView {...FADE_UP}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '700',
+                color: colors.textPrimary,
+                marginBottom: 8,
+                textAlign: 'center',
+              }}
             >
-              Go Back
-            </motion.button>
-          </motion.div>
-        </div>
+              Payment Failed
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: colors.textMuted,
+                textAlign: 'center',
+                marginBottom: 40,
+              }}
+            >
+              {flow.error || 'Something went wrong with your payment'}
+            </Text>
+          </MotiView>
+
+          <View style={{ width: '100%' }}>
+            <Pressable
+              onPress={flow.reset}
+              style={{
+                backgroundColor: '#B8860B',
+                paddingVertical: 16,
+                borderRadius: 16,
+                alignItems: 'center',
+                marginBottom: 16,
+              }}
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 17 }}>
+                Try Again
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={onExit}
+              style={{ alignItems: 'center', paddingVertical: 12 }}
+            >
+              <Text
+                style={{
+                  color: colors.textMuted,
+                  fontWeight: '500',
+                  fontSize: 15,
+                }}
+              >
+                Go Back
+              </Text>
+            </Pressable>
+          </View>
+        </View>
       );
 
     default:

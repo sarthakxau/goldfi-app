@@ -1,6 +1,5 @@
-'use client';
-
 import { useState, useCallback, useEffect, useRef } from 'react';
+import Constants from 'expo-constants';
 import { authFetchJson } from '@/lib/apiClient';
 import Decimal from 'decimal.js';
 import {
@@ -58,7 +57,8 @@ export function useUpiFlow() {
   const fetchPrice = useCallback(async () => {
     setState((s) => ({ ...s, priceLoading: true }));
     try {
-      const res = await fetch('/api/prices');
+      const API_BASE = Constants.expoConfig?.extra?.apiUrl ?? process.env.EXPO_PUBLIC_API_URL ?? '';
+      const res = await fetch(`${API_BASE}/api/prices`);
       const json = (await res.json()) as { success: boolean; data?: GoldPrice; error?: string };
       if (json.success && json.data) {
         setState((s) => ({

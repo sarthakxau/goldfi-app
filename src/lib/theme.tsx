@@ -1,5 +1,5 @@
 import { createContext, useContext, useCallback, useEffect, useState } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
+import { Appearance, useColorScheme as useRNColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -77,6 +77,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const isDark = resolvedTheme === 'dark';
   const colors = isDark ? darkColors : lightColors;
+
+  // Sync NativeWind dark: classes with our theme state
+  useEffect(() => {
+    if (theme === 'system') {
+      Appearance.setColorScheme(null);
+    } else {
+      Appearance.setColorScheme(theme);
+    }
+  }, [theme]);
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);

@@ -33,7 +33,8 @@
       "Bash(grep:*)",
       "Bash(npx expo config:*)",
       "Bash(npx expo-doctor:*)",
-      "Bash(npx expo --version)"
+      "Bash(npx expo --version)",
+      "Bash(xargs cat:*)"
     ]
   }
 }

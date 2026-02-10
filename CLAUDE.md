@@ -2,126 +2,169 @@
 
 ## Project Overview
 
-Bullion is a Progressive Web App (PWA) for digital gold savings targeting Indian users. Users can buy and sell tokenized gold (XAUT0) on Arbitrum using INR. The app abstracts away all blockchain/crypto complexity and presents itself as a simple gold savings app.
+Bullion (gold.fi) is a mobile app for digital gold savings targeting Indian users. Users can buy and sell tokenized gold (XAUT0) on Arbitrum using INR/UPI. The app abstracts away all blockchain/crypto complexity and presents itself as a simple gold savings app.
+
+**Architecture**: Expo React Native (iOS) frontend + separately deployed Next.js API backend. The mobile app calls backend APIs via absolute URL.
 
 ## Tech Stack
 
-- **Framework**: Next.js 14 (App Router) with TypeScript
-- **Styling**: TailwindCSS with custom gold color palette
-- **Database**: PostgreSQL via Supabase
-- **Cache**: Redis (in-memory mock in dev, Upstash in production)
-- **Icons**: Lucide React
-- **Auth/Wallet**: Privy SDK (phone/email login with embedded wallets)
+- **Framework**: Expo SDK 54 + React Native 0.81.5 + React 19
+- **Router**: Expo Router v6 (file-based routing in `app/` directory)
+- **Styling**: NativeWind v4 (Tailwind CSS for React Native) + `react-native-css-interop`
+- **Database**: PostgreSQL via Supabase (direct queries, no ORM)
+- **Icons**: Lucide React Native
+- **Auth/Wallet**: Privy Expo SDK (`@privy-io/expo` v0.63.4) — email/code login with embedded wallets
 - **Blockchain**: Viem v2 on Arbitrum
 - **State Management**: Zustand
-- **Charts**: Recharts
-- **Animations**: Motion (Framer Motion v12+) via `motion/react` + `tailwindcss-animate` Tailwind plugin
-- **PWA**: next-pwa
+- **Animations**: Moti v0.29 + Reanimated v4
+- **Forms**: React Hook Form + Zod
 - **Numbers**: decimal.js for precise financial calculations
+- **Fonts**: DM Sans (via `@expo-google-fonts/dm-sans`)
 
 ## Project Structure
 
 ```
-src/
-├── app/                      # Next.js App Router
-│   ├── (auth)/               # Auth route group (login)
-│   ├── (dashboard)/          # Protected routes
-│   │   ├── page.tsx          # Home/holdings dashboard
-│   │   ├── buy/              # Buy gold page
-│   │   ├── sell/             # Sell gold page
-│   │   ├── transactions/     # Transaction history
-│   │   ├── account/          # User account settings
-│   │   ├── card/             # Gold card feature
-│   │   ├── gold-charts/      # TradingView charts
-│   │   └── yield/            # Yield/jewellers features
-│   ├── api/                  # Backend API routes
-│   │   ├── auth/sync/        # Sync Privy user to DB
-│   │   ├── prices/           # Gold price endpoints (/, /history, /tola)
-│   │   ├── holdings/         # User holdings
-│   │   ├── balance/          # Wallet balances (usdt, xaut)
-│   │   ├── swap/             # Buy swap (quote, record)
-│   │   ├── sell/             # Sell swap (quote, record)
-│   │   ├── transactions/     # Buy/sell/history
-│   │   └── webhooks/         # Onmeta payment webhooks
-│   ├── layout.tsx            # Root layout
-│   ├── providers.tsx         # Privy provider setup
-│   └── manifest.ts           # PWA manifest
-├── components/               # Reusable React components
-│   ├── animations/           # Animation system components
-│   │   ├── FadeUp.tsx        # Fade-up entrance wrapper
-│   │   ├── StaggerContainer.tsx # Staggered list reveal
-│   │   ├── PageTransition.tsx   # Page-level entrance animation
-│   │   ├── AnimatedNumber.tsx   # Smooth number morphing
-│   │   └── index.ts          # Barrel exports
-│   ├── Buy/                  # Buy flow components
-│   │   ├── SwapModal.tsx     # Main swap modal
-│   │   ├── SwapProgress.tsx  # Step progress indicator
-│   │   ├── SwapQuote.tsx     # Quote display
-│   │   ├── BalanceDisplay.tsx
-│   │   ├── DepositModal.tsx  # USDT deposit instructions
-│   │   └── HistoryModal.tsx  # Transaction history in modal
-│   ├── HoldingCard.tsx       # Holdings display with P&L
-│   ├── PriceDisplay.tsx      # Current price ticker
-│   ├── TolaPrice.tsx         # Tola price display
-│   ├── TolaCard.tsx          # Tola-based gold card
-│   ├── GoldChart.tsx         # 7-day price chart (Recharts)
-│   ├── TradingViewWidget.tsx # TradingView embed
-│   ├── CardModals.tsx        # Gold card modals
-│   └── TransactionList.tsx   # Transaction history list
-├── hooks/                    # Custom React hooks
-│   ├── useSwap.ts            # Buy swap logic (USDT → XAUT)
-│   └── useSellSwap.ts        # Sell swap logic (XAUT → USDT)
-├── lib/                      # Core utilities
-│   ├── animations.ts         # Shared animation constants & variants
-│   ├── form.ts               # React Hook Form + Zod utilities
-│   ├── redis.ts              # Redis client
-│   ├── viem.ts               # Server-side Viem clients
-│   ├── clientViem.ts         # Client-side Viem (browser)
-│   ├── supabase.ts           # Supabase client
-│   ├── auth.ts               # Server-side auth verification
-│   ├── apiClient.ts          # Client-side authenticated fetch
-│   ├── constants.ts          # Smart contracts, config values
-│   ├── theme.tsx             # Theme provider
-│   └── utils.ts              # Helper functions
-├── services/                 # Business logic
-│   ├── priceOracle.ts        # Gold price fetching & caching
-│   ├── dexService.ts         # Camelot V3 DEX interactions
-│   ├── onmetaService.ts      # INR payment processing
-│   └── transactionProcessor.ts
-├── store/                    # Zustand state
-│   └── index.ts              # Global app state
-└── types/                    # TypeScript interfaces
-    └── index.ts              # All type definitions
+├── index.js                  # Entry point — crypto polyfills + expo-router/entry
+├── app.json                  # Expo config (scheme: goldfi, typed routes)
+├── babel.config.js           # Expo preset + NativeWind + Reanimated plugin
+├── metro.config.js           # NativeWind integration + conditionNames
+├── tailwind.config.ts        # Gold color palette, dark mode, NativeWind preset
+├── global.css                # @tailwind base/components/utilities
+├── eas.json                  # EAS Build profiles (dev/preview/production)
+│
+├── app/                      # Expo Router (file-based routes)
+│   ├── _layout.tsx           # Root layout (fonts, AuthProvider, ThemeProvider, Stack)
+│   ├── (auth)/
+│   │   ├── _layout.tsx       # Auth group layout
+│   │   └── login.tsx         # Privy email/code login screen
+│   ├── (tabs)/
+│   │   ├── _layout.tsx       # Tab bar (Home, Card, Earn, Settings) + auth guard
+│   │   ├── index.tsx         # Home — holdings, price, quick actions
+│   │   ├── card.tsx          # Gold card feature
+│   │   ├── account/          # Settings, personal info
+│   │   │   ├── index.tsx     # Account settings
+│   │   │   ├── personal.tsx  # Personal info
+│   │   │   └── kyc.tsx       # KYC verification
+│   │   └── yield/            # Earn / yield strategies
+│   │       ├── index.tsx     # Yield overview
+│   │       └── strategies/   # Strategy list + detail
+│   ├── buy/
+│   │   ├── index.tsx         # Buy gold (USDT swap)
+│   │   └── upi.tsx           # Buy gold via UPI
+│   ├── sell.tsx              # Sell gold
+│   ├── gift/
+│   │   ├── index.tsx         # Gift history
+│   │   ├── send.tsx          # Send gold gift
+│   │   └── claim/[token].tsx # Claim a gift
+│   ├── transactions.tsx      # Transaction history
+│   ├── gold-charts.tsx       # TradingView charts
+│   ├── autopay/              # Auto-pay SIP
+│   │   ├── index.tsx         # AutoPay list
+│   │   ├── new.tsx           # Create new plan
+│   │   └── [id].tsx          # Plan detail
+│   ├── redeem/               # Physical redemption
+│   │   ├── index.tsx         # Redeem overview
+│   │   └── jewellers.tsx     # Jeweller list
+│   └── +not-found.tsx        # 404 screen
+│
+├── src/
+│   ├── lib/                  # Core utilities (shared by app)
+│   │   ├── auth-provider.tsx # AuthProvider + AuthGate (Privy wrapper)
+│   │   ├── apiClient.ts      # authFetch() / authFetchJson() with Bearer token
+│   │   ├── supabase.ts       # Supabase client (SecureStore auth adapter) + Db* types
+│   │   ├── clientViem.ts     # Client-side Viem + ERC20/Router ABIs
+│   │   ├── constants.ts      # Contract addresses, chain ID, limits
+│   │   ├── utils.ts          # cn(), formatINR(), formatGrams(), etc.
+│   │   ├── animations.ts     # Moti/Reanimated presets (FADE_UP, SCALE_IN, etc.)
+│   │   ├── theme.tsx         # ThemeProvider (light/dark/system, AsyncStorage)
+│   │   ├── form.ts           # React Hook Form + Zod re-exports, validation patterns
+│   │   ├── polyfills.ts      # Crypto polyfills (used by index.js)
+│   │   ├── giftData.ts       # Gift presets & occasions
+│   │   ├── copy.ts           # Clipboard utility
+│   │   ├── yieldData.ts      # Yield strategy mock data
+│   │   ├── mock/autopay.ts   # AutoPay mock data
+│   │   ├── auth.ts           # Server-side auth (reference, used by backend)
+│   │   ├── redis.ts          # Redis client (reference, used by backend)
+│   │   └── viem.ts           # Server-side Viem (reference, used by backend)
+│   ├── components/           # Reusable React Native components
+│   │   ├── animations/       # Animation wrappers
+│   │   │   ├── FadeUp.tsx
+│   │   │   ├── StaggerContainer.tsx
+│   │   │   ├── PageTransition.tsx
+│   │   │   ├── AnimatedNumber.tsx
+│   │   │   └── index.ts
+│   │   ├── Buy/              # Buy flow (SwapModal, UPI flow, etc.)
+│   │   ├── Gift/             # Gift flow (send, claim, preview, etc.)
+│   │   ├── AutoPay/          # AutoPay components
+│   │   ├── HoldingCard.tsx   # Holdings display with P&L
+│   │   ├── PriceDisplay.tsx  # Current price ticker
+│   │   ├── TolaCard.tsx      # Tola-based gold card
+│   │   ├── TolaPrice.tsx     # Tola price display
+│   │   ├── GoldChart.tsx     # Price chart
+│   │   ├── CardModals.tsx    # Gold card modals
+│   │   ├── TransactionList.tsx
+│   │   ├── TransactionDetailModal.tsx
+│   │   └── TradingViewWidget.tsx
+│   ├── hooks/                # Custom React hooks
+│   │   ├── useSwap.ts        # Buy: USDT → XAUT swap
+│   │   ├── useSellSwap.ts    # Sell: XAUT → USDT swap
+│   │   ├── useUpiFlow.ts     # UPI payment flow
+│   │   ├── useGiftSend.ts    # Gift sending flow
+│   │   └── useAutoPay.ts     # AutoPay management
+│   ├── services/             # Business logic (reference, used by backend)
+│   │   ├── dexService.ts     # Camelot V3 DEX interactions
+│   │   ├── priceOracle.ts    # Gold price fetching
+│   │   ├── onmetaService.ts  # INR payment processing
+│   │   ├── giftService.ts    # Gift sending/claiming
+│   │   ├── emailService.ts   # Email notifications
+│   │   └── transactionProcessor.ts
+│   ├── store/
+│   │   └── index.ts          # Zustand store (goldPrice, holding, transactions)
+│   ├── types/
+│   │   └── index.ts          # All TypeScript interfaces
+│   └── _app_web/             # OLD Next.js routes (reference only, gitignored)
 ```
 
 ## Development Commands
 
 ```bash
-pnpm dev          # Start development server (localhost:3000)
-pnpm build        # Build for production
-pnpm start        # Start production server
-pnpm lint         # Run ESLint
+# Development (MUST use Node 20 — Node 22+ breaks Expo type stripping)
+nvm use 20
+npx expo start --tunnel --clear   # Dev server (MUST use --tunnel, LAN mode hangs)
+
+# Build verification
+npx expo export --platform ios    # Verify production bundle
+npx tsc --noEmit                  # TypeScript check
+
+# EAS Build
+eas build --profile development --platform ios
+eas build --profile preview --platform ios
+eas build --profile production --platform ios
+
+# Lint
+pnpm lint
 ```
 
-Note: Using `db:push` for schema sync. Migrations not configured.
+**Critical**: Always use `--tunnel` mode for Expo Go. LAN mode hangs on "opening project..." screen.
 
 ## Key Files Reference
 
 | File | Purpose |
 |------|---------|
-| `src/lib/constants.ts` | Smart contract addresses, chain ID, decimals, swap limits |
-| `src/lib/animations.ts` | Shared easings, durations, springs, motion variants |
-| `src/lib/form.ts` | React Hook Form + Zod utilities, validation patterns |
-| `src/components/animations/` | Reusable animation wrapper components (FadeUp, Stagger, etc.) |
-| `src/lib/viem.ts` | Server-side Viem public client |
-| `src/lib/clientViem.ts` | Client-side Viem + ERC20/Router ABIs for browser |
-| `src/lib/auth.ts` | Server-side Privy token verification |
-| `src/lib/apiClient.ts` | Client-side `authFetch()` with Bearer token |
-| `src/hooks/useSwap.ts` | Buy flow: USDT → XAUT swap hook |
-| `src/hooks/useSellSwap.ts` | Sell flow: XAUT → USDT swap hook |
-| `src/services/dexService.ts` | Camelot V3 swap quotes and execution |
-| `src/services/priceOracle.ts` | CoinGecko price fetching with Redis cache |
-| `src/types/index.ts` | All TypeScript interfaces and types |
+| `index.js` | Entry point — crypto polyfills MUST run before expo-router/entry |
+| `app/_layout.tsx` | Root layout — fonts, AuthProvider, ThemeProvider, Stack |
+| `app/(tabs)/_layout.tsx` | Tab bar + auth guard (redirects to login if unauthenticated) |
+| `src/lib/auth-provider.tsx` | Privy wrapper — AuthProvider, AuthGate, useAuth() hook |
+| `src/lib/apiClient.ts` | authFetch() / authFetchJson() with Bearer token |
+| `src/lib/supabase.ts` | Supabase client (SecureStore adapter) + Db* types |
+| `src/lib/constants.ts` | Contract addresses, chain ID, decimals, swap limits |
+| `src/lib/animations.ts` | Moti animation presets (FADE_UP, SCALE_IN, etc.) |
+| `src/lib/theme.tsx` | ThemeProvider (light/dark/system via AsyncStorage) |
+| `src/lib/form.ts` | React Hook Form + Zod re-exports, validation patterns |
+| `src/lib/clientViem.ts` | Client-side Viem + ERC20/Router ABIs |
+| `src/lib/utils.ts` | cn(), formatINR(), formatGrams(), formatPercent() |
+| `src/types/index.ts` | All TypeScript interfaces |
+| `src/store/index.ts` | Zustand store |
 
 ## Coding Conventions
 
@@ -130,19 +173,29 @@ Note: Using `db:push` for schema sync. Migrations not configured.
 - Strict mode enabled
 - Path alias: `@/*` maps to `./src/*`
 - All API responses use `ApiResponse<T>` wrapper type
+- **Whitelist include in tsconfig** — new `src/lib/` files MUST be added to `tsconfig.json` `include` array
 
 ### Components
 
-- PascalCase for component names
-- Located in `src/components/`
-- Use `cn()` helper from `utils.ts` for Tailwind class merging
+- React Native components (View, Text, Pressable, ScrollView — NOT div, span, button)
+- PascalCase for component names, located in `src/components/`
+- Use `cn()` helper from `utils.ts` for NativeWind class merging
+- Use `className` prop (NativeWind) instead of `StyleSheet.create()`
 
-### API Routes
+### Privy SDK
 
-- Located in `src/app/api/`
-- Return JSON with `ApiResponse<T>` structure
-- Protected routes use `verifyAuth()` from `src/lib/auth.ts`
-- Client calls use `authFetch()` from `src/lib/apiClient.ts` to attach Bearer token
+- `@privy-io/expo` MUST be lazy-loaded via `require()` — top-level import crashes in dev bypass mode
+- Dev bypass: `DEV_BYPASS_AUTH = __DEV__` in auth-provider.tsx skips Privy entirely
+- User email: extract from `user.linked_accounts` (type 'email'), NOT `user.email`
+- Token getter: `setAccessTokenGetter(getAccessToken)` wired in AuthGate
+- Auth guard lives in `app/(tabs)/_layout.tsx` — redirects to login if not authenticated
+
+### API Calls
+
+- Backend is a separately deployed Next.js app
+- Mobile app calls via `authFetch()` / `authFetchJson()` from `src/lib/apiClient.ts`
+- `EXPO_PUBLIC_API_URL` env var sets the base URL
+- Bearer token auto-attached from Privy
 
 ### Financial Calculations
 
@@ -152,335 +205,134 @@ Note: Using `db:push` for schema sync. Migrations not configured.
 
 ### Formatting Functions (from utils.ts)
 
-- `formatINR()` - Currency formatting for Indian rupees
-- `formatGrams()` - Gold amount display
-- `formatPercent()` - Percentage display
-- `ouncesToGrams()` / `gramsToOunces()` - Unit conversion
-
-### Animation Requirements
-
-All new client components **MUST** include entrance animations — see "Animation System" section for mandatory patterns. This is non-negotiable to maintain the premium feel of the app.
+- `formatINR()` — Currency formatting for Indian rupees
+- `formatGrams()` — Gold amount display
+- `formatPercent()` — Percentage display
+- `ouncesToGrams()` / `gramsToOunces()` — Unit conversion
+- `truncateAddress()` — Wallet address display
+- `formatDate()` — Indian locale date formatting
+- `calculatePnlPercent()` — P&L calculation with Decimal
 
 ## Animation System
 
-Bullion uses a comprehensive animation system built on **Motion** (Framer Motion v12+) to create a refined, premium feel appropriate for a financial app. All animations are subtle, purposeful, and consistent.
+Bullion uses **Moti** (built on Reanimated 3) for animations. All presets are in `src/lib/animations.ts`.
 
 ### Import Rule
 
 ```typescript
-import { motion, AnimatePresence } from 'motion/react';
-// NOT: 'motion/react-client' — that variant is not used in this codebase
+import { MotiView } from 'moti';
+import { FADE_UP, SCALE_IN, DURATION, STAGGER } from '@/lib/animations';
+
+// Spread preset directly on MotiView:
+<MotiView {...FADE_UP}>...</MotiView>
 ```
 
 ### Design Philosophy
 
-- **Refined & subtle** — 200-400ms duration, smooth deceleration (`EASE_OUT_EXPO`)
-- **No jarring movement** — Maximum 12-16px travel distance
-- **Staggered reveals** — 50-80ms between sequential items
-- **Spring physics** — Use spring presets for bouncy interactions (buttons, badges)
+- **Refined & subtle** — 200–400ms duration, smooth deceleration
+- **No jarring movement** — Maximum 12–16px travel distance
+- **Staggered reveals** — 40–80ms between sequential items
 - **Financial app appropriate** — Professional, not playful
 
 ### Shared Constants (`src/lib/animations.ts`)
 
-#### Easing Curves
+```typescript
+// Easing (Reanimated Easing objects)
+EASE_OUT         // Easing.out(Easing.quad)
+EASE_OUT_EXPO    // Easing.out(Easing.exp) — most common
+EASE_IN_OUT      // Easing.inOut(Easing.quad)
+
+// Durations (milliseconds — Reanimated uses ms)
+DURATION.fast = 200     // Quick interactions
+DURATION.normal = 300   // Default
+DURATION.slow = 400     // Hero elements, modals
+DURATION.slower = 500   // Special emphasis
+
+// Spring configs
+SPRING.gentle   // { damping: 30, stiffness: 300 } — card reveals
+SPRING.bouncy   // { damping: 20, stiffness: 300 } — success states
+SPRING.snappy   // { damping: 35, stiffness: 400 } — button presses
+
+// Stagger delays (ms)
+STAGGER.fast = 40      // Quick lists
+STAGGER.normal = 60    // Default
+STAGGER.slow = 80      // Dramatic reveals
+```
+
+### Moti Animation Presets
+
+| Preset | Use Case | Properties |
+|--------|----------|------------|
+| `FADE_UP` | Standard entrance | `opacity: 0→1, translateY: 12→0` |
+| `FADE_IN` | No movement fade | `opacity: 0→1` |
+| `SCALE_IN` | Badges, icons, success | `opacity: 0→1, scale: 0.85→1` (spring) |
+| `PAGE_TRANSITION` | Page containers | `opacity: 0→1, translateY: 8→0` |
+| `MODAL_SCALE` | Centered modals | `scale: 0.95→1` with exit |
+| `BACKDROP_FADE` | Modal backdrops | `opacity: 0→1` with exit |
+
+### Staggered Lists
 
 ```typescript
-EASE_OUT = [0.25, 0.1, 0.25, 1.0]
-EASE_OUT_EXPO = [0.16, 1, 0.3, 1]  // Smooth deceleration, most common
-EASE_IN_OUT = [0.42, 0, 0.58, 1]
-```
+import { MotiView } from 'moti';
+import { FADE_UP, staggerDelay } from '@/lib/animations';
 
-#### Durations (seconds)
-
-```typescript
-DURATION.fast = 0.2    // Quick interactions, exits
-DURATION.normal = 0.3  // Default for most elements
-DURATION.slow = 0.4    // Hero elements, modals
-DURATION.slower = 0.5  // Special emphasis
-```
-
-#### Spring Presets
-
-```typescript
-SPRING.gentle  // { damping: 30, stiffness: 300 } — card reveals
-SPRING.bouncy  // { damping: 20, stiffness: 300 } — success states, badges
-SPRING.snappy  // { damping: 35, stiffness: 400 } — button presses
-```
-
-#### Stagger Delays
-
-```typescript
-STAGGER.fast = 0.04    // Quick lists
-STAGGER.normal = 0.06  // Default stagger
-STAGGER.slow = 0.08    // Dramatic reveals
-```
-
-### Motion Variants (export from `src/lib/animations.ts`)
-
-| Variant | Use Case | Properties |
-|---------|----------|------------|
-| `fadeUp` | Standard entrance | `opacity: 0→1, y: 12→0` |
-| `fadeIn` | No movement fade | `opacity: 0→1` |
-| `scaleIn` | Badges, icons, success | `opacity: 0→1, scale: 0.85→1` |
-| `slideUp` | Modals, bottom sheets | `y: 100%→0` with exit animation |
-| `backdropFade` | Modal backdrops | `opacity: 0→1` with exit |
-| `modalScale` | Centered modals | `scale: 0.95→1, opacity: 0→1` |
-| `pageTransition` | Page containers | Fade-up with stagger children |
-| `highlightPulse` | Attention drawing | Box-shadow pulse |
-| `staggerContainer()` | List wrappers | Configurable stagger timing |
-
-### Reusable Animation Components
-
-All located in `src/components/animations/`:
-
-#### `FadeUp` — The workhorse
-```typescript
-import { FadeUp } from '@/components/animations';
-
-<FadeUp delay={0.1} distance={12} duration={0.3}>
-  <YourComponent />
-</FadeUp>
-
-// Scroll-triggered version
-<FadeUp inView once delay={0.2}>
-  <YourComponent />
-</FadeUp>
-```
-
-#### `StaggerContainer` + `StaggerItem` — For lists
-```typescript
-import { StaggerContainer, StaggerItem } from '@/components/animations';
-
-<StaggerContainer staggerDelay={0.06} delayChildren={0.2}>
-  {items.map(item => (
-    <StaggerItem key={item.id}>
-      <ListItem {...item} />
-    </StaggerItem>
-  ))}
-</StaggerContainer>
-```
-
-#### `PageTransition` — Page wrapper
-
-```typescript
-import { PageTransition } from '@/components/animations';
-
-<PageTransition>
-  <YourPageContent />
-</PageTransition>
-```
-
-#### `AnimatedNumber` — Financial values
-
-```typescript
-import { AnimatedNumber } from '@/components/animations';
-
-<AnimatedNumber 
-  value={price} 
-  format={formatINR} 
-  duration={0.5}
-/>
-```
-
-### CSS Animation Classes (`src/app/globals.css`)
-
-#### `.live-dot`
-Breathing glow animation for live price indicators.
-```html
-<span className="live-dot w-2 h-2 rounded-full bg-success" />
-```
-
-#### `.gold-shimmer`
-Subtle shimmer overlay for premium cards (holdings card, TolaCard).
-```html
-<div className="card-gold relative overflow-hidden">
-  <div className="absolute inset-0 gold-shimmer pointer-events-none" />
-  {/* card content */}
-</div>
-```
-
-### Mandatory Patterns for New Components
-
-#### 1. **Pages** — Fade-up entrance on mount
-```typescript
-<motion.div
-  initial={{ opacity: 0, y: 8 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: DURATION.normal, ease: EASE_OUT_EXPO }}
->
-  {/* page content */}
-</motion.div>
-```
-
-#### 2. **Page Sections** — Staggered reveal
-Wrap sections in `StaggerContainer`, use `FadeUp` or `StaggerItem` for children.
-
-#### 3. **Modals** — Scale + fade with backdrop
-```typescript
-<AnimatePresence>
-  {isOpen && (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      variants={backdropFade}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      onClick={onClose}
-    >
-      <motion.div
-        className="bg-white rounded-2xl p-6"
-        variants={modalScale}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* modal content */}
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
-```
-
-#### 4. **Lists/Grids** — Staggered children
-```typescript
-<motion.div
-  initial="hidden"
-  animate="visible"
-  variants={staggerContainer(STAGGER.normal)}
->
-  {items.map((item, i) => (
-    <motion.div key={i} variants={fadeUp}>
-      {item}
-    </motion.div>
-  ))}
-</motion.div>
-```
-
-#### 5. **Buttons** — Press feedback
-```typescript
-<motion.button
-  whileTap={{ scale: 0.97 }}
-  transition={SPRING.snappy}
->
-  Click me
-</motion.button>
-```
-
-#### 6. **Loading Spinners** — Controlled rotation (not CSS)
-```typescript
-<motion.div
-  animate={{ rotate: 360 }}
-  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
->
-  <RefreshCw className="size-4" />
-</motion.div>
-```
-
-#### 7. **Financial Values** — `AnimatedNumber`
-Any price, balance, or holdings value that changes should use `AnimatedNumber` for smooth morphing.
-
-#### 8. **Tab/Filter Pills** — Animated indicator
-Use `layoutId` for sliding active indicator:
-```typescript
-{tabs.map(tab => (
-  <button key={tab} onClick={() => setActive(tab)}>
-    {active === tab && (
-      <motion.div
-        className="absolute inset-0 bg-white rounded-full"
-        layoutId="tabIndicator"
-        transition={{ duration: DURATION.fast, ease: EASE_OUT_EXPO }}
-      />
-    )}
-    <span className="relative z-10">{tab}</span>
-  </button>
+{items.map((item, i) => (
+  <MotiView key={item.id} {...FADE_UP} delay={staggerDelay(i)}>
+    <ListItem {...item} />
+  </MotiView>
 ))}
 ```
 
-### Accessibility
+### Reusable Animation Components (`src/components/animations/`)
 
-- **Reduced motion**: All components respect `prefers-reduced-motion` via `useReducedMotion()` hook
-- **No auto-play**: No distracting infinite animations except subtle shimmer
-- **Focus states**: Maintain visibility during animations
+- `FadeUp` — Fade-up entrance wrapper
+- `StaggerContainer` + `StaggerItem` — Staggered list reveal
+- `PageTransition` — Page-level entrance animation
+- `AnimatedNumber` — Smooth number morphing for financial values
 
-### Examples in Existing Code
+### Mandatory Patterns for New Screens
 
-- **Dashboard layout** (`src/app/(dashboard)/layout.tsx`): Page transitions + bottom nav sliding indicator
-- **Home page** (`src/app/(dashboard)/page.tsx`): Staggered sections, holdings card with shimmer, returns badge spring-in
-- **Login page** (`src/app/(auth)/login/page.tsx`): Orchestrated carousel entrance with staggered features
-- **Sell page** (`src/app/(dashboard)/sell/page.tsx`): Error/success state animations, quote expand/collapse
-- **TolaCard** (`src/components/TolaCard.tsx`): 3D tilt entrance on mount
+1. **Pages** — Wrap in `<MotiView {...PAGE_TRANSITION}>` or `<PageTransition>`
+2. **Lists** — Use `staggerDelay(index)` with `FADE_UP`
+3. **Modals** — Use `MODAL_SCALE` + `BACKDROP_FADE`
+4. **Financial values** — Use `<AnimatedNumber>` for prices/balances
+5. **All new components MUST include entrance animations**
 
 ## Form Management
 
-Bullion uses **React Hook Form** with **Zod** for type-safe form validation. This is the standard approach for all forms, especially important for upcoming KYC flows.
-
-### Imports from `src/lib/form.ts`
+Uses **React Hook Form** + **Zod** via `src/lib/form.ts`.
 
 ```typescript
 import { z, useForm, zodResolver, type FormData } from '@/lib/form';
 ```
 
-The `form.ts` utility file re-exports commonly used items for convenience:
-
-- `z` — Zod schema builder
-- `useForm`, `useFormContext`, `FormProvider`, `Controller` — React Hook Form hooks
-- `zodResolver` — Connects Zod schemas to React Hook Form
-- `FormData<T>` — Type helper to infer form types from Zod schemas
-
-### Available Validation Patterns
-
-Pre-built validators for Indian KYC requirements:
+### Validation Patterns (Indian KYC)
 
 ```typescript
-import { validationPatterns } from '@/lib/form';
-
-validationPatterns.email     // Email validation
-validationPatterns.phone     // Indian 10-digit mobile (starts with 6-9)
-validationPatterns.pan       // PAN card format (ABCDE1234F)
-validationPatterns.aadhaar   // 12-digit Aadhaar number
-validationPatterns.pincode   // 6-digit Indian pincode
-validationPatterns.ifsc      // Bank IFSC code
-validationPatterns.accountNumber  // 9-18 digit bank account
-validationPatterns.upiId     // UPI ID format
+validationPatterns.email       // Email
+validationPatterns.phone       // Indian 10-digit mobile
+validationPatterns.pan         // PAN card (ABCDE1234F)
+validationPatterns.aadhaar     // 12-digit Aadhaar
+validationPatterns.pincode     // 6-digit pincode
+validationPatterns.ifsc        // Bank IFSC
+validationPatterns.accountNumber // 9-18 digit bank account
+validationPatterns.upiId       // UPI ID
 ```
 
-### Reusable Schema Builders
+### Schema Builders
 
 ```typescript
-import { commonSchemas } from '@/lib/form';
-
-// Amount in INR with min/max
-commonSchemas.inrAmount(100, 100000)  // ₹100 - ₹1,00,000
-
-// Amount in grams
-commonSchemas.gramsAmount(0.01, 1000)  // 0.01g - 1000g
-
-// Optional text with max length
-commonSchemas.optionalText(100)  // Optional, max 100 chars
-
-// Required string with custom field name in error
-commonSchemas.requiredString('Full Name')  // "Full Name is required"
+commonSchemas.inrAmount(100, 100000)    // ₹100 - ₹1,00,000
+commonSchemas.gramsAmount(0.01, 1000)   // 0.01g - 1000g
+commonSchemas.optionalText(100)         // Optional, max 100 chars
+commonSchemas.requiredString('Name')    // "Name is required"
 ```
-
-### Key Patterns
-
-| Pattern | Usage |
-|---------|-------|
-| `register('fieldName')` | Spread on native inputs |
-| `watch('fieldName')` | Get reactive field value |
-| `setValue('fieldName', value, { shouldValidate: true })` | Programmatic update |
-| `errors.fieldName?.message` | Display validation error |
-| `isValid` | Form passes all validation |
-| `isSubmitting` | Async submit in progress |
-| `mode: 'onChange'` | Validate on every change (real-time) |
-| `mode: 'onBlur'` | Validate when field loses focus |
 
 ## Smart Contract Addresses (Arbitrum Mainnet)
 
 ```typescript
 XAUT0: '0x40461291347e1eCbb09499F3371D3f17f10d7159'
-USDT: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9'
+USDT:  '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9'
 CAMELOT_V3_ROUTER: '0x1F721E2E82F6676FCE4eA07A5958cF098D339e18'
 CAMELOT_V3_QUOTER: '0x0Fc73040b26E9bC8514fA028D998E73A254Fa76E'
 ```
@@ -490,187 +342,168 @@ Chain ID: 42161 (Arbitrum One)
 ### Constants (from constants.ts)
 
 ```typescript
-// Token decimals
 XAUT_DECIMALS = 6
 USDT_DECIMALS = 6
-
-// Unit conversions
 GRAMS_PER_OUNCE = 31.1035
 GRAMS_PER_TOLA = 10
 
-// Swap limits (Buy)
+// Buy limits (USDT swap)
 MIN_USDT_SWAP = 5
 MAX_USDT_SWAP = 100000
-QUOTE_REFRESH_INTERVAL = 15000  // 15 seconds
-QUOTE_VALIDITY_SECONDS = 60
-SWAP_DEADLINE_MINUTES = 5
 
-// Swap limits (Sell)
+// Buy limits (UPI)
+MIN_INR_BUY = 100       // ₹100
+MAX_INR_BUY = 100000    // ₹1,00,000
+
+// Sell limits
 MIN_GRAMS_SELL = 0.01
 MAX_GRAMS_SELL = 1000
 
-// Slippage
 SLIPPAGE_TOLERANCE = 0.005  // 0.5%
+QUOTE_REFRESH_INTERVAL = 15000  // 15 seconds
 ```
 
-## Database Models
+## Database
 
-### User
-- Links Privy user ID to wallet address
-- One-to-one relation with Holding
-- One-to-many relation with Transactions
+Uses Supabase directly (no Prisma/ORM). Client uses `expo-secure-store` for token storage.
 
-### Holding
-- User's XAUT balance, average buy price, total invested
-- Auto-created when user signs up
-- Updated after each buy/sell
+- DB types: `Db*` interfaces in `src/lib/supabase.ts` (snake_case columns)
+- Frontend types: camelCase in `src/types/index.ts`
+- Tables: `users`, `holdings`, `transactions`, `price_history`, `gifts`
 
-### Transaction
-- Records buy/sell operations
-- Status: pending → processing → completed/failed
-- Stores prices, amounts, blockchain tx hashes
+### Key Models
 
-### PriceHistory
-- Historical gold prices for charts
-- Stored every 5 minutes
+| Table | Purpose |
+|-------|---------|
+| `users` | Privy user ID → wallet address mapping |
+| `holdings` | XAUT balance, avg buy price, total invested, P&L |
+| `transactions` | Buy/sell records with status, amounts, tx hashes |
+| `price_history` | Historical gold prices (every 5 min) |
+| `gifts` | Gold gift records (send/claim/expire) |
 
 ## Environment Variables
 
-Required environment variables (see `.env` file):
-
 ```
-DATABASE_URL               # PostgreSQL connection string
-REDIS_URL                  # Redis/Upstash URL
-
-NEXT_PUBLIC_PRIVY_APP_ID   # Privy app ID (public)
-PRIVY_APP_SECRET           # Privy secret (server-only)
-
-ARBITRUM_RPC_URL           # Arbitrum RPC endpoint
-TREASURY_PRIVATE_KEY       # Server wallet private key (NEVER expose)
-TREASURY_WALLET_ADDRESS    # Treasury wallet address
-
-COINGECKO_API_KEY          # For gold price feed
-
-NEXT_PUBLIC_SUPABASE_URL   # Supabase URL
-SUPABASE_SERVICE_ROLE_KEY  # Supabase service key
-
-ONMETA_API_KEY             # Payment integration
-ONMETA_MERCHANT_ID         # Payment integration
-ONMETA_WEBHOOK_SECRET      # Payment integration
+EXPO_PUBLIC_API_URL            # Backend API base URL
+EXPO_PUBLIC_PRIVY_APP_ID       # Privy app ID
+EXPO_PUBLIC_PRIVY_CLIENT_ID    # Privy client ID
+EXPO_PUBLIC_SUPABASE_URL       # Supabase URL
+EXPO_PUBLIC_SUPABASE_ANON_KEY  # Supabase anon key
 ```
 
-## API Endpoints
+Backend (Next.js, separately deployed):
+```
+DATABASE_URL / REDIS_URL
+PRIVY_APP_SECRET
+ARBITRUM_RPC_URL
+TREASURY_PRIVATE_KEY          # NEVER expose
+TREASURY_WALLET_ADDRESS
+COINGECKO_API_KEY
+SUPABASE_SERVICE_ROLE_KEY
+ONMETA_API_KEY / ONMETA_MERCHANT_ID / ONMETA_WEBHOOK_SECRET
+```
 
-### Public Endpoints
+## API Endpoints (Backend)
+
+### Public
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
 | `/api/prices` | GET | Current gold price (USD, INR, per gram) |
-| `/api/prices/history` | GET | 7-day price history for charts |
+| `/api/prices/history` | GET | 7-day price history |
 | `/api/prices/tola` | GET | Gold price per tola |
 
-### Protected Endpoints (require Bearer token)
+### Protected (Bearer token)
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
 | `/api/auth/sync` | POST | Sync Privy user to database |
 | `/api/holdings` | GET | User's holdings with P&L |
-| `/api/balance/usdt` | GET | User's USDT wallet balance |
-| `/api/balance/xaut` | GET | User's XAUT wallet balance (+ grams) |
-| `/api/swap/quote` | GET | Get quote for USDT → XAUT swap |
+| `/api/balance/usdt` | GET | USDT wallet balance |
+| `/api/balance/xaut` | GET | XAUT wallet balance (+ grams) |
+| `/api/swap/quote` | GET | USDT → XAUT quote |
 | `/api/swap/record` | POST | Record completed buy swap |
-| `/api/sell/quote` | GET | Get quote for XAUT → USDT swap |
+| `/api/sell/quote` | GET | XAUT → USDT quote |
 | `/api/sell/record` | POST | Record completed sell swap |
-| `/api/transactions/buy` | POST | Initiate buy transaction |
-| `/api/transactions/sell` | POST | Initiate sell transaction |
-| `/api/transactions/history` | GET | User's transaction history |
-| `/api/webhooks/onmeta` | POST | Payment confirmation webhook |
+| `/api/transactions/history` | GET | Transaction history |
+| `/api/upi/create-order` | POST | Create UPI payment order |
+| `/api/upi/confirm` | POST | Confirm UPI payment |
+| `/api/gift/send` | POST | Send gold gift |
+| `/api/gift/claim` | POST | Claim a gift |
+| `/api/gift/lookup` | GET | Lookup recipient |
+| `/api/gift/sent` | GET | Sent gifts list |
+| `/api/gift/received` | GET | Received gifts list |
 
 ## Transaction Flows
 
-### Buy Flow (Client-Side Swap via useSwap hook)
-1. User enters USDT amount on buy page
-2. Fetch quote from `/api/swap/quote`
-3. Check USDT allowance for Camelot Router
-4. If insufficient, send approval tx (user signs via Privy)
-5. Execute swap tx: USDT → XAUT on Camelot
-6. Wait for tx confirmation
-7. Record transaction via `/api/swap/record`
-8. Refresh balances
-
-### Sell Flow (Client-Side Swap via useSellSwap hook)
-1. User enters grams amount on sell page
-2. Convert grams to XAUT (÷ 31.1035)
-3. Fetch quote from `/api/sell/quote`
-4. Check XAUT allowance for Camelot Router
-5. If insufficient, send approval tx
-6. Execute swap tx: XAUT → USDT on Camelot
-7. Wait for tx confirmation
-8. Record transaction via `/api/sell/record`
-9. Refresh balances
-
-### Swap Step States (SwapStep type)
+### Buy Flow (USDT Swap — `useSwap` hook)
 `input` → `approve` → `swap` → `confirming` → `success` | `error`
 
-## Custom Hooks
+### Buy Flow (UPI — `useUpiFlow` hook)
+`amount` → `payment` → `processing` → `success` | `error`
 
-### useSwap (Buy)
-Located in `src/hooks/useSwap.ts`. Manages the USDT → XAUT buy flow.
+### Sell Flow (`useSellSwap` hook)
+`input` → `approve` → `swap` → `confirming` → `success` | `error`
 
-**Returns:**
-- `walletAddress`, `usdtBalance`, `balanceLoading`
-- `quote`, `quoteLoading`
-- `step` (SwapStep), `error`
-- `approvalTxHash`, `swapTxHash`
-- `fetchBalance()`, `fetchQuote(amount)`, `executeSwap(usdtAmount)`, `reset()`
-
-### useSellSwap (Sell)
-Located in `src/hooks/useSellSwap.ts`. Manages the XAUT → USDT sell flow.
-
-**Returns:**
-
-- `walletAddress`, `xautBalance`, `xautBalanceGrams`, `balanceLoading`
-- `quote`, `quoteLoading`
-- `step` (SwapStep), `error`
-- `approvalTxHash`, `swapTxHash`
-- `fetchBalance()`, `fetchQuote(gramsAmount)`, `executeSell(gramsAmount)`, `reset()`
+### Gift Flow (`useGiftSend` hook)
+`input` → `lookup` → `confirm` → `payment`/`approve` → `transfer` → `confirming` → `success`
 
 ## Authentication Pattern
 
-### Server-Side (`src/lib/auth.ts`)
+### Client-Side (Expo App)
 
 ```typescript
-import { verifyAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/auth-provider';
 
-const auth = await verifyAuth();
-if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-// auth.privyUserId available
+const { isReady, isAuthenticated, userId, walletAddress, email, logout } = useAuth();
 ```
 
-### Client-Side (`src/lib/apiClient.ts`)
-
 ```typescript
-import { authFetch, authFetchJson } from '@/lib/apiClient';
+import { authFetchJson } from '@/lib/apiClient';
 
-// Automatically attaches Bearer token from Privy
-const res = await authFetch('/api/holdings');
 const { success, data, error } = await authFetchJson<HoldingData>('/api/holdings');
 ```
 
-## Testing & Verification
+### Auth Guard
 
-After making changes:
+Located in `app/(tabs)/_layout.tsx`. Redirects to `/(auth)/login` if not authenticated.
 
-1. Run `pnpm build` to check for TypeScript errors
-2. Run `pnpm lint` to check code style
-3. Start dev server with `pnpm dev` and test manually
-4. For schema changes: `pnpm db:push` to sync database
+## Build & Config Notes
+
+### Babel (`babel.config.js`)
+```javascript
+presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel']
+plugins: ['react-native-reanimated/plugin']  // MUST be last plugin
+```
+
+### Metro (`metro.config.js`)
+- NativeWind integration via `withNativeWind(config, { input: './global.css' })`
+- `unstable_conditionNames`: `['react-native', 'browser', 'require', 'import', 'default']`
+- `'default'` is needed for packages like jose, @noble/hashes
+
+### Tailwind (`tailwind.config.ts`)
+- Preset: `nativewind/preset`
+- Custom colors: `gold.*`, `surface.*`, `surface-dark.*`, `text.*`, `text-dark.*`, `success.*`, `error.*`, `warning.*`, `border.*`
+- Font: `DMSans` (400, 500, 700)
+- Dark mode: `class`
+
+### TypeScript (`tsconfig.json`)
+- Extends `expo/tsconfig.base`
+- **Whitelist include** — only listed files/patterns are compiled. New `src/lib/` files MUST be added explicitly.
+
+### Polyfills (`index.js`)
+Crypto polyfills (getRandomValues, randomUUID, subtle.digest) MUST run before `expo-router/entry` — Privy, jose, and viem need them.
 
 ## Important Notes
 
-- **Never expose TREASURY_PRIVATE_KEY** - only use server-side
-- **No crypto jargon in UI** - users see "grams of gold", not "XAUT tokens"
-- **Mobile-first design** - all UI optimized for phone screens
-- **Use Indian locale** - amounts in INR, dates in IST
-- **Price caching** - 60 second TTL to reduce API calls
-- **Client vs Server Viem** - use `clientViem.ts` in browser (hooks/components), `viem.ts` on server (API routes)
-- **Swaps are client-side** - user signs transactions via Privy embedded wallet, not server treasury
-- **Tola unit** - 1 tola = 10 grams (common in India for gold pricing)
+- **Node 20 required** — Node 22+ breaks Expo type stripping
+- **Tunnel mode required** — `npx expo start --tunnel --clear` (LAN mode hangs Expo Go)
+- **Never expose TREASURY_PRIVATE_KEY** — only used by backend
+- **No crypto jargon in UI** — users see "grams of gold", not "XAUT tokens"
+- **Mobile-first design** — iOS-native feel
+- **Use Indian locale** — amounts in INR, dates in IST
+- **Price caching** — 60s TTL to reduce API calls
+- **Swaps are client-side** — user signs via Privy embedded wallet
+- **Tola unit** — 1 tola = 10 grams
+- **Privy lazy-loading** — always `require('@privy-io/expo')`, never top-level import
+- **`@noble/hashes/crypto.js`** exports warning is cosmetic — safe to ignore
+- **`expo-crypto` is NOT a config plugin** — do NOT add to app.json plugins
+- **Old web code** in `src/_app_web/` is reference-only (gitignored)
