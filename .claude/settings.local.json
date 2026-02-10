@@ -30,7 +30,10 @@
       "Bash(python3:*)",
       "Bash(find:*)",
       "Bash(npx expo install:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx expo config:*)",
+      "Bash(npx expo-doctor:*)",
+      "Bash(npx expo --version)"
     ]
   }
 }

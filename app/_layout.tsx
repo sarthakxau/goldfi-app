@@ -40,6 +40,13 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="buy" />
+          <Stack.Screen name="sell" />
+          <Stack.Screen name="gift" />
+          <Stack.Screen name="transactions" />
+          <Stack.Screen name="gold-charts" />
+          <Stack.Screen name="autopay" />
+          <Stack.Screen name="redeem" />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />

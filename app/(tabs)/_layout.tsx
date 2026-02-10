@@ -69,14 +69,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="yield"
+        name="yield/index"
         options={{
           title: 'Earn',
           tabBarIcon: ({ color, size }) => <Sprout size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="account"
+        name="account/index"
         options={{
           title: 'Settings',
           tabBarIcon: ({ color, size }) => (
@@ -85,14 +85,11 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Hidden from tab bar — accessible via navigation */}
-      <Tabs.Screen name="buy" options={{ href: null }} />
-      <Tabs.Screen name="sell" options={{ href: null }} />
-      <Tabs.Screen name="gift" options={{ href: null }} />
-      <Tabs.Screen name="transactions" options={{ href: null }} />
-      <Tabs.Screen name="gold-charts" options={{ href: null }} />
-      <Tabs.Screen name="autopay" options={{ href: null }} />
-      <Tabs.Screen name="redeem" options={{ href: null }} />
+      {/* Sub-routes hidden from tab bar */}
+      <Tabs.Screen name="account/kyc" options={{ href: null }} />
+      <Tabs.Screen name="account/personal" options={{ href: null }} />
+      <Tabs.Screen name="yield/strategies/index" options={{ href: null }} />
+      <Tabs.Screen name="yield/strategies/[id]" options={{ href: null }} />
     </Tabs>
   );
 }

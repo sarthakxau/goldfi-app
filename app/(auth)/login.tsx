@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { useLoginWithEmail, usePrivy } from '@privy-io/expo';
 import { MotiView } from 'moti';
 import { FADE_UP, FADE_IN, SCALE_IN, DURATION, staggerDelay } from '@/lib/animations';
 import { useAuth } from '@/lib/auth-provider';
@@ -26,9 +25,17 @@ const FEATURES = [
   'withdraw anytime, with zero limits',
 ];
 
-export default function LoginScreen() {
-  const { isReady, isAuthenticated } = useAuth();
+// ── Privy login form (only rendered in production mode) ────
+
+function PrivyLoginForm() {
+  const { useLoginWithEmail } = require('@privy-io/expo') as {
+    useLoginWithEmail: () => {
+      sendCode: (args: { email: string }) => Promise<void>;
+      loginWithCode: (args: { code: string; email: string }) => Promise<void>;
+    };
+  };
   const { sendCode, loginWithCode } = useLoginWithEmail();
+  const { isReady, isAuthenticated } = useAuth();
 
   const [step, setStep] = useState<LoginStep>('email');
   const [email, setEmail] = useState('');
@@ -38,7 +45,6 @@ export default function LoginScreen() {
 
   const codeInputRef = useRef<TextInput>(null);
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isReady && isAuthenticated) {
       router.replace('/(tabs)');
@@ -53,7 +59,6 @@ export default function LoginScreen() {
     try {
       await sendCode({ email: email.trim() });
       setStep('code');
-      // Focus OTP input after transition
       setTimeout(() => codeInputRef.current?.focus(), 300);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to send code';
@@ -70,7 +75,6 @@ export default function LoginScreen() {
     setError(null);
     try {
       await loginWithCode({ code: code.trim(), email: email.trim() });
-      // Navigation happens via the useEffect above once isAuthenticated flips
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Invalid code';
       setError(msg);
@@ -85,6 +89,81 @@ export default function LoginScreen() {
     setError(null);
   }, []);
 
+  return (
+    <LoginUI
+      step={step}
+      email={email}
+      setEmail={setEmail}
+      code={code}
+      setCode={setCode}
+      loading={loading}
+      error={error}
+      setError={setError}
+      codeInputRef={codeInputRef}
+      handleSendCode={handleSendCode}
+      handleLogin={handleLogin}
+      handleBack={handleBack}
+    />
+  );
+}
+
+// ── Main export ─────────────────────────────────────────────
+
+export default function LoginScreen() {
+  const { isReady, isAuthenticated } = useAuth();
+
+  // In dev bypass mode, immediately redirect — never render Privy hooks
+  useEffect(() => {
+    if (isReady && isAuthenticated) {
+      router.replace('/(tabs)');
+    }
+  }, [isReady, isAuthenticated]);
+
+  if (__DEV__ && isAuthenticated) {
+    return (
+      <SafeAreaView className="flex-1 bg-surface dark:bg-surface-dark">
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#B8860B" />
+          <Text className="text-text-muted dark:text-text-dark-muted mt-4 text-sm">
+            Redirecting...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return <PrivyLoginForm />;
+}
+
+// ── Shared login UI ─────────────────────────────────────────
+
+function LoginUI({
+  step,
+  email,
+  setEmail,
+  code,
+  setCode,
+  loading,
+  error,
+  setError,
+  codeInputRef,
+  handleSendCode,
+  handleLogin,
+  handleBack,
+}: {
+  step: LoginStep;
+  email: string;
+  setEmail: (v: string) => void;
+  code: string;
+  setCode: (v: string) => void;
+  loading: boolean;
+  error: string | null;
+  setError: (v: string | null) => void;
+  codeInputRef: React.RefObject<TextInput | null>;
+  handleSendCode: () => void;
+  handleLogin: () => void;
+  handleBack: () => void;
+}) {
   return (
     <SafeAreaView className="flex-1 bg-surface dark:bg-surface-dark">
       <KeyboardAvoidingView

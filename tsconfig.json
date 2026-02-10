@@ -16,6 +16,7 @@
     "src/lib/theme.tsx",
     "src/lib/animations.ts",
     "src/lib/apiClient.ts",
+    "src/lib/giftData.ts",
     "src/lib/supabase.ts",
     "src/lib/clientViem.ts",
     "src/lib/auth-provider.tsx",
