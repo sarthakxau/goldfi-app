@@ -749,23 +749,26 @@ export default function AccountScreen() {
             <Pressable
               onPress={() => setShowLogoutModal(true)}
               style={({ pressed }) => ({
-                marginTop: 28,
-                paddingVertical: 14,
-                borderRadius: 16,
-                backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
-                borderWidth: 1,
-                borderColor: isDark ? '#2D2D2D' : '#E5E7EB',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                opacity: pressed ? 0.7 : 1,
+                opacity: pressed ? 0.85 : 1,
               })}
             >
-              <LogOut size={18} color="#EF4444" />
-              <Text style={{ fontSize: 15, fontWeight: '600', color: '#EF4444' }}>
-                Sign Out
-              </Text>
+              <View
+                style={{
+                  marginTop: 28,
+                  paddingVertical: 16,
+                  borderRadius: 16,
+                  backgroundColor: '#EF4444',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                }}
+              >
+                <LogOut size={18} color="#FFFFFF" />
+                <Text style={{ fontSize: 15, fontWeight: '700', color: '#FFFFFF' }}>
+                  Sign Out
+                </Text>
+              </View>
             </Pressable>
           </MotiView>
         </View>

@@ -14,6 +14,7 @@ import {
   ArrowUpRight,
   Calendar,
   Gift,
+  Info,
   RefreshCw,
   Sprout,
 } from 'lucide-react-native';
@@ -55,6 +56,7 @@ export default function HomeScreen() {
   } = useAppStore();
 
   const [viewMode, setViewMode] = useState<ViewMode>('inr');
+  const [showScudoTooltip, setShowScudoTooltip] = useState(false);
 
   // ── Data Fetching ─────────────────────────────────────
 
@@ -275,12 +277,72 @@ export default function HomeScreen() {
             }}
           >
             {/* Value Display */}
-            <Text
-              className="text-4xl font-bold text-text-primary dark:text-text-dark-primary"
-              style={{ fontVariant: ['tabular-nums'], marginBottom: 8 }}
-            >
-              {getDisplayValue()}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <Text
+                className="text-4xl font-bold text-text-primary dark:text-text-dark-primary"
+                style={{ fontVariant: ['tabular-nums'], flex: 1 }}
+              >
+                {getDisplayValue()}
+              </Text>
+
+              {viewMode === 'scudo' && (
+                <View style={{ position: 'relative' }}>
+                  <Pressable
+                    onPress={() => setShowScudoTooltip((v) => !v)}
+                    hitSlop={8}
+                    style={{ padding: 4 }}
+                  >
+                    <Info size={16} color={colors.textMuted} />
+                  </Pressable>
+
+                  {showScudoTooltip && (
+                    <>
+                      <Pressable
+                        style={{
+                          position: 'absolute',
+                          top: -999,
+                          left: -999,
+                          right: -999,
+                          bottom: -999,
+                          width: 9999,
+                          height: 9999,
+                        }}
+                        onPress={() => setShowScudoTooltip(false)}
+                      />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          bottom: 32,
+                          right: -8,
+                          width: 180,
+                          backgroundColor: isDark ? '#242424' : '#FFFFFF',
+                          borderWidth: 1,
+                          borderColor: isDark ? '#3D3D3D' : '#E5E7EB',
+                          borderRadius: 10,
+                          padding: 10,
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.15,
+                          shadowRadius: 6,
+                          elevation: 5,
+                          zIndex: 50,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: colors.textSecondary,
+                            lineHeight: 16,
+                          }}
+                        >
+                          1 Scudo = 1/1000 XAUT (approx. 31.1 mg gold)
+                        </Text>
+                      </View>
+                    </>
+                  )}
+                </View>
+              )}
+            </View>
 
             {/* Label + Unit Selector */}
             <View className="flex-row items-center justify-between">
@@ -347,7 +409,7 @@ export default function HomeScreen() {
               exit={{ opacity: 0, scale: 0.85 }}
               transition={{ type: 'spring' as const, damping: 20, stiffness: 300 }}
             >
-              <View style={{ alignItems: 'center', marginTop: -12, marginBottom: 16, zIndex: 10 }}>
+              <View style={{ alignItems: 'center', marginTop: -22, marginBottom: 24, zIndex: 10 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -716,7 +778,7 @@ function TransactionItem({
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignItems: 'flex-start',
+            alignItems: 'center',
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
