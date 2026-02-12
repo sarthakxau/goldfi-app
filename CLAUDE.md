@@ -507,3 +507,13 @@ Crypto polyfills (getRandomValues, randomUUID, subtle.digest) MUST run before `e
 - **`@noble/hashes/crypto.js`** exports warning is cosmetic — safe to ignore
 - **`expo-crypto` is NOT a config plugin** — do NOT add to app.json plugins
 - **Old web code** in `src/_app_web/` is reference-only (gitignored)
+
+## Resources & References
+
+- **Expo Documentation**: https://docs.expo.dev
+- **Expo Router**: https://docs.expo.dev/router/introduction/
+- **NativeWind**: https://www.nativewind.dev
+- **Moti**: https://moti.fyi
+- **Privy Expo SDK**: https://docs.privy.io/guide/expo
+- **Viem**: https://viem.sh
+- **Arbitrum**: https://arbitrum.io
