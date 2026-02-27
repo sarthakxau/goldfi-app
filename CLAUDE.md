@@ -130,7 +130,8 @@ Bullion (gold.fi) is a mobile app for digital gold savings targeting Indian user
 ```bash
 # Development (MUST use Node 20 — Node 22+ breaks Expo type stripping)
 nvm use 20
-npx expo start --tunnel --clear   # Dev server (MUST use --tunnel, LAN mode hangs)
+npx expo start --clear   # Dev server
+npx expo start --tunnel --clear   # Dev server (if LAN hangs)
 
 # Build verification
 npx expo export --platform ios    # Verify production bundle

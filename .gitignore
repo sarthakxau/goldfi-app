@@ -10,7 +10,6 @@
 # next.js (legacy, keeping for reference)
 /.next/
 /out/
-.claude/
 
 # expo
 .expo/
@@ -34,6 +33,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env*
+!.env.example
 
 # vercel
 .vercel

@@ -38,7 +38,9 @@
       "Bash(gh repo:*)",
       "Bash(git push:*)",
       "Bash(git branch:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
